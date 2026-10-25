@@ -83,6 +83,35 @@ rol: voluntarios, organizaciones, coordinadores, ciudadanos) · Simulacros (carr
   `aria-describedby`), resumen de errores con enlaces a cada campo y autorización de datos (Ley 1581).
 - Verificado con axe-core (WCAG 2.1 A/AA) en todas las rutas: 0 incidencias.
 
+**v2.3 — panel de la organización tipo dashboard (25/10/2026)**
+
+El panel (`/panel/*`) dejó la barra lateral de 248 px por un *shell* de aplicación inspirado en un dashboard de
+referencia (video interno, no se publica): minimalista, con tarjetas blancas y mucho aire.
+
+| Aspecto | Panel v2.3 |
+|---|---|
+| Shell | Lienzo suave (`--surface-canvas`) con un marco redondeado de 32 px (`--surface-frame`). Barra superior fija y esmerilada: marca en píldora, navegación en píldora con indicador de tinta que se desliza a la página activa, herramientas (búsqueda, notificaciones) y menú de cuenta. Riel flotante de íconos a la izquierda: tema claro/oscuro, «Nueva convocatoria», ir al sitio, ayuda y cerrar sesión |
+| Temas | **Claro por defecto** y oscuro a elección (se recuerda en el navegador). El panel pone `data-theme` en `<html>` mientras está montado; `tokens.css` tiene las dos paletas. El cambio se expande en círculo desde el botón (View Transitions; sin animación con movimiento reducido). El sitio público sigue en su tema oscuro |
+| Tinta | `--surface-inverse` / `--text-on-inverse`: el relleno de los botones primarios, la página activa y los filtros activos (claro sobre oscuro, casi negro sobre claro) |
+| Modo Emergencia | Relleno naranja en degradado (`--emergency-fill`) con texto blanco ≥ 4,7:1 en todos sus puntos, siempre con el texto «Modo Emergencia» |
+| Gráficas | Dos series validadas con el validador de paletas (CVD, contraste, banda de luminosidad) en claro y en oscuro: normal `--chart-normal` (azul) y emergencia `--chart-emergency` (naranja). Leyenda siempre visible, etiqueta directa solo en el día de hoy y tabla equivalente para lectores de pantalla |
+| Móvil (< 1024 px) | El marco ocupa todo el ancho, el riel se oculta (el tema pasa a la barra superior) y la navegación se vuelve un dock inferior con íconos y etiquetas, al alcance del pulgar |
+
+**Pantallas**
+- **Panel** (`/panel`): saludo según la hora; tarjeta de la red (cifra principal «46 a menos de 5 km», acceso al
+  mapa y a las respuestas, desglose por habilidad); 4 indicadores (Modo Emergencia, confirmados hoy, cupos
+  cubiertos, tiempo de aviso); gráfica semanal de voluntarios convocados por tipo; medidor de cupos con resto
+  rayado; historial reciente; y tabla de respuestas con búsqueda (sin tildes ni mayúsculas) y filtro.
+- **Convocatorias** (`/panel/convocatorias`, `/panel/historial`): pestañas en píldora; tarjeta naranja de la
+  emergencia activa con medidor y acciones; indicaciones por pestaña (turno, seguridad, reglas del Modo
+  Emergencia); voluntarios convocados; registro de actividad en vivo. El historial suma un resumen y una
+  tarjeta por convocatoria cerrada.
+- **Mapa** (`/panel/mapa`): mismo contenido, con el mapa ilustrativo sin invertir en el tema claro.
+
+Componentes nuevos en `components/panel/`: `PanelTopbar`, `PanelRail`, `Popover` (búsqueda, notificaciones,
+ayuda y cuenta; Escape devuelve el foco), `Segmented` (pestañas WAI-ARIA o filtros con píldora deslizante),
+`StatTile`, `WeekChart`, `usePanelTheme` y `useSlidingPill`. Se retiraron `Sidebar` y `MetricCard`.
+
 ## 1. Pantallas y rutas
 
 | Figma | Pantalla | Ruta | Requisitos |
@@ -165,7 +194,7 @@ El cuerpo nunca baja de 16 px en campos de formulario.
 
 **Retícula del sitio**: marco de 1440 px, contenido de 1200 px y márgenes de 120 px
 (`--page-gutter: clamp(16px, 8.3vw, 120px)`). Secciones con 96 px de padding vertical (72 px en héroe y
-confianza). **Panel**: barra lateral de 248 px, contenido con 32 px de margen y 24 px entre bloques.
+confianza). **Panel** (v2.3): marco de 32 px de radio, riel de 56 px, tarjetas de 24 px de radio y 20 px entre bloques.
 
 | Token | Valor | Dónde |
 |---|---|---|
@@ -201,8 +230,8 @@ confianza). **Panel**: barra lateral de 248 px, contenido con 32 px de margen y 
 | Progreso | `ProgressBar` | Pista `surface-sunken`, alto 8 (10 en tarjetas grandes), radio = alto/2. Tonos brand, muted, success. |
 | Tarjeta/Métrica (4:246) | `MetricCard` | Padding 14, radio 18, borde `border-default`, ícono 20 `brand-primary`, Numeral/Medium, Caption `text-muted`. |
 | Web/Encabezado sitio (22:597) | `SiteHeader` | 80 px, borde inferior, enlaces Label/Default con 36 px de separación, acciones con 12 px. Fijo arriba al hacer scroll. |
-| Web/Barra lateral (22:593) | `Sidebar` | 248 px, padding 24 16 20, gap 24. Ítem: padding 10 12, radio 12, ícono 20. Activo: fondo `brand-primary-soft`, ícono `brand-primary`, texto `brand-primary-strong`. Contador: píldora `brand-primary`. |
-| Web/Encabezado panel (22:632) | `PanelHeader` | Padding 28 32 20, título Web/H2, búsqueda 280 × 44 radio 12, campana 44 px, botón primario. |
+| Web/Barra lateral (22:593) | `PanelTopbar` + `PanelRail` | Reemplazada en v2.3: navegación en píldora arriba (dock inferior en móvil) y riel flotante de íconos con tooltip. Ver la sección 0. |
+| Web/Encabezado panel (22:632) | `PanelHeader` | v2.3: título de 40 px que entra palabra por palabra, lead, acciones de la página y botón primario «Nueva convocatoria». La búsqueda y la campana pasaron a la barra superior. |
 | Web/Tabla (22:653) | `ResponsesTable` | Encabezado Overline en `surface-page`, filas de 12 px de padding vertical, avatar anónimo de 32 px. Voluntarios **solo con código** (#A12), nunca nombre ni teléfono. |
 | Mapa/Base web (22:706) | `IllustratedMap` | Mapa ilustrativo de 1000 × 760 (no es cartografía real), radio de 5 km, puntos aproximados por barrio, punto de operación con halo. Escenas `hero`, `panel` y `live` en `src/data/mapScenes.js`. |
 | Panel lateral | `NewCallDrawer` | 520 px, `elevation-3`, velo al 45 %. Encabezado y pie con borde, cuerpo con scroll. `role="dialog"`, se cierra con Esc o clic en el velo. |
@@ -219,8 +248,8 @@ confianza). **Panel**: barra lateral de 248 px, contenido con 32 px de margen y 
   foco al abrirse y lo devuelve al cerrarse.
 - **Movimiento**: ver la sección 6.1; con `prefers-reduced-motion: reduce` todo queda estático.
 - **Objetivos táctiles** ≥ 44 px (botones de 52 px, chips de 56 px).
-- **Responsive**: el sitio pasa a una columna por debajo de 960–1180 px; el panel convierte la barra lateral
-  en una barra superior con menú desplazable por debajo de 960 px.
+- **Responsive**: el sitio pasa a una columna por debajo de 960–1180 px; por debajo de 1024 px el panel
+  oculta el riel y lleva la navegación a un dock inferior.
 - **Privacidad visible** (Ley 1581 de 2012): ubicación aproximada por barrio, voluntarios anonimizados en
   tablas y mapa, y casilla de autorización de datos **sin marcar por defecto**.
 

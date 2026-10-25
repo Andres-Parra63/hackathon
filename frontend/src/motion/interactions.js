@@ -29,21 +29,18 @@ const HOVERS = [
     },
   },
   { selector: '.skill-chip, .live__filter', build: (tl, el) => tl.to(el, { y: -2 }, 0) },
-  {
-    selector: '.dash__cta',
-    build: (tl, el) => tl.to(el, { y: -3 }, 0).to(el.querySelector('.dash__cta-plus'), { rotation: 90, scale: 1.06 }, 0),
-  },
-  {
-    selector: '.sidebar__link',
-    build: (tl, el) => tl.to(el.querySelectorAll('.icon, .sidebar__label'), { x: 3, stagger: 0.03 }, 0),
-  },
-  { selector: '.dash__history li, .calls__history .card', build: (tl, el) => tl.to(el, { x: 4 }, 0) },
+  { selector: '.dash__history li', build: (tl, el) => tl.to(el, { x: 4 }, 0) },
   { selector: '.drawer__close', build: (tl, el) => tl.to(el, { rotation: 90, duration: 0.5 }, 0) },
+  // Panel rail and top-bar icons: the glyph grows a touch; the bell rings.
   {
-    selector: '.panel-header__bell',
+    selector: '.prail__btn, .ptop__icon:not(.ptop__icon--unread)',
+    build: (tl, el) => tl.to(el.querySelector('.icon'), { scale: 1.14 }, 0),
+  },
+  {
+    selector: '.ptop__icon--unread',
     build: (tl, el) =>
-      tl.to(el.querySelector('img'), {
-        keyframes: { rotation: [0, 10, -8, 5, -2, 0] },
+      tl.to(el.querySelector('.icon'), {
+        keyframes: { rotation: [0, 12, -9, 5, -2, 0] },
         duration: 0.8,
         ease: 'none',
       }),
@@ -51,7 +48,7 @@ const HOVERS = [
 ]
 
 const PRESSABLE =
-  '.btn:not(:disabled), .skill-chip, .live__filter, .dash__cta, .stepper__btn:not(:disabled), .segmented__item, .live__zoom button'
+  '.btn:not(:disabled), .skill-chip, .live__filter, .stepper__btn:not(:disabled), .segmented__item, .live__zoom button, .seg__item, .prail__btn, .ptop__icon, .ptop__user, .pnav__link'
 
 const MAGNETIC = '[data-magnetic]'
 
