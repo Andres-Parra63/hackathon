@@ -6,9 +6,9 @@ import './DotGlobe.css'
 const RAD = Math.PI / 180
 // Colombia is drawn enlarged around its centroid so it reads at a glance without growing the sphere.
 const CENTER = [4.3, -73.6]
-const ENLARGE = 2.3
+const ENLARGE = 3.6
 const LIFT = 1.045 // the enlarged country floats this far above the surface (3D relief)
-const RING_DEG = 4.4 // call radius around Bogotá, in enlarged degrees (stylized, not to scale)
+const RING_DEG = 9 // call radius around Bogotá, in enlarged degrees (stylized, not to scale)
 const FRONT_LON = CENTER[1] + 4 // view longitude that puts Colombia slightly left of center
 
 const enlarge = ([lat, lon]) => [CENTER[0] + (lat - CENTER[0]) * ENLARGE, CENTER[1] + (lon - CENTER[1]) * ENLARGE]
@@ -64,7 +64,7 @@ function slerp(a, b, t) {
   return [a[0] * ka + b[0] * kb, a[1] * ka + b[1] * kb, a[2] * ka + b[2] * kb]
 }
 
-/** Builds every layer once: lattice, graticule, world land, the enlarged country, volunteers, arcs. */
+/** Builds every layer once: lattice, graticule, world land, the enlarged country, volunteers, network. */
 function buildGeometry() {
   const colombiaBig = COLOMBIA.map(enlarge)
 
@@ -89,8 +89,8 @@ function buildGeometry() {
   }
 
   const country = []
-  for (let lat = -4.4; lat <= 12.6; lat += 0.42) {
-    for (let lon = -79.2; lon <= -66.6; lon += 0.42) if (insidePolygon(lat, lon, COLOMBIA)) country.push(enlarge([lat, lon]))
+  for (let lat = -4.4; lat <= 12.6; lat += 0.3) {
+    for (let lon = -79.2; lon <= -66.6; lon += 0.3) if (insidePolygon(lat, lon, COLOMBIA)) country.push(enlarge([lat, lon]))
   }
 
   const outline = []
@@ -109,26 +109,51 @@ function buildGeometry() {
   const rand = mulberry32(17)
   const volunteers = []
   while (volunteers.length < 46) {
-    const r = Math.sqrt(rand()) * RING_DEG * 1.9
+    const r = Math.sqrt(rand()) * RING_DEG * 1.7
     const t = rand() * Math.PI * 2
     const p = [bogota[0] + r * Math.sin(t), bogota[1] + r * Math.cos(t)]
     if (!insidePolygon(p[0], p[1], colombiaBig)) continue
     volunteers.push({ v: toVec(p), match: r < RING_DEG, angle: Math.atan2(Math.sin(t), Math.cos(t)), phase: rand() })
   }
 
-  const from = toVec(bogota)
-  const arcs = CITIES.map((city, i) => {
-    const to = toVec(enlarge(city.at))
-    const omega = Math.acos(Math.min(1, from[0] * to[0] + from[1] * to[1] + from[2] * to[2]))
-    const height = 0.04 + omega * 0.55
+  // Network: every city links to Bogotá (hub edges, busier) and to its two nearest cities (mesh).
+  const nodes = CITIES.map((city) => ({ ...city, v: toVec(enlarge(city.at)), flat: enlarge(city.at) }))
+  const hub = { v: toVec(bogota), flat: bogota }
+  const pairs = nodes.map((node) => [hub, node, 'hub'])
+  const seen = new Set()
+  nodes.forEach((a, i) => {
+    nodes
+      .map((b, j) => ({ j, d: Math.hypot(a.flat[0] - b.flat[0], a.flat[1] - b.flat[1]) }))
+      .filter(({ j }) => j !== i)
+      .sort((p, q) => p.d - q.d)
+      .slice(0, 2)
+      .forEach(({ j }) => {
+        const key = [i, j].sort().join('-')
+        if (!seen.has(key)) {
+          seen.add(key)
+          pairs.push([a, nodes[j], 'mesh'])
+        }
+      })
+  })
+  const edges = pairs.map(([a, b, kind], i) => {
+    const omega = Math.acos(Math.min(1, a.v[0] * b.v[0] + a.v[1] * b.v[1] + a.v[2] * b.v[2]))
+    const height = (kind === 'hub' ? 0.03 : 0.015) + omega * 0.5
     const pts = []
     for (let s = 0; s <= 28; s++) {
       const t = s / 28
-      const v = slerp(from, to, t)
+      const v = slerp(a.v, b.v, t)
       const k = LIFT + height * Math.sin(Math.PI * t)
       pts.push([v[0] * k, v[1] * k, v[2] * k])
     }
-    return { pts, to, phase: i / CITIES.length }
+    return {
+      pts,
+      kind,
+      end: b,
+      delay: i * 70, // edges draw in one after another
+      duration: (kind === 'hub' ? 2200 : 3200) + rand() * 1400, // ms per trip
+      phase: rand(),
+      packets: kind === 'hub' ? 2 : 1,
+    }
   })
 
   const stars = []
@@ -142,9 +167,10 @@ function buildGeometry() {
     outline: pack(outline),
     ring: ring.map(toVec),
     bogota: toVec(bogota),
-    label: toVec(enlarge([12.9, -81.2])),
+    label: toVec(enlarge([12.2, -80.6])),
     volunteers,
-    arcs,
+    edges,
+    nodes,
     stars,
   }
 }
@@ -153,7 +179,8 @@ const cssVar = (el, name, fallback) => getComputedStyle(el).getPropertyValue(nam
 
 /**
  * Rotating dot-matrix globe. Colombia floats enlarged above the surface with Bogotá's call radius,
- * a radar sweep, volunteers that ping as it passes, and call arcs to other cities. Spins and slows
+ * a radar sweep, volunteers that ping as it passes, and an animated network of call links between
+ * cities (lines draw in, dashes flow, packets travel and nodes flash on arrival). Spins and slows
  * down while Colombia faces the viewer; drag to spin it (inertia). `control.current.focus` (0–1,
  * driven by scroll) turns it to face Colombia. Static with reduced motion; paused off screen.
  */
@@ -179,7 +206,8 @@ export default function DotGlobe({ label, hud, control, className = '' }) {
     let frame = 0
     let visible = true
     let last = 0
-    const view = { lon: FRONT_LON - 70, lat: 12, tilt: 0, vel: 0 }
+    let born = null
+    const view = { lon: FRONT_LON - 70, lat: 7, tilt: 0, vel: 0 }
     const pointer = { x: 0, y: 0 }
     const drag = { active: false, x: 0, t: 0 }
 
@@ -266,7 +294,7 @@ export default function DotGlobe({ label, hud, control, className = '' }) {
       dots(geo.land, colors.dot, 1.9, 0.1, 0.32, 0.05)
 
       // Enlarged Colombia: shadow on the surface, short "walls", then the raised top layer.
-      dots(geo.country, colors.fill, 2.2, 0.12, 0.25)
+      dots(geo.country, colors.fill, 2, 0.1, 0.22)
       ctx.strokeStyle = colors.brand
       ctx.lineWidth = 1 * u
       for (let i = 0; i < geo.outline.length; i += 6) {
@@ -282,7 +310,7 @@ export default function DotGlobe({ label, hud, control, className = '' }) {
         ctx.lineTo(b.x, b.y)
         ctx.stroke()
       }
-      dots(geo.country, colors.dot, 2.3, 0.3, 0.6, 0, LIFT)
+      dots(geo.country, colors.dot, 2, 0.28, 0.55, 0, LIFT)
       dots(geo.outline, colors.brand, 2.2, 0.45, 0.55, 0, LIFT)
 
       const bog = project(...geo.bogota, LIFT)
@@ -297,10 +325,10 @@ export default function DotGlobe({ label, hud, control, className = '' }) {
           const p = project(v[0], v[1], v[2], LIFT)
           return [p.x, p.y]
         })
-        ctx.globalAlpha = 0.9 * facing
-        ctx.strokeStyle = colors.brand
-        ctx.lineWidth = 1.2 * u
-        ctx.setLineDash([3 * u, 4 * u])
+        ctx.globalAlpha = 0.75 * facing
+        ctx.strokeStyle = colors.dot
+        ctx.lineWidth = 1.4 * u
+        ctx.setLineDash([4 * u, 5 * u])
         ctx.lineDashOffset = -t / 60
         ctx.beginPath()
         ringPts.forEach(([x, y], i) => (i ? ctx.lineTo(x, y) : ctx.moveTo(x, y)))
@@ -316,7 +344,7 @@ export default function DotGlobe({ label, hud, control, className = '' }) {
           for (let step = 0; step < 14; step++) {
             const i0 = (head - step - 1 + total) % total
             const i1 = (head - step + total) % total
-            ctx.globalAlpha = 0.22 * (1 - step / 14) * facing
+            ctx.globalAlpha = 0.32 * (1 - step / 14) * facing
             ctx.beginPath()
             ctx.moveTo(bx, by)
             ctx.lineTo(...ringPts[i0])
@@ -352,53 +380,149 @@ export default function DotGlobe({ label, hud, control, className = '' }) {
         }
       }
 
-      // Call arcs from Bogotá with a travelling pulse.
-      for (const arc of geo.arcs) {
-        const pts = arc.pts.map((q) => {
+      // Connected network: lines draw in one after another, dashes flow along them, packets with
+      // a trail travel from Bogotá outward (hub) and between neighbors (mesh), and every node
+      // flashes when a packet arrives.
+      if (born === null) born = time
+      const age = reduced ? Infinity : time - born
+      const arrivals = new Map()
+
+      if (facing > 0) {
+        // Volunteers inside the radius stay linked to the operation point.
+        ctx.lineWidth = 0.8 * u
+        ctx.strokeStyle = colors.brand
+        for (const v of geo.volunteers) {
+          if (!v.match) continue
+          const p = project(v.v[0], v.v[1], v.v[2], LIFT)
+          if (p.z <= 0) continue
+          ctx.globalAlpha = (0.1 + (reduced ? 0 : 0.12 * Math.sin(t / 500 + v.phase * 9))) * p.z
+          ctx.beginPath()
+          ctx.moveTo(bx, by)
+          ctx.lineTo(p.x, p.y)
+          ctx.stroke()
+        }
+      }
+
+      for (const edge of geo.edges) {
+        const draw = Math.min(1, Math.max(0, (age - 600 - edge.delay) / 1300))
+        if (draw <= 0) continue
+        const pts = edge.pts.map((q) => {
           const p = project(q[0], q[1], q[2], 1)
           return [p.x, p.y, p.z]
         })
-        ctx.lineWidth = 1.4 * u
-        ctx.strokeStyle = colors.brand
-        for (let i = 1; i < pts.length; i++) {
-          const z = Math.min(pts[i - 1][2], pts[i][2])
-          if (z <= -0.05) continue
-          ctx.globalAlpha = 0.55 * Math.max(0, z + 0.05)
+        const last = Math.max(1, Math.round(draw * (pts.length - 1)))
+        const hubEdge = edge.kind === 'hub'
+        const strokePath = () => {
           ctx.beginPath()
-          ctx.moveTo(pts[i - 1][0], pts[i - 1][1])
-          ctx.lineTo(pts[i][0], pts[i][1])
+          let open = false
+          for (let i = 0; i <= last; i++) {
+            const [x, y, z] = pts[i]
+            if (z <= -0.02) {
+              open = false
+              continue
+            }
+            if (open) ctx.lineTo(x, y)
+            else ctx.moveTo(x, y)
+            open = true
+          }
           ctx.stroke()
         }
-        if (!reduced) {
-          const k = ((t / 2400 + arc.phase) % 1.35) / 1
-          if (k <= 1) {
-            const idx = k * (pts.length - 1)
+        const depth = Math.max(0, pts[Math.round(last / 2)][2] + 0.1)
+
+        // Base line, then dashes flowing outward
+        ctx.strokeStyle = colors.brand
+        ctx.lineWidth = (hubEdge ? 1.5 : 1.1) * u
+        ctx.globalAlpha = (hubEdge ? 0.5 : 0.32) * depth
+        strokePath()
+        ctx.setLineDash([2 * u, 8 * u])
+        ctx.lineDashOffset = reduced ? 0 : -t / (hubEdge ? 22 : 34)
+        ctx.strokeStyle = colors.dot
+        ctx.lineWidth = (hubEdge ? 1.6 : 1.2) * u
+        ctx.globalAlpha = (hubEdge ? 0.85 : 0.55) * depth
+        strokePath()
+        ctx.setLineDash([])
+
+        // Leading spark while the line is still drawing in
+        if (draw < 1) {
+          const [hx, hy, hz] = pts[last]
+          if (hz > 0) {
+            ctx.globalAlpha = hz
+            ctx.fillStyle = colors.dot
+            ctx.beginPath()
+            ctx.arc(hx, hy, 2.4 * u, 0, Math.PI * 2)
+            ctx.fill()
+          }
+          continue
+        }
+
+        if (reduced) continue
+        // Packets with a fading trail; k > 1 is the short rest after arriving.
+        for (let n = 0; n < edge.packets; n++) {
+          const k = (t / edge.duration + edge.phase + n / edge.packets) % 1.3
+          if (k > 1) {
+            const flash = 1 - (k - 1) / 0.3
+            arrivals.set(edge.end, Math.max(arrivals.get(edge.end) ?? 0, flash))
+            continue
+          }
+          for (let trail = 0; trail < 9; trail++) {
+            const kk = k - trail * 0.018
+            if (kk < 0) break
+            const idx = kk * (pts.length - 1)
             const i = Math.floor(idx)
             const f = idx - i
-            const a = pts[i]
-            const b = pts[Math.min(i + 1, pts.length - 1)]
-            const z = a[2] + (b[2] - a[2]) * f
-            if (z > 0) {
-              const x = a[0] + (b[0] - a[0]) * f
-              const y = a[1] + (b[1] - a[1]) * f
-              const glow = ctx.createRadialGradient(x, y, 0, x, y, 9 * u)
+            const pa = pts[i]
+            const pb = pts[Math.min(i + 1, pts.length - 1)]
+            const z = pa[2] + (pb[2] - pa[2]) * f
+            if (z <= 0) continue
+            const x = pa[0] + (pb[0] - pa[0]) * f
+            const y = pa[1] + (pb[1] - pa[1]) * f
+            if (trail === 0) {
+              const glow = ctx.createRadialGradient(x, y, 0, x, y, (hubEdge ? 9 : 7) * u)
               glow.addColorStop(0, 'rgba(235, 241, 255, 0.95)')
               glow.addColorStop(0.35, 'rgba(92, 157, 255, 0.6)')
               glow.addColorStop(1, 'rgba(92, 157, 255, 0)')
               ctx.globalAlpha = z
               ctx.fillStyle = glow
               ctx.beginPath()
-              ctx.arc(x, y, 9 * u, 0, Math.PI * 2)
+              ctx.arc(x, y, (hubEdge ? 9 : 7) * u, 0, Math.PI * 2)
               ctx.fill()
+            } else {
+              ctx.globalAlpha = z * 0.7 * (1 - trail / 9)
+              ctx.fillStyle = colors.brand
+              ctx.fillRect(x - 1.2 * u, y - 1.2 * u, 2.4 * u, 2.4 * u)
             }
           }
         }
-        // City node
-        const end = project(arc.to[0] * LIFT, arc.to[1] * LIFT, arc.to[2] * LIFT, 1)
-        if (end.z > 0) {
-          ctx.globalAlpha = 0.9 * end.z
-          ctx.fillStyle = colors.dot
-          ctx.fillRect(end.x - 1.6 * u, end.y - 1.6 * u, 3.2 * u, 3.2 * u)
+      }
+
+      // City nodes: halo, core, arrival flash and a few names.
+      ctx.textAlign = 'left'
+      ctx.font = `400 ${Math.round(9.5 * u)}px ${colors.mono}`
+      for (const node of geo.nodes) {
+        const p = project(node.v[0] * LIFT, node.v[1] * LIFT, node.v[2] * LIFT, 1)
+        if (p.z <= 0) continue
+        const flash = arrivals.get(node) ?? 0
+        const appear = Math.min(1, Math.max(0, (age - 400) / 900))
+        ctx.globalAlpha = 0.25 * p.z * appear
+        ctx.fillStyle = colors.brand
+        ctx.beginPath()
+        ctx.arc(p.x, p.y, (5 + flash * 3) * u, 0, Math.PI * 2)
+        ctx.fill()
+        ctx.globalAlpha = p.z * appear
+        ctx.fillStyle = colors.dot
+        ctx.fillRect(p.x - 1.8 * u, p.y - 1.8 * u, 3.6 * u, 3.6 * u)
+        if (flash > 0) {
+          ctx.globalAlpha = flash * p.z
+          ctx.strokeStyle = colors.dot
+          ctx.lineWidth = 1.2 * u
+          ctx.beginPath()
+          ctx.arc(p.x, p.y, (4 + (1 - flash) * 14) * u, 0, Math.PI * 2)
+          ctx.stroke()
+        }
+        if (node.label && p.z > 0.5) {
+          ctx.globalAlpha = 0.6 * smoothstep(0.5, 0.8, p.z) * appear
+          ctx.fillStyle = colors.muted
+          ctx.fillText(node.name.toUpperCase(), p.x + 7 * u, p.y + 1 * u)
         }
       }
 
@@ -474,13 +598,13 @@ export default function DotGlobe({ label, hud, control, className = '' }) {
           return Math.max(w, ctx.measureText(coords).width) + 8 * u
         }
         // Callout to the right of Bogotá; on narrow globes the short form is used so it always fits.
-        const long = bx + 52 * u + widthOf(hud.city, hud.coords) < size - 4
+        const long = bx + 96 * u + widthOf(hud.city, hud.coords) < size - 4
         const city = long ? hud.city : hud.cityShort
         const coords = long ? hud.coords : hud.coordsShort
         const textW = widthOf(city, coords)
-        const dir = bx + 52 * u + textW < size - 4 ? 1 : -1
-        const lx = bx + dir * 52 * u
-        const ly = by - 62 * u
+        const dir = bx + 96 * u + textW < size - 4 ? 1 : -1
+        const lx = bx + dir * 96 * u
+        const ly = by - 34 * u
         ctx.globalAlpha = 0.85 * a
         ctx.strokeStyle = colors.dot
         ctx.lineWidth = 1

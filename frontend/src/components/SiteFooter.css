@@ -55,6 +55,28 @@
   color: var(--text-strong);
 }
 
+/* Large wordmark: outlined glyphs filled by a soft blue gradient from below */
+.site-footer__wordmark {
+  margin: 0 0 calc(-1 * var(--space-16));
+  background: linear-gradient(180deg, rgb(235 241 255 / 0.22), rgb(10 99 230 / 0.05));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-size: clamp(56px, 13.5vw, 196px);
+  font-weight: 560;
+  letter-spacing: -0.055em;
+  line-height: 0.9;
+  white-space: nowrap;
+  user-select: none;
+}
+
+/* SplitText wraps words: keep the clipped gradient on them */
+.site-footer__wordmark div {
+  background: inherit;
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
 .site-footer__credits {
   display: flex;
   flex-wrap: wrap;

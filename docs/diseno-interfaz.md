@@ -38,9 +38,10 @@ rol: voluntarios, organizaciones, coordinadores, ciudadanos) · Simulacros (carr
 **v2.1 — dinamismo (25/10/2026)**
 - **Globo** (`components/DotGlobe.jsx` + `globeGeo.js`): mundo completo en puntos con la cara trasera visible
   en tenue; gira 360° y frena cuando Colombia mira al frente; se arrastra con inercia. Colombia se dibuja
-  **ampliada ×2,3 y elevada** sobre la superficie (la esfera no cambia de tamaño), con el radio de Bogotá,
-  barrido de radar, voluntarios que se iluminan al paso del barrido, arcos de convocatoria a otras ciudades,
-  anillo HUD y coordenadas. Es ilustrativo y la leyenda lo dice.
+  **ampliada ×3,6 y elevada** sobre la superficie (la esfera no cambia de tamaño), con el radio de Bogotá,
+  barrido de radar, voluntarios que se iluminan al paso del barrido, una **red animada** de 17 ciudades
+  (enlaces que se dibujan al aparecer, guiones que fluyen, paquetes con estela y nodos que destellan al
+  recibirlos), anillo HUD y coordenadas. Es ilustrativo y la leyenda lo dice.
 - **Hero con scrollytelling** (escritorio, con movimiento): se fija durante el scroll; el texto se desvanece,
   el escenario sube hasta centrar el globo y este gira hasta enfocar Colombia. En móvil no se fija, pero el
   enfoque avanza con el scroll.
@@ -51,7 +52,24 @@ rol: voluntarios, organizaciones, coordinadores, ciudadanos) · Simulacros (carr
 - **Microinteracciones**: eyebrows que se "decodifican" (`data-scramble`; el texto real va en un `sr-only`),
   resplandor que sigue al cursor en las tarjetas de cristal (`data-spotlight`), título con shimmer y píldora
   deslizante en las pestañas (transitions-dev 15 y 16), y aurora lenta detrás del globo.
-- Rendimiento del globo medido en Edge sin GPU: mediana de 7 ms por fotograma, p95 de 13,9 ms.
+- Rendimiento del globo medido en Edge sin GPU: mediana de 7 ms por fotograma, p95 de 14 ms.
+
+**v2.2 — movimiento avanzado (25/10/2026)**
+- `useReveal` amplía su vocabulario: títulos con palabras que entran en 3D y se enfocan; variantes `card`
+  (inclinación 3D + desenfoque), `blur` y `clip` (cortina); `data-depth` (cada sección sale de la
+  profundidad al entrar y retrocede al salir, ligado al scroll) y `data-inview` (líneas que se dibujan).
+- Tarjetas con inclinación 3D hacia el puntero (`data-tilt`) y resplandor global que sigue al cursor
+  (`CursorGlow`); barrido de luz en los botones principales y subrayado animado en el menú.
+- Pestañas que entran en cascada; al cambiar de rol el panel se abre con una cortina, el icono rebota y la
+  cifra cuenta. El carrusel se desliza según la dirección y sus cifras cuentan. La comparación entra fila a
+  fila con las marcas en ola. La confirmación del formulario usa el *success check* de transitions-dev.
+- Pie con columnas en cascada y una marca gigante que sube palabra por palabra.
+- **Actividad simulada** convertida en feed en vivo: eventos generados (convocatorias, turnos, check-ins,
+  emergencias confirmadas…) con hora de Bogotá, contador y desplazamiento continuo. El botón pausa y
+  reanuda movimiento y eventos (antes la cinta seguía en pausa tras «Reanudar» porque `:focus-within`
+  la detenía mientras el botón tenía el foco). En móvil la etiqueta «Actividad simulada» siempre se ve.
+- Todo respeta `prefers-reduced-motion`: sin desplazamiento, profundidad, desenfoque ni inclinación; solo
+  fundidos.
 
 **Decisiones de accesibilidad nuevas**
 - Las entradas animadas usan `opacity`, no `autoAlpha`: `visibility: hidden` sacaba del orden de tabulación
