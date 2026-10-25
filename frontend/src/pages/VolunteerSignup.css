@@ -16,6 +16,12 @@
   flex-shrink: 0;
 }
 
+.signup__notes {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-24);
+}
+
 .signup__steps {
   display: flex;
   flex-direction: column;
@@ -140,6 +146,19 @@
   flex-direction: column;
   align-items: flex-start;
   gap: var(--space-20);
+}
+
+/* Success check lands with a spring */
+.signup__done > .icon-tile {
+  animation: done-pop 0.7s var(--ease-bounce) 0.15s both;
+}
+
+@keyframes done-pop {
+  from { scale: 0; rotate: -90deg; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .signup__done > .icon-tile { animation: none; }
 }
 
 @media (max-width: 1100px) {

@@ -1,4 +1,5 @@
-import { useId } from 'react'
+import { useId, useRef } from 'react'
+import { gsap, prefersReducedMotion, useGSAP } from '../motion/gsap'
 import Icon from './Icon'
 import './FormControls.css'
 
@@ -72,8 +73,46 @@ export function Note({ icon, tone = 'info', className = '', children }) {
   )
 }
 
-/** Progress bar: sunken track + filled bar. `value` from 0 to 1. */
+/**
+ * Progress bar: sunken track + filled bar. `value` from 0 to 1.
+ * Fills from zero when it scrolls into view and glides to new values.
+ */
 export function ProgressBar({ value, height = 8, tone = 'brand', label }) {
+  const fill = useRef(null)
+  const mounted = useRef(false)
+  // The fill is full width and slides in from the left inside the clipped track (GPU transform,
+  // no layout work, and the rounded end keeps its shape).
+  const offset = (value - 1) * 100
+
+  useGSAP(
+    () => {
+      const first = !mounted.current
+      mounted.current = true
+      if (prefersReducedMotion()) {
+        gsap.set(fill.current, { xPercent: offset })
+      } else if (first) {
+        gsap.fromTo(
+          fill.current,
+          { xPercent: -100 },
+          {
+            xPercent: offset,
+            duration: 1.8,
+            delay: 0.25,
+            ease: 'expo.out',
+            scrollTrigger: { trigger: fill.current, start: 'top 90%', once: true },
+          },
+        )
+      } else {
+        gsap.to(fill.current, { xPercent: offset, duration: 1.2, ease: 'expo.out' })
+      }
+      // Only runs on unmount (revertOnUpdate: false); a remount fills from zero again.
+      return () => {
+        mounted.current = false
+      }
+    },
+    { dependencies: [offset], revertOnUpdate: false },
+  )
+
   return (
     <div
       className={`progress progress--${tone}`}
@@ -84,7 +123,7 @@ export function ProgressBar({ value, height = 8, tone = 'brand', label }) {
       aria-valuenow={Math.round(value * 100)}
       aria-label={label}
     >
-      <span style={{ width: `${value * 100}%`, borderRadius: height / 2 }} />
+      <span ref={fill} style={{ borderRadius: height / 2 }} />
     </div>
   )
 }
