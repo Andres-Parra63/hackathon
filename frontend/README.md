@@ -11,6 +11,9 @@ npm run build
 npm run lint
 ```
 
+Si el backend corre en otro host o puerto, crea `frontend/.env` a partir de
+[`frontend/.env.example`](./.env.example) y ajusta `VITE_API_URL`.
+
 | Ruta | Pantalla |
 |---|---|
 | `/` | Sitio público (W01) |
