@@ -1,14 +1,17 @@
 .ticker {
   position: relative;
+  z-index: 5; /* stays above whatever scrolls beneath it (e.g. the hero legend) */
   display: flex;
   align-items: center;
   gap: var(--space-16);
   padding: var(--space-10) var(--page-gutter);
   border-block: 1px solid var(--border-default);
+  /* Opaque base: the bar must hide the content behind it, so no translucent layer here */
   background:
     linear-gradient(90deg, rgb(255 167 51 / 0.05), transparent 30%),
-    var(--surface-glass);
+    #070709;
   overflow: hidden;
+  isolation: isolate;
 }
 
 /* A light that sweeps along the top border, like a signal travelling the network */

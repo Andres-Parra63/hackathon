@@ -15,6 +15,11 @@ import './Landing.css'
 
 const t = es.landing
 
+// Pinned hero needs room for the globe + legend: tall viewports only (zoom shrinks the viewport).
+const TALL = '(min-height: 600px)'
+const SHORT = '(max-height: 599px)'
+const NARROW = '(max-width: 1023px)'
+
 function SectionHeader({ eyebrow, title, lead, id, center = false, tone, shimmer = false }) {
   return (
     <header className={`section-header ${center ? 'section-header--center' : ''}`}>
@@ -84,15 +89,20 @@ function Hero() {
       })
 
       // Desktop: scrollytelling. The hero pins; the copy fades away, the stage glides up until the
-      // globe sits in the middle of the screen and the globe turns to face Colombia. The sphere
-      // never changes size; the figures close in around it.
-      mm.add(`${MOTION_OK} and ${DESKTOP}`, () => {
+      // globe (and its legend) sit in the middle of the screen and the globe turns to face Colombia.
+      // Only on screens tall enough to hold them: at high zoom the viewport gets short, the hero
+      // stays in normal flow and nothing is clipped.
+      mm.add(`${MOTION_OK} and ${DESKTOP} and ${TALL}`, () => {
         const section = ref.current
         section.classList.add('is-pinned')
         const stage = q('.hero__stage')[0]
+        const legend = q('.hero__legend')[0]
         const travel = () => {
           const pad = parseFloat(getComputedStyle(section).paddingTop)
-          return -(stage.offsetTop + pad - Math.max(0, (window.innerHeight - stage.offsetHeight) / 2))
+          const group = legend.offsetTop + legend.offsetHeight - stage.offsetTop // globe + legend as one block
+          const header = 72
+          const top = Math.max(header + 8, header + (window.innerHeight - header - group) / 2)
+          return -(stage.offsetTop + pad - top)
         }
         gsap
           .timeline({
@@ -116,8 +126,9 @@ function Hero() {
         return () => section.classList.remove('is-pinned')
       })
 
-      // Tablet / phone: no pin; the copy lifts away and the globe turns toward Colombia as it scrolls in.
-      mm.add(`${MOTION_OK} and (max-width: 1023px)`, () => {
+      // Tablet / phone / short windows: no pin; the copy lifts away and the globe turns toward
+      // Colombia as it scrolls in.
+      mm.add(`${MOTION_OK} and ${NARROW}, ${MOTION_OK} and ${SHORT}`, () => {
         gsap.to(q('.hero__message'), {
           y: -40,
           opacity: 0.25,
