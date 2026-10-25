@@ -1,0 +1,45 @@
+.skill-chip {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  height: var(--chip-height);
+  padding: 0 var(--space-12);
+  border-radius: var(--radius-control);
+  border: 1.5px solid var(--border-default);
+  background: var(--surface-card);
+  color: var(--text-strong);
+  font-size: 14px;
+  line-height: 26px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  transition:
+    background-color var(--duration-fast) var(--ease-out),
+    border-color var(--duration-fast) var(--ease-out);
+}
+
+.skill-chip:hover {
+  border-color: var(--border-strong);
+}
+
+.skill-chip.is-selected {
+  background: var(--brand-primary);
+  border-color: var(--brand-primary-strong);
+  color: var(--text-on-color);
+}
+
+.skill-chip__check {
+  position: absolute;
+  top: 4.5px;
+  right: 4.5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--surface-card);
+  color: var(--brand-primary);
+}

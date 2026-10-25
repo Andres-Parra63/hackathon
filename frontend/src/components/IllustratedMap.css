@@ -1,0 +1,95 @@
+.imap {
+  position: relative;
+  overflow: hidden;
+  background: var(--map-block);
+  isolation: isolate;
+}
+
+.imap__layer {
+  position: absolute;
+  inset: 0;
+  transition: transform var(--duration-base) var(--ease-out);
+}
+
+.imap__tile {
+  position: absolute;
+  width: 1000px;
+  height: 760px;
+}
+
+/* Neighborhood labels: Label/Small in text/muted; the river in status/info */
+.imap__label {
+  position: absolute;
+  color: var(--text-muted);
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.imap__label--river {
+  color: var(--status-info);
+  transform: translate(-50%, -50%) rotate(-80deg);
+}
+
+.imap__abs {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.imap__dot {
+  transition: opacity var(--duration-base) var(--ease-out);
+}
+
+.imap__dot.is-dim {
+  opacity: 0.25;
+}
+
+/* "Pulso": soft halo behind the operation point */
+.imap__pulse {
+  opacity: 0.35;
+  animation: imap-pulse 2.4s var(--ease-out) infinite;
+}
+
+@keyframes imap-pulse {
+  0%   { transform: translate(-50%, -50%) scale(0.6); opacity: 0.45; }
+  100% { transform: translate(-50%, -50%) scale(1.35); opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .imap__pulse { animation: none; }
+}
+
+.imap__center {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 3px solid var(--surface-card);
+  background: var(--brand-primary);
+  color: var(--text-on-color);
+}
+
+.imap__center.is-raised {
+  box-shadow: var(--elevation-2);
+}
+
+/* "5 km" / "Radio 5 km" label */
+.imap__chip {
+  position: absolute;
+  padding: var(--space-4) var(--space-10);
+  border-radius: var(--radius-pill);
+  background: var(--surface-card);
+  box-shadow: var(--elevation-1);
+  color: var(--brand-primary);
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.imap--live .imap__chip {
+  padding: 5px var(--space-12);
+}

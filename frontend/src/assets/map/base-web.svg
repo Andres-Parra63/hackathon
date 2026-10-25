@@ -1,0 +1,39 @@
+<svg width="1000" height="760" viewBox="0 0 1000 760" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect width="1000" height="760" fill="#F5F5F5"/>
+<g id="Componentes &#194;&#183; Web">
+<rect x="-64" y="-1967" width="1568" height="2791" rx="32" fill="white"/>
+<g id="Mapa base &#194;&#183; Web">
+<g id="Mapa/Base web" clip-path="url(#clip0_2_3)">
+<path id="Vector" d="M1000 0H0V760H1000V0Z" fill="#E3E6DE"/>
+<path id="Vector_2" d="M246 90H94C86.268 90 80 96.268 80 104V186C80 193.732 86.268 200 94 200H246C253.732 200 260 193.732 260 186V104C260 96.268 253.732 90 246 90Z" fill="#D6EBD0"/>
+<path id="Vector_3" d="M656 480H534C526.268 480 520 486.268 520 494V616C520 623.732 526.268 630 534 630H656C663.732 630 670 623.732 670 616V494C670 486.268 663.732 480 656 480Z" fill="#D6EBD0"/>
+<path id="Vector_4" d="M286 545H124C116.268 545 110 551.268 110 559V641C110 648.732 116.268 655 124 655H286C293.732 655 300 648.732 300 641V559C300 551.268 293.732 545 286 545Z" fill="#D6EBD0"/>
+<path id="Vector_5" d="M706 205H614C606.268 205 600 211.268 600 219V271C600 278.732 606.268 285 614 285H706C713.732 285 720 278.732 720 271V219C720 211.268 713.732 205 706 205Z" fill="#D6EBD0"/>
+<path id="Vector_6" d="M430 328C450.987 328 468 310.987 468 290C468 269.013 450.987 252 430 252C409.013 252 392 269.013 392 290C392 310.987 409.013 328 430 328Z" fill="#D6EBD0"/>
+<path id="Vector_7" d="M860 0C830 140 920 260 880 400C850 520 830 640 900 760H1000V0H860Z" fill="#C7DFF1"/>
+<path id="Vector_8" d="M0 60L872 32" stroke="white" stroke-width="6" stroke-linecap="round"/>
+<path id="Vector_9" d="M0 205L872 177" stroke="white" stroke-width="6" stroke-linecap="round"/>
+<path id="Vector_10" d="M0 335L872 307" stroke="white" stroke-width="6" stroke-linecap="round"/>
+<path id="Vector_11" d="M0 470L872 442" stroke="white" stroke-width="6" stroke-linecap="round"/>
+<path id="Vector_12" d="M0 605L872 577" stroke="white" stroke-width="6" stroke-linecap="round"/>
+<path id="Vector_13" d="M0 705L872 677" stroke="white" stroke-width="6" stroke-linecap="round"/>
+<path id="Vector_14" d="M70 0L100 760" stroke="white" stroke-width="6" stroke-linecap="round"/>
+<path id="Vector_15" d="M180 0L210 760" stroke="white" stroke-width="6" stroke-linecap="round"/>
+<path id="Vector_16" d="M300 0L330 760" stroke="white" stroke-width="6" stroke-linecap="round"/>
+<path id="Vector_17" d="M470 0L500 760" stroke="white" stroke-width="6" stroke-linecap="round"/>
+<path id="Vector_18" d="M560 0L590 760" stroke="white" stroke-width="6" stroke-linecap="round"/>
+<path id="Vector_19" d="M690 0L720 760" stroke="white" stroke-width="6" stroke-linecap="round"/>
+<path id="Vector_20" d="M790 0L820 760" stroke="white" stroke-width="6" stroke-linecap="round"/>
+<path id="Vector_21" d="M0 380L866 318" stroke="white" stroke-width="14" stroke-linecap="round"/>
+<path id="Vector_22" d="M360 0L400 760" stroke="white" stroke-width="14" stroke-linecap="round"/>
+<path id="Vector_23" d="M0 160C300 190 600 130 862 170" stroke="white" stroke-width="14" stroke-linecap="round"/>
+<path id="Vector_24" d="M40 760L640 470" stroke="white" stroke-width="14" stroke-linecap="round"/>
+</g>
+</g>
+</g>
+<defs>
+<clipPath id="clip0_2_3">
+<rect width="1000" height="760" fill="white"/>
+</clipPath>
+</defs>
+</svg>

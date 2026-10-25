@@ -1,0 +1,15 @@
+.icon-tile {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon-tile--brand         { background: var(--brand-primary-soft);  color: var(--brand-primary); }
+.icon-tile--info          { background: var(--status-info-soft);    color: var(--status-info); }
+.icon-tile--success       { background: var(--status-success-soft); color: var(--status-success); }
+.icon-tile--sunken        { background: var(--surface-sunken);      color: var(--text-default); }
+.icon-tile--card          { background: var(--surface-card);        color: var(--status-info); }
+.icon-tile--card-brand    { background: var(--surface-card);        color: var(--brand-primary); }
+.icon-tile--card-success  { background: var(--surface-card);        color: var(--status-success); }
+.icon-tile--solid-success { background: var(--status-success);      color: var(--text-on-color); }

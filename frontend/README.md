@@ -1,0 +1,27 @@
+# Manos en Red — frontend
+
+Interfaz web (React + Vite) implementada desde el diseño de Figma. Especificación completa de colores,
+tipografía, tamaños y componentes: [`docs/diseno-interfaz.md`](../docs/diseno-interfaz.md).
+
+```bash
+npm install
+npm run dev       # http://localhost:5173
+npm run build
+npm run lint
+```
+
+| Ruta | Pantalla |
+|---|---|
+| `/` | Sitio público (W01) |
+| `/registro` | Registro de voluntario (W07) |
+| `/ingreso` | Ingreso de la organización (W02) |
+| `/panel` | Panel de la organización (W03); `?nueva=1` abre la nueva convocatoria (W04) |
+| `/panel/mapa` | Mapa en vivo y filtro (W05) |
+| `/panel/convocatorias` · `/panel/historial` | Convocatorias y respuestas (W06) |
+| `/guia` | Guía de estilo viva (tokens y componentes) |
+
+Estructura: `src/styles/tokens.css` (tokens de diseño), `src/styles/base.css` (escala tipográfica),
+`src/components/` (componentes base y del panel), `src/pages/` (pantallas), `src/i18n/es.js` (textos de la
+interfaz), `src/data/` (datos ficticios y escenas del mapa).
+
+Todos los datos son ficticios. No usar datos personales reales en desarrollo.

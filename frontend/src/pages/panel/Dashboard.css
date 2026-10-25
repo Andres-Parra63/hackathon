@@ -1,0 +1,141 @@
+.dash__metrics {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-16);
+}
+
+.dash__columns {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-24);
+}
+
+.dash__left {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--space-24);
+  min-width: 0;
+}
+
+.dash__right {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-24);
+  width: 400px;
+  flex-shrink: 0;
+}
+
+.dash__active-head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-16);
+}
+
+.dash__active-text {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--space-8);
+  min-width: 0;
+}
+
+.dash__history {
+  gap: var(--space-12);
+}
+
+.dash__history ul {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-12);
+}
+
+.dash__history li {
+  display: flex;
+  align-items: center;
+  gap: var(--space-12);
+  padding: var(--space-12) var(--space-16);
+  border-radius: var(--radius-control);
+  background: var(--surface-page);
+}
+
+.dash__history li > div {
+  flex: 1;
+}
+
+/* Mapa de voluntarios card */
+.dash__map {
+  overflow: hidden;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-3xl);
+  background: var(--surface-card);
+  box-shadow: var(--elevation-1);
+}
+
+.dash__map-view {
+  height: 280px;
+}
+
+.dash__map-foot {
+  display: flex;
+  align-items: center;
+  gap: var(--space-12);
+  padding: var(--space-14) var(--space-16) var(--space-14) var(--space-20);
+}
+
+.dash__map-foot > div {
+  flex: 1;
+}
+
+/* CTA · Nueva convocatoria */
+.dash__cta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-14);
+  padding: var(--space-20) var(--space-20) var(--space-20) 22px;
+  border-radius: var(--radius-3xl);
+  background: var(--brand-primary);
+  box-shadow: var(--elevation-2);
+  color: var(--text-on-color);
+  text-align: left;
+  transition: background-color var(--duration-fast) var(--ease-out);
+}
+
+.dash__cta:hover {
+  background: var(--brand-primary-strong);
+}
+
+.dash__cta-text {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.dash__cta-plus {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--surface-card);
+  color: var(--brand-primary);
+}
+
+.dash__privacy {
+  padding: var(--space-16);
+  border-radius: var(--radius-xl);
+}
+
+@media (max-width: 1280px) {
+  .dash__columns { flex-direction: column; align-items: stretch; }
+  .dash__right { width: 100%; }
+}
+
+@media (max-width: 760px) {
+  .dash__metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .dash__active-head { flex-wrap: wrap; }
+  .dash__active-head .btn { width: 100%; }
+}
