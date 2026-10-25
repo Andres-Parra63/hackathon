@@ -3,7 +3,7 @@
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   min-height: 100vh;
-  background: var(--surface-card);
+  background: var(--surface-page);
 }
 
 /* Panel de marca */
@@ -14,11 +14,15 @@
   gap: var(--space-40);
   overflow: hidden;
   padding: var(--space-64) 80px;
-  background: var(--brand-primary);
+  border-right: 1px solid var(--border-default);
+  background:
+    radial-gradient(ellipse 80% 60% at 70% 85%, rgb(10 99 230 / 0.32), transparent 65%),
+    var(--surface-card);
 }
 
 .login__ring {
   position: absolute;
+  opacity: 0.35;
   pointer-events: none;
 }
 
@@ -56,9 +60,12 @@
   gap: var(--space-6);
   min-width: 0;
   padding: var(--space-16);
+  border: 1px solid var(--border-default);
   border-radius: var(--radius-xl);
-  background: rgb(255 255 255 / 0.12);
-  color: var(--text-on-color);
+  background: var(--surface-glass);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  color: var(--text-strong);
 }
 
 .login__stats dd {
@@ -93,7 +100,7 @@
   gap: var(--space-12);
 }
 
-.login__remember {
+.login__remember .checkbox {
   align-items: center;
   gap: var(--space-8);
 }

@@ -1,64 +1,73 @@
 /*
  * Design tokens — Manos en Red.
- * Source: Figma "voluntariado — Prototipo web móvil (MVP)", page "Guía de estilo y componentes"
- * and the variables bound in the "Web (escritorio)" screens. Names mirror the Figma variables
- * (`brand/primary` -> `--brand-primary`). Change values here, never inline in components.
+ * Dark, minimal theme (v2): black canvas, glass surfaces with hairline borders, DM Sans + DM Mono.
+ * Blue = normal mode (trust), orange = Emergency Mode (alert); both always ship with a text label.
+ * Every text/background pair below meets WCAG 2.1 AA on --surface-page and --surface-card
+ * (ratios noted where they are close). Change values here, never inline in components.
  */
 :root {
-  /* ---------- Color · Brand ---------- */
-  --brand-primary: #1f5fbf;        /* Primary action, links, emphasis */
-  --brand-primary-strong: #164a96; /* Pressed state, text on soft backgrounds */
-  --brand-primary-soft: #e3ecfa;   /* Accent backgrounds, active nav item */
-  --brand-primary-subtle: #f3f7fd; /* Very soft backgrounds */
+  color-scheme: dark;
+
+  /* ---------- Color · Brand (blue, normal mode) ---------- */
+  --brand-primary: #0a63e6;        /* Fills with white text (5.4:1), focus borders, bars */
+  --brand-primary-hover: #0852c2;  /* Hover/pressed fill under white text (6.9:1) */
+  --brand-primary-strong: #5c9dff; /* Blue as text, icons and links on dark (7.7:1 on black) */
+  --brand-primary-soft: #0d2147;   /* Accent backgrounds (strong text on it: 5.8:1) */
+  --brand-primary-subtle: #070f1f; /* Very soft accent backgrounds, row hover */
 
   /* ---------- Color · Text ---------- */
-  --text-strong: #161827;   /* Headings, values */
-  --text-default: #3b3f54;  /* Body text */
-  --text-muted: #6c7086;    /* Secondary text, captions */
-  --text-on-color: #ffffff; /* Text on brand/status fills */
+  --text-strong: #ebf1ff;   /* Headings, values (18:1) */
+  --text-default: #c4c8d2;  /* Body text (12:1) */
+  --text-muted: #8f94a0;    /* Secondary text, captions (6.9:1 on black, 6.2:1 on card) */
+  --text-on-color: #ffffff; /* Text on brand fills */
+  --text-on-light: #050608; /* Text on white or light fills */
 
   /* ---------- Color · Surfaces & borders ---------- */
-  --surface-page: #f5f6f8;
-  --surface-card: #ffffff;
-  --surface-sunken: #eceef2;
-  --border-default: #e2e4e9;
-  --border-strong: #c6cad2;
-  --overlay-scrim: rgb(22 24 39 / 0.45);
+  --surface-page: #000000;
+  --surface-card: #0b0b0d;          /* Panels, cards (≈ white 3 % over black) */
+  --surface-raised: #141418;        /* Popovers, hovered rows */
+  --surface-sunken: #18181d;        /* Tracks, inactive chips */
+  --surface-glass: rgb(255 255 255 / 0.03);
+  --border-default: rgb(255 255 255 / 0.1);  /* Hairlines between surfaces (decorative) */
+  --border-strong: rgb(255 255 255 / 0.38);  /* Control outlines: 3.3:1 non-text contrast */
+  --overlay-scrim: rgb(0 0 0 / 0.6);
 
   /* ---------- Color · Status ---------- */
-  --status-success: #12805a;      /* Confirmed, available */
-  --status-success-soft: #e2f4ec;
-  --status-warning: #a55f00;      /* Emergency mode, pending */
-  --status-warning-soft: #fff1d9;
-  --status-info: #2456c9;         /* Information, live */
-  --status-info-soft: #e7eefc;
+  --status-success: #3ecf8e;      /* Confirmed, available (9.9:1) */
+  --status-success-soft: #0b2a1d;
+  --status-warning: #ffa733;      /* Emergency Mode, pending (10.8:1) */
+  --status-warning-soft: #2e1d05;
+  --status-danger: #ff7a7a;       /* Form errors, always with an icon and text (8.3:1) */
+  --status-info: #5c9dff;         /* Information, live */
+  --status-info-soft: #0d2147;
 
-  /* ---------- Color · Illustrative map ---------- */
-  --map-land: #eef0ea;
-  --map-block: #e3e6de;
-  --map-road: #ffffff;
-  --map-park: #d6ebd0;
-  --map-water: #c7dff1;
+  /* ---------- Color · Illustrative map (the light SVG base is inverted in IllustratedMap.css) ---------- */
+  --map-land: #101114;
+  --map-block: #0d0e11;
+  --map-road: #1c1d22;
+  --map-park: #0f1d14;
+  --map-water: #0b1626;
 
   /* ---------- Typography ---------- */
-  --font-sans: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-sans: "DM Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "DM Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
   --weight-regular: 400;
-  --weight-medium: 500;
-  --weight-semibold: 600;
-  --weight-bold: 700;
-  --weight-extrabold: 800;
+  --weight-medium: 510;   /* The reference's signature weight (variable font) */
+  --weight-semibold: 560;
+  --weight-bold: 620;
+  --weight-extrabold: 680;
 
   /* ---------- Radius ---------- */
-  --radius-xs: 7px;     /* Checkbox */
-  --radius-sm: 10px;    /* Small icon tiles */
-  --radius-md: 12px;    /* Nav items, search, segmented items */
-  --radius-control: 14px; /* Buttons, inputs, chips */
-  --radius-lg: 16px;    /* Notes, icon tiles 52px */
-  --radius-xl: 18px;    /* Metric cards */
-  --radius-2xl: 20px;   /* Floating cards */
-  --radius-3xl: 24px;   /* Cards */
-  --radius-4xl: 28px;   /* Large panels */
-  --radius-5xl: 32px;   /* Hero visual, CTA band */
+  --radius-xs: 6px;     /* Checkbox */
+  --radius-sm: 8px;     /* Small icon tiles */
+  --radius-md: 10px;    /* Nav items, search, segmented items */
+  --radius-control: 999px; /* Buttons and inputs are pills */
+  --radius-lg: 12px;    /* Notes, icon tiles */
+  --radius-xl: 16px;    /* Metric cards */
+  --radius-2xl: 18px;   /* Floating cards */
+  --radius-3xl: 22px;   /* Cards */
+  --radius-4xl: 24px;   /* Large panels */
+  --radius-5xl: 28px;   /* Hero visual, CTA panel */
   --radius-pill: 999px;
 
   /* ---------- Spacing (4 px base, with the half steps used in the design) ---------- */
@@ -82,21 +91,23 @@
   --space-72: 72px;
   --space-96: 96px;
   --space-120: 120px;
+  --space-160: 160px;
 
-  /* ---------- Elevation ---------- */
-  --elevation-1: 0 1px 2px rgb(22 24 39 / 0.05), 0 4px 12px rgb(22 24 39 / 0.05);   /* Card */
-  --elevation-2: 0 2px 6px rgb(22 24 39 / 0.05), 0 8px 24px rgb(22 24 39 / 0.1);    /* Floating */
-  --elevation-3: 0 4px 10px rgb(22 24 39 / 0.08), 0 18px 40px rgb(22 24 39 / 0.22); /* Notification */
+  /* ---------- Elevation (on black, depth comes from borders and blur more than from shadow) ---------- */
+  --elevation-1: 0 1px 0 rgb(255 255 255 / 0.04) inset, 0 8px 24px rgb(0 0 0 / 0.4);   /* Card */
+  --elevation-2: 0 1px 0 rgb(255 255 255 / 0.06) inset, 0 16px 40px rgb(0 0 0 / 0.55); /* Floating */
+  --elevation-3: 0 1px 0 rgb(255 255 255 / 0.08) inset, 0 24px 60px rgb(0 0 0 / 0.7);  /* Notification */
+  --glass-blur: blur(16px);
 
   /* ---------- Sizes ---------- */
   --control-height: 52px;  /* Buttons and inputs (touch target ≥ 44 px) */
   --chip-height: 56px;
-  --site-header-height: 80px;
+  --site-header-height: 72px;
   --sidebar-width: 248px;
-  --content-max: 1200px;   /* 1440 frame − 2 × 120 gutter */
-  --page-gutter: clamp(16px, 8.3vw, 120px);
+  --content-max: 1200px;
+  --page-gutter: clamp(16px, 5vw, 64px);
 
-  --focus-ring: 0 0 0 3px rgb(31 95 191 / 0.35);
+  --focus-ring: 0 0 0 2px var(--surface-page), 0 0 0 4px var(--brand-primary-strong);
 
   /*
    * ---------- Motion ----------
@@ -106,12 +117,18 @@
    * this brand needs to re-skin (colors, sizes); the timings stay as the library tuned them.
    */
   --tabs-text-muted: var(--text-muted);
-  --tabs-text-active: var(--brand-primary);
+  --tabs-text-active: var(--text-on-light);
   --tabs-bar-bg: var(--surface-sunken);
-  --tabs-pill-bg: var(--surface-card);
+  --tabs-pill-bg: var(--text-strong);
   --shimmer-base: var(--text-muted);
   --shimmer-highlight: var(--text-strong);
+  --tt-bg: var(--surface-raised);
+  --tt-fg: var(--text-strong);
+  --think-base: var(--text-muted);
+  --think-highlight: var(--text-strong);
+  --matrix-base: var(--surface-sunken);
+  --matrix-active: var(--text-muted);
   --toggle-travel: 20px; /* 48 px track − 22 px thumb − 2 × 3 px inset */
   --check-len: 24;       /* Icon/check path length (22.6) rounded up */
-  --tilt-glare-opacity: 0.28;
+  --tilt-glare-opacity: 0.12;
 }

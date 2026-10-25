@@ -6,7 +6,7 @@
   border: 1px solid var(--border-default);
   border-radius: var(--radius-xl);
   background: var(--surface-card);
-  color: var(--brand-primary);
+  color: var(--brand-primary-strong);
   transition:
     box-shadow var(--duration-fast) var(--ease-smooth-out),
     border-color var(--duration-fast) var(--ease-smooth-out);

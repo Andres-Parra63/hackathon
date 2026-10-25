@@ -47,7 +47,7 @@
   color: var(--brand-primary-strong);
   font-size: 14px;
   line-height: 18px;
-  font-weight: 600;
+  font-weight: 510;
 }
 
 /* Formulario: card, 36 px padding, 28 px radius, Elevación/2 */
@@ -116,7 +116,7 @@
   color: var(--status-success);
   font-size: 14px;
   line-height: 18px;
-  font-weight: 600;
+  font-weight: 510;
 }
 
 .signup__approx {

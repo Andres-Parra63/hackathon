@@ -55,7 +55,7 @@
   align-items: center;
   gap: var(--space-12);
   padding: var(--space-12) var(--space-16);
-  border-radius: var(--radius-control);
+  border-radius: var(--radius-lg);
   background: var(--surface-page);
 }
 
@@ -104,8 +104,8 @@
 }
 
 .dash__cta:hover {
-  background: var(--brand-primary-strong);
-  box-shadow: 0 4px 10px rgb(31 95 191 / 0.18), 0 18px 40px rgb(31 95 191 / 0.3);
+  background: var(--brand-primary-hover);
+  box-shadow: 0 0 0 1px rgb(92 157 255 / 0.4), 0 18px 48px rgb(10 99 230 / 0.35);
 }
 
 .dash__history li {
@@ -132,7 +132,7 @@
   height: 48px;
   border-radius: 50%;
   background: var(--surface-card);
-  color: var(--brand-primary);
+  color: var(--brand-primary-strong);
 }
 
 .dash__privacy {
