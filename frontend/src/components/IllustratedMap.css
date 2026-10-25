@@ -8,7 +8,6 @@
 .imap__layer {
   position: absolute;
   inset: 0;
-  transition: transform var(--duration-base) var(--ease-out);
 }
 
 .imap__tile {
@@ -29,36 +28,42 @@
 
 .imap__label--river {
   color: var(--status-info);
-  transform: translate(-50%, -50%) rotate(-80deg);
+  translate: -50% -50%;
+  rotate: -80deg;
 }
 
+/* Centered with `translate` so GSAP can own `transform` (scale, x, y) */
 .imap__abs {
   position: absolute;
-  transform: translate(-50%, -50%);
+  translate: -50% -50%;
   pointer-events: none;
 }
 
 .imap__dot {
-  transition: opacity var(--duration-base) var(--ease-out);
+  transition:
+    opacity var(--duration-fast) var(--ease-smooth-out),
+    filter var(--duration-fast) var(--ease-smooth-out);
 }
 
 .imap__dot.is-dim {
-  opacity: 0.25;
+  opacity: 0.2;
+  filter: grayscale(1);
 }
 
-/* "Pulso": soft halo behind the operation point */
+/* "Pulso": soft halo that keeps expanding from the operation point */
 .imap__pulse {
-  opacity: 0.35;
-  animation: imap-pulse 2.4s var(--ease-out) infinite;
+  opacity: 0;
+  filter: brightness(0) invert(1); /* white ripple, visible over the blue radius */
+  animation: imap-pulse 2.6s cubic-bezier(0.2, 0.6, 0.3, 1) infinite;
 }
 
 @keyframes imap-pulse {
-  0%   { transform: translate(-50%, -50%) scale(0.6); opacity: 0.45; }
-  100% { transform: translate(-50%, -50%) scale(1.35); opacity: 0; }
+  0%   { scale: 0.7; opacity: 0.5; }
+  100% { scale: 2.4; opacity: 0; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .imap__pulse { animation: none; }
+  .imap__pulse { animation: none; opacity: 0.35; }
 }
 
 .imap__center {

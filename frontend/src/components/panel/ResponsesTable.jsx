@@ -25,7 +25,7 @@ export default function ResponsesTable({ rows, withDetail = false, caption }) {
             {withDetail && <th scope="col" className="rtable__detail">{t.detail}</th>}
           </tr>
         </thead>
-        <tbody>
+        <tbody data-stagger="left" data-delay="0.2">
           {rows.map((row) => (
             <tr key={row.id}>
               <th scope="row">

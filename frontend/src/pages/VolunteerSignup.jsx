@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import Button from '../components/Button'
 import { Checkbox, Note, Switch, TextField } from '../components/FormControls'
 import Icon from '../components/Icon'
@@ -7,6 +7,8 @@ import SiteHeader from '../components/SiteHeader'
 import SkillChip from '../components/SkillChip'
 import { SKILLS } from '../data/demo'
 import es from '../i18n/es'
+import PageTransition from '../motion/PageTransition'
+import { useReveal } from '../motion/useReveal'
 import './VolunteerSignup.css'
 
 const t = es.signup
@@ -18,6 +20,8 @@ export default function VolunteerSignup() {
   // Consent must be prior, express and informed (Ley 1581): never pre-checked.
   const [consent, setConsent] = useState(false)
   const [done, setDone] = useState(false)
+  const main = useRef(null)
+  useReveal(main)
 
   const canSubmit = skills.length > 0 && consent
 
@@ -32,14 +36,18 @@ export default function VolunteerSignup() {
   return (
     <>
       <SiteHeader />
-      <main className="signup">
+      <main ref={main} className="signup">
         <section className="signup__intro" aria-labelledby="signup-title">
-          <p className="t-overline c-brand">{t.eyebrow}</p>
-          <h1 id="signup-title" className="t-h1-web c-strong">
+          <p className="t-overline c-brand" data-reveal="fade">
+            {t.eyebrow}
+          </p>
+          <h1 id="signup-title" className="t-h1-web c-strong" data-split>
             {t.title}
           </h1>
-          <p className="t-body-xl c-muted">{t.lead}</p>
-          <ol className="signup__steps">
+          <p className="t-body-xl c-muted" data-reveal="up" data-delay="0.2">
+            {t.lead}
+          </p>
+          <ol className="signup__steps" data-stagger="left" data-delay="0.35">
             {t.steps.map((step, i) => (
               <li key={step.title}>
                 <span className="signup__step-number">{i + 1}</span>
@@ -50,15 +58,18 @@ export default function VolunteerSignup() {
               </li>
             ))}
           </ol>
-          <Note icon="message" tone="info">
-            {t.notePush}
-          </Note>
-          <Note icon="eye-off" tone="sunken">
-            {t.notePrivacy}
-          </Note>
+          <div className="signup__notes" data-stagger="up" data-delay="0.6">
+            <Note icon="message" tone="info">
+              {t.notePush}
+            </Note>
+            <Note icon="eye-off" tone="sunken">
+              {t.notePrivacy}
+            </Note>
+          </div>
         </section>
 
-        <div className="signup__card">
+        <div className="signup__card" data-reveal="scale" data-delay="0.2">
+          <PageTransition key={done ? 'done' : 'form'}>
           {done ? (
             <div className="signup__done" role="status">
               <IconTile icon="check" tone="solid-success" size={56} iconSize={28} round />
@@ -72,7 +83,7 @@ export default function VolunteerSignup() {
             <form className="signup__form" onSubmit={handleSubmit}>
               <fieldset>
                 <legend className="t-label c-default">{t.skillsLegend}</legend>
-                <div className="signup__skills">
+                <div className="signup__skills" data-stagger="up" data-delay="0.5">
                   {SKILLS.map((skill) => (
                     <SkillChip
                       key={skill}
@@ -134,6 +145,7 @@ export default function VolunteerSignup() {
               </div>
             </form>
           )}
+          </PageTransition>
         </div>
       </main>
     </>

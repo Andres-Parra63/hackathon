@@ -32,6 +32,9 @@
   line-height: 16px;
   font-weight: 600;
   white-space: nowrap;
+  transition:
+    background-color var(--duration-fast) var(--ease-smooth-out),
+    color var(--duration-fast) var(--ease-smooth-out);
 }
 
 .live__filter.is-active {
@@ -60,9 +63,14 @@
   color: var(--text-strong);
 }
 
+.live__zoom button {
+  transition: background-color var(--duration-fast) var(--ease-smooth-out);
+}
+
 .live__zoom button:hover {
   background: var(--surface-page);
 }
+
 
 /* Leyenda: 300 px, Elevación/2 */
 .live__legend {

@@ -12,7 +12,7 @@ export default function PanelHeader({ title, subtitle }) {
   const { open } = useNewCall()
   return (
     <header className="panel-header">
-      <div className="panel-header__titles">
+      <div className="panel-header__titles" data-stagger="up">
         <h1 className="t-h2-web c-strong">{title}</h1>
         <p className="t-body c-muted">{subtitle}</p>
       </div>

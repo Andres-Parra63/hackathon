@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import Badge from '../../components/Badge'
 import Button from '../../components/Button'
 import { ProgressBar } from '../../components/FormControls'
@@ -6,6 +6,8 @@ import PanelHeader from '../../components/panel/PanelHeader'
 import ResponsesTable from '../../components/panel/ResponsesTable'
 import { HISTORY, RESPONSES } from '../../data/demo'
 import es from '../../i18n/es'
+import PageTransition from '../../motion/PageTransition'
+import { useReveal } from '../../motion/useReveal'
 import './Calls.css'
 
 const t = es.calls
@@ -15,6 +17,8 @@ export default function Calls({ initialTab = 'active' }) {
   const [tab, setTab] = useState(initialTab)
   const [covered, setCovered] = useState(false)
   const [resent, setResent] = useState(false)
+  const root = useRef(null)
+  useReveal(root)
 
   const tabs = [
     { id: 'active', label: t.tabs.active },
@@ -22,7 +26,7 @@ export default function Calls({ initialTab = 'active' }) {
   ]
 
   return (
-    <>
+    <div ref={root}>
       <PanelHeader title={t.title} subtitle={t.subtitle} />
       <div className="panel-content calls">
         <div className="calls__tabs" role="tablist" aria-label={t.title}>
@@ -42,8 +46,10 @@ export default function Calls({ initialTab = 'active' }) {
           ))}
         </div>
 
+        <PageTransition key={tab}>
         {tab === 'active' ? (
-          <div id="panel-active" role="tabpanel" aria-labelledby="tab-active" className="calls__panel">
+          <div id="panel-active" role="tabpanel" aria-labelledby="tab-active" className="calls__panel" data-stagger="up">
+
             <section className="card card--raised calls__summary" aria-labelledby="call-title">
               <div className="calls__head">
                 <span className="type-tile type-tile--solid" aria-hidden="true">
@@ -110,7 +116,7 @@ export default function Calls({ initialTab = 'active' }) {
           </div>
         ) : (
           <div id="panel-history" role="tabpanel" aria-labelledby="tab-history" className="calls__panel">
-            <ul className="calls__history">
+            <ul className="calls__history" data-stagger="up">
               {HISTORY.map((item) => (
                 <li key={item.title} className="card">
                   <div className="row-between">
@@ -125,7 +131,8 @@ export default function Calls({ initialTab = 'active' }) {
             </ul>
           </div>
         )}
+        </PageTransition>
       </div>
-    </>
+    </div>
   )
 }
