@@ -884,3 +884,93 @@
   .access__row { grid-template-columns: minmax(0, 1fr); }
   .access { padding: var(--space-24) var(--space-16); }
 }
+
+/* ===================== Motion layer v3 (CSS side) ===================== */
+
+/* Facts: a light line draws across the top of each figure as it enters (data-inview -> .is-in) */
+.fact {
+  position: relative;
+}
+
+.fact::before {
+  content: '';
+  position: absolute;
+  top: -1px;
+  left: 0;
+  right: var(--space-32);
+  height: 1px;
+  background: linear-gradient(90deg, var(--brand-primary-strong), rgb(92 157 255 / 0));
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 1.4s var(--ease-smooth-out);
+}
+
+.fact + .fact::before {
+  left: var(--space-32);
+}
+
+.fact.is-in::before {
+  transform: scaleX(1);
+}
+
+/* Steps: hovering lights the number and grows a short rule under it */
+.step {
+  position: relative;
+  padding-top: var(--space-8);
+}
+
+.step::before {
+  content: '';
+  position: absolute;
+  top: calc(-1 * var(--space-32) - 1px);
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: var(--text-strong);
+  transition: width var(--duration-very-slow) var(--ease-smooth-out);
+}
+
+.step__number {
+  transition: color var(--duration-fast) var(--ease-smooth-out), letter-spacing var(--duration-fast) var(--ease-smooth-out);
+}
+
+@media (hover: hover) {
+  .step:hover::before { width: 100%; }
+  .step:hover .step__number { color: var(--text-strong); letter-spacing: 0.12em; }
+}
+
+/* Timeline: the active step's icon breathes with an orange halo (Emergency Mode, labelled above) */
+.timeline__icon {
+  transition:
+    background-color var(--duration-fast) var(--ease-smooth-out),
+    border-color var(--duration-fast) var(--ease-smooth-out),
+    color var(--duration-fast) var(--ease-smooth-out),
+    transform var(--duration-very-slow) var(--ease-bounce);
+}
+
+.timeline.is-enhanced .timeline__item.is-active .timeline__icon {
+  transform: scale(1.12);
+  animation: timeline-halo 2.2s ease-out infinite;
+}
+
+@keyframes timeline-halo {
+  0%   { box-shadow: 0 0 0 0 rgb(255 167 51 / 0.45); }
+  100% { box-shadow: 0 0 0 14px rgb(255 167 51 / 0); }
+}
+
+/* Role metric and scenario figures keep tabular digits while they count */
+.role__metric,
+.scenario__metrics dd {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Success check (transitions-dev 10): dash length set to this path's real length (31.1 -> 32) */
+.access__done-icon.t-success-check svg path {
+  stroke-dasharray: 32;
+  stroke-dashoffset: 32;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fact::before { transition: none; }
+  .timeline.is-enhanced .timeline__item.is-active .timeline__icon { animation: none; }
+}
