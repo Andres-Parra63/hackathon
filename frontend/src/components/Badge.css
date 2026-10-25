@@ -1,0 +1,27 @@
+.badge {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: var(--space-6);
+  padding: var(--space-4) var(--space-10) var(--space-4) var(--space-8);
+  border-radius: var(--radius-pill);
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* 6 px status dot in the text color */
+.badge::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.badge--critical { background: var(--brand-primary-soft);   color: var(--brand-primary-strong); }
+.badge--success  { background: var(--status-success-soft);  color: var(--status-success); }
+.badge--warning  { background: var(--status-warning-soft);  color: var(--status-warning); }
+.badge--info     { background: var(--status-info-soft);     color: var(--status-info); }
+.badge--neutral  { background: var(--surface-sunken);       color: var(--text-default); }
