@@ -1,0 +1,83 @@
+.panel {
+  display: grid;
+  grid-template-columns: var(--sidebar-width) minmax(0, 1fr);
+  min-height: 100vh;
+  background: var(--surface-page);
+}
+
+.panel__main {
+  min-width: 0;
+}
+
+/* Content area below the panel header: 4/32 vertical, 32 horizontal padding */
+.panel-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-24);
+  padding: var(--space-4) var(--space-32) var(--space-32);
+}
+
+/* Generic white card used across the panel (24 px radius) */
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-16);
+  padding: var(--space-24);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-3xl);
+  background: var(--surface-card);
+}
+
+.card--raised {
+  box-shadow: var(--elevation-1);
+}
+
+.row-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-12);
+}
+
+.badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-8);
+}
+
+/* Tipo: "LOG" tile */
+.type-tile {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  border-radius: var(--radius-xl);
+  background: var(--brand-primary-soft);
+  color: var(--brand-primary-strong);
+  font-size: 18px;
+  line-height: 40px;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+}
+
+.type-tile--solid {
+  width: 72px;
+  height: 72px;
+  border-radius: var(--radius-2xl);
+  background: var(--brand-primary);
+  color: var(--text-on-color);
+}
+
+@media (max-width: 960px) {
+  .panel {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto 1fr; /* top bar keeps its height; main takes the rest */
+  }
+}
+
+@media (max-width: 600px) {
+  .panel-content { padding: var(--space-4) var(--space-16) var(--space-24); }
+  .card { padding: var(--space-16); }
+}

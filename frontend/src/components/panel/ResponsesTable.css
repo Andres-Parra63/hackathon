@@ -1,0 +1,82 @@
+.rtable {
+  overflow-x: auto;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-control);
+}
+
+.rtable table {
+  width: 100%;
+  min-width: 560px;
+  border-collapse: collapse;
+}
+
+.rtable th,
+.rtable td {
+  padding: var(--space-12) var(--space-8);
+  text-align: left;
+  vertical-align: middle;
+}
+
+.rtable th:first-child,
+.rtable td:first-child {
+  padding-left: var(--space-20);
+}
+
+.rtable th:last-child,
+.rtable td:last-child {
+  padding-right: var(--space-20);
+}
+
+/* Encabezado tabla: overline on surface/page */
+.rtable thead th {
+  background: var(--surface-page);
+  color: var(--text-muted);
+  font-size: 11px;
+  line-height: 14px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.rtable tbody tr {
+  border-top: 1px solid var(--border-default);
+  background: var(--surface-card);
+}
+
+.rtable tbody th {
+  font-size: 14px;
+  line-height: 18px;
+  font-weight: 600;
+  color: var(--text-strong);
+  white-space: nowrap;
+}
+
+.rtable__who {
+  display: flex;
+  align-items: center;
+  gap: var(--space-10);
+}
+
+/* Avatar anónimo */
+.rtable__avatar {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--surface-sunken);
+  color: var(--text-muted);
+}
+
+/* Column widths from the Figma table (gap 16 between columns) */
+.rtable__skill    { width: 88px; }
+.rtable__distance { width: 112px; }
+.rtable__status   { width: 156px; }
+.rtable__time     { width: 96px; }
+.rtable__detail   { width: 206px; }
+
+.rtable td {
+  white-space: nowrap;
+}

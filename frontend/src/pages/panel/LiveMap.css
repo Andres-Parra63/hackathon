@@ -1,0 +1,174 @@
+.live {
+  flex-direction: row;
+  align-items: flex-start;
+}
+
+/* Mapa en vivo: 860 px tall, 24 px radius, Elevación/1 */
+.live__map {
+  flex: 1;
+  min-width: 0;
+  height: 860px;
+  border-radius: var(--radius-3xl);
+  box-shadow: var(--elevation-1);
+}
+
+.live__filters {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  right: 84px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-8);
+}
+
+.live__filter {
+  padding: 9px var(--space-16);
+  border-radius: var(--radius-pill);
+  background: var(--surface-card);
+  box-shadow: var(--elevation-1);
+  color: var(--text-strong);
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.live__filter.is-active {
+  background: var(--text-strong);
+  color: var(--text-on-color);
+}
+
+.live__zoom {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: var(--radius-control);
+  background: var(--surface-card);
+  box-shadow: var(--elevation-1);
+}
+
+.live__zoom button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  color: var(--text-strong);
+}
+
+.live__zoom button:hover {
+  background: var(--surface-page);
+}
+
+/* Leyenda: 300 px, Elevación/2 */
+.live__legend {
+  position: absolute;
+  left: 20px;
+  bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-10);
+  width: min(300px, calc(100% - 40px));
+  padding: var(--space-16);
+  border-radius: var(--radius-xl);
+  background: var(--surface-card);
+  box-shadow: var(--elevation-2);
+}
+
+.live__legend ul {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-10);
+}
+
+.live__legend li {
+  display: flex;
+  align-items: center;
+  gap: var(--space-10);
+}
+
+.live__legend li img {
+  width: 12px;
+  flex-shrink: 0;
+  object-fit: none;
+}
+
+.live__legend li .t-body-sm {
+  flex: 1;
+}
+
+.live__legend-privacy {
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+}
+
+/* Panel derecho: 380 px */
+.live__side {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-16);
+  width: 380px;
+  flex-shrink: 0;
+}
+
+.live__sent {
+  display: flex;
+  align-items: center;
+  gap: var(--space-14);
+  padding: var(--space-16);
+  border-radius: var(--radius-2xl);
+  background: var(--status-success-soft);
+}
+
+.live__sent > div {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.live__card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-12);
+  padding: var(--space-20);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-2xl);
+  background: var(--surface-card);
+}
+
+.live__card--raised {
+  gap: var(--space-14);
+  box-shadow: var(--elevation-1);
+}
+
+/* Title and "Sin IA" badge sit edge to edge (space-between, no gap) as in Figma */
+.live__card .row-between {
+  gap: var(--space-4);
+}
+
+.live__step {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+@media (max-width: 1280px) {
+  .live { flex-direction: column; align-items: stretch; }
+  .live__side { width: 100%; }
+  .live__map { flex: none; height: 640px; }
+}
+
+@media (max-width: 600px) {
+  .live__map { height: 520px; }
+  /* Keep the operation point (362, 420 in the 724 × 860 frame) in the middle of the viewport */
+  .live__map .imap__layer {
+    inset: calc(50% - 420px) auto auto calc(50% - 362px);
+    width: 724px;
+    height: 860px;
+  }
+}
