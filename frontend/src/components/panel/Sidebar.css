@@ -41,7 +41,23 @@
   padding: var(--space-10) var(--space-12);
   border-radius: var(--radius-md);
   color: var(--text-muted);
-  transition: background-color var(--duration-fast) var(--ease-out);
+  transition:
+    background-color var(--duration-fast) var(--ease-smooth-out),
+    color var(--duration-fast) var(--ease-smooth-out);
+}
+
+/* The counter pulses softly to signal a pending call */
+.sidebar__count {
+  animation: count-pulse 2.4s ease-in-out infinite;
+}
+
+@keyframes count-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgb(31 95 191 / 0.45); }
+  50%      { box-shadow: 0 0 0 6px rgb(31 95 191 / 0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sidebar__count { animation: none; }
 }
 
 .sidebar__label {

@@ -98,11 +98,22 @@
   box-shadow: var(--elevation-2);
   color: var(--text-on-color);
   text-align: left;
-  transition: background-color var(--duration-fast) var(--ease-out);
+  transition:
+    background-color var(--duration-fast) var(--ease-smooth-out),
+    box-shadow var(--duration-fast) var(--ease-smooth-out);
 }
 
 .dash__cta:hover {
   background: var(--brand-primary-strong);
+  box-shadow: 0 4px 10px rgb(31 95 191 / 0.18), 0 18px 40px rgb(31 95 191 / 0.3);
+}
+
+.dash__history li {
+  transition: background-color var(--duration-fast) var(--ease-smooth-out);
+}
+
+.dash__history li:hover {
+  background: var(--brand-primary-subtle);
 }
 
 .dash__cta-text {

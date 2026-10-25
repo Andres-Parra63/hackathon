@@ -7,4 +7,14 @@
   border-radius: var(--radius-xl);
   background: var(--surface-card);
   color: var(--brand-primary);
+  transition:
+    box-shadow var(--duration-fast) var(--ease-smooth-out),
+    border-color var(--duration-fast) var(--ease-smooth-out);
+}
+
+@media (hover: hover) {
+  .metric:hover {
+    border-color: var(--brand-primary-soft);
+    box-shadow: var(--elevation-1);
+  }
 }

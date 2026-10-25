@@ -96,16 +96,22 @@
   --content-max: 1200px;   /* 1440 frame − 2 × 120 gutter */
   --page-gutter: clamp(16px, 8.3vw, 120px);
 
-  /* ---------- Motion ---------- */
-  --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
-  --duration-fast: 120ms;
-  --duration-base: 200ms;
   --focus-ring: 0 0 0 3px rgb(31 95 191 / 0.35);
-}
 
-@media (prefers-reduced-motion: reduce) {
-  :root {
-    --duration-fast: 0ms;
-    --duration-base: 0ms;
-  }
+  /*
+   * ---------- Motion ----------
+   * The motion scale comes from transitions.dev (styles/transitions-dev.css, loaded first):
+   * --duration-stagger/micro/quick/fast/medium/slow/very-slow, --ease-smooth-out, --ease-in-out,
+   * --ease-bounce, --distance-*, --scale-*, --blur-*. Below, only the per-transition variables
+   * this brand needs to re-skin (colors, sizes); the timings stay as the library tuned them.
+   */
+  --tabs-text-muted: var(--text-muted);
+  --tabs-text-active: var(--brand-primary);
+  --tabs-bar-bg: var(--surface-sunken);
+  --tabs-pill-bg: var(--surface-card);
+  --shimmer-base: var(--text-muted);
+  --shimmer-highlight: var(--text-strong);
+  --toggle-travel: 20px; /* 48 px track − 22 px thumb − 2 × 3 px inset */
+  --check-len: 24;       /* Icon/check path length (22.6) rounded up */
+  --tilt-glare-opacity: 0.28;
 }

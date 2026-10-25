@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 import { SKILLS } from '../../data/demo'
 import es from '../../i18n/es'
+import { EASE, gsap, prefersReducedMotion, useGSAP } from '../../motion/gsap'
+import { getLenis } from '../../motion/smoothScroll'
 import Button from '../Button'
 import { TextArea } from '../FormControls'
 import Icon from '../Icon'
@@ -17,18 +19,63 @@ export default function NewCallDrawer({ onClose, onSubmit }) {
   const [skills, setSkills] = useState(['Logística'])
   const [slots, setSlots] = useState(4)
   const [type, setType] = useState(t.types[2])
+  const rootRef = useRef(null)
   const panelRef = useRef(null)
+  const leaving = useRef(false)
 
-  // Focus the dialog on open, close with Escape, give focus back on close.
+  // Entrance: the veil fades in while the panel glides from the right; its sections follow.
+  // Reduced motion: both simply fade.
+  const { contextSafe } = useGSAP(
+    () => {
+      const q = gsap.utils.selector(rootRef)
+      const scrim = q('.drawer-scrim')
+      if (prefersReducedMotion()) {
+        gsap.from([scrim, panelRef.current], { autoAlpha: 0, duration: 0.4, ease: 'power1.out' })
+        return
+      }
+      gsap
+        .timeline({ defaults: { ease: EASE.smooth } })
+        .from(scrim, { autoAlpha: 0, duration: 0.7, ease: 'power2.out' }, 0)
+        .from(panelRef.current, { xPercent: 100, duration: 1.1 }, 0)
+        .from(
+          q('.drawer__header > *, .drawer__body > *, .drawer__footer > *'),
+          { y: 14, autoAlpha: 0, duration: 0.9, stagger: 0.045, clearProps: 'transform,opacity,visibility' },
+          0.25,
+        )
+    },
+    { scope: rootRef },
+  )
+
+  // Exit: glide out first, then unmount through the callback.
+  const leave = contextSafe((then) => {
+    if (leaving.current) return
+    leaving.current = true
+    const scrim = rootRef.current.querySelector('.drawer-scrim')
+    if (prefersReducedMotion()) {
+      gsap.to([scrim, panelRef.current], { autoAlpha: 0, duration: 0.25, onComplete: then })
+      return
+    }
+    gsap
+      .timeline({ onComplete: then, defaults: { ease: EASE.inOut } })
+      .to(panelRef.current, { xPercent: 100, duration: 0.65 }, 0)
+      .to(scrim, { autoAlpha: 0, duration: 0.55 }, 0.1)
+  })
+  const close = () => leave(onClose)
+  const leaveRef = useRef(leave)
+  leaveRef.current = leave
+
+  // Focus the dialog on open, close with Escape, give focus back on close, pause page scroll.
   useEffect(() => {
     const previous = document.activeElement
     panelRef.current?.focus()
-    const onKey = (event) => event.key === 'Escape' && onClose()
+    const onKey = (event) => event.key === 'Escape' && leaveRef.current(onClose)
     document.addEventListener('keydown', onKey)
     document.body.style.overflow = 'hidden'
+    getLenis()?.stop()
     return () => {
       document.removeEventListener('keydown', onKey)
       document.body.style.overflow = ''
+      getLenis()?.start()
       previous?.focus?.()
     }
   }, [onClose])
@@ -38,12 +85,12 @@ export default function NewCallDrawer({ onClose, onSubmit }) {
 
   const handleSubmit = (event) => {
     event.preventDefault()
-    if (skills.length) onSubmit({ skills, slots, type })
+    if (skills.length) leave(() => onSubmit({ skills, slots, type }))
   }
 
   return (
-    <div className="drawer-root">
-      <div className="drawer-scrim" onClick={onClose} aria-hidden="true" />
+    <div ref={rootRef} className="drawer-root">
+      <div className="drawer-scrim" onClick={close} aria-hidden="true" />
       <form
         ref={panelRef}
         className="drawer"
@@ -60,12 +107,12 @@ export default function NewCallDrawer({ onClose, onSubmit }) {
             </h2>
             <p className="t-body c-muted">{t.lead}</p>
           </div>
-          <button type="button" className="drawer__close" onClick={onClose} aria-label={t.close}>
+          <button type="button" className="drawer__close" onClick={close} aria-label={t.close}>
             <Icon name="x" size={20} />
           </button>
         </header>
 
-        <div className="drawer__body">
+        <div className="drawer__body" data-lenis-prevent>
           <fieldset className="drawer__group">
             <legend className="t-label c-default">{t.skillLabel}</legend>
             <div className="drawer__skills">
@@ -100,7 +147,7 @@ export default function NewCallDrawer({ onClose, onSubmit }) {
                   <Icon name="minus" size={18} />
                 </button>
                 <output className="stepper__value t-h2" aria-live="polite">
-                  {slots}
+                  <span key={slots}>{slots}</span>
                 </output>
                 <button
                   type="button"
@@ -146,7 +193,7 @@ export default function NewCallDrawer({ onClose, onSubmit }) {
         </div>
 
         <footer className="drawer__footer">
-          <Button variant="secondary" onClick={onClose}>
+          <Button variant="secondary" onClick={close}>
             {t.cancel}
           </Button>
           <Button type="submit" icon="send" className="drawer__submit" disabled={!skills.length}>

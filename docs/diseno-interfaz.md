@@ -144,13 +144,58 @@ confianza). **Panel**: barra lateral de 248 px, contenido con 32 px de margen y 
   se muestra en el borde.
 - **Teclado**: chips, segmentos, filtros y pestañas son botones o radios nativos; el panel lateral recibe el
   foco al abrirse y lo devuelve al cerrarse.
-- **Movimiento**: transiciones de 120 a 200 ms; con `prefers-reduced-motion` se desactivan, incluido el halo
-  del mapa.
+- **Movimiento**: ver la sección 6.1; con `prefers-reduced-motion: reduce` todo queda estático.
 - **Objetivos táctiles** ≥ 44 px (botones de 52 px, chips de 56 px).
 - **Responsive**: el sitio pasa a una columna por debajo de 960–1180 px; el panel convierte la barra lateral
   en una barra superior con menú desplazable por debajo de 960 px.
 - **Privacidad visible** (Ley 1581 de 2012): ubicación aproximada por barrio, voluntarios anonimizados en
   tablas y mapa, y casilla de autorización de datos **sin marcar por defecto**.
+
+### 6.1 Animación
+
+Librerías: **GSAP 3.15** (ScrollTrigger, SplitText, `@gsap/react`) y **Lenis 1.3** para el scroll suave,
+sincronizado con el ticker de GSAP. Código en `frontend/src/motion/`.
+
+| Archivo | Responsabilidad |
+|---|---|
+| `gsap.js` | Registro de plugins, curvas, duraciones, distancias y condiciones (`MOTION_OK`, `REDUCED`, `FINE_POINTER`, `DESKTOP`) |
+| `smoothScroll.js` | Lenis solo en escritorio con mouse o trackpad; en pantallas táctiles el scroll es nativo |
+| `useReveal.js` | Entradas declarativas por atributos `data-*`, parallax y versión simplificada |
+| `interactions.js` | Microinteracciones: `gsap.timeline({ paused: true })` por elemento, controladas con `mouseenter`/`mouseleave` y al presionar |
+| `PageTransition.jsx` | Entrada de cada página y pestaña |
+
+| Token | Valor | Uso |
+|---|---|---|
+| `EASE.out` | `power3.out` | Entradas, hover |
+| `EASE.smooth` | `expo.out` | Títulos, entrada de página, panel lateral |
+| `EASE.inOut` | `power2.inOut` | Salidas, ocultar el encabezado |
+| `EASE.settle` | `elastic.out(1, 0.75)` | Rebote suave al soltar un clic |
+| `DURATION` | 0,4 / 0,8 / 1,2 s | Rápida / base / lenta |
+| `DISTANCE` | 28 px | Recorrido de las entradas (pequeño a propósito) |
+
+**Atributos** (hook `useReveal`): `data-reveal="up|fade|scale|left|right"`, `data-stagger` (hijos en secuencia,
+90 ms), `data-split` (títulos línea a línea con máscara), `data-count` (cuenta el número una vez),
+`data-parallax="-6"` (desplazamiento en % al hacer scroll) y `data-delay`. Las entradas se disparan al llegar
+al **80 % del viewport** con `toggleActions: "play none none reverse"`: aparecen al bajar y se ocultan al volver
+a subir. Las entradas usan `xPercent`/`yPercent` y el hover usa `x`/`y`/`scale`; GSAP los compone, así que no
+se pisan entre sí.
+
+| Dónde | Qué pasa |
+|---|---|
+| Carga de página | Fundido con subida de 18 px (1 s, `expo.out`); en el héroe, el título entra palabra por palabra cuando la fuente ya cargó, para que nada salte |
+| Héroe | Texto, botones y cifras en cascada; el mapa se arma (radio, puntos al azar, punto de operación); avisos que respiran; inclinación 3D de 5° con el mouse; parallax al hacer scroll |
+| Encabezado | Entra desde arriba, se oculta al bajar y vuelve al subir, sombra al desplazarse, barra de progreso de lectura |
+| Secciones | Títulos línea a línea, tarjetas en cascada, cifras que cuentan, parallax sutil en las grillas, banda final que se abre al hacer scroll |
+| «Cómo funciona» (escritorio) | **Sección fija (pin)** mientras las tres tarjetas aparecen una tras otra y la línea de progreso avanza, ligada al scroll (`scrub`) |
+| Hover y clic | Tarjetas suben 6 px y su ícono gira; botones suben 2 px; al presionar bajan a 96 % y vuelven con rebote suave; CTA principales magnéticos |
+| Panel | Métricas que cuentan, filas en cascada, barras que se llenan, zoom suave del mapa, panel lateral que entra y sale deslizándose |
+
+**Rendimiento**: solo se animan `transform` y `opacity` (las barras de progreso se desplazan con `xPercent` en
+lugar de animar `width`); `gsap.context()` (vía `useGSAP` y `matchMedia`) limpia todo al cambiar de página.
+
+**Movimiento reducido** (`prefers-reduced-motion: reduce`, por ejemplo con los efectos de animación de Windows
+apagados): se mantiene la misma coreografía **solo con fundidos de opacidad**. No hay desplazamientos, parallax,
+pin, hover con movimiento ni Lenis.
 
 ## 7. Diferencias con Figma y pendientes
 

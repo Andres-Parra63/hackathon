@@ -52,6 +52,10 @@
   border-radius: var(--radius-md);
 }
 
+.panel-header__search {
+  transition: border-color var(--duration-fast) var(--ease-smooth-out), box-shadow var(--duration-fast) var(--ease-smooth-out);
+}
+
 @media (max-width: 1180px) {
   .panel-header { flex-wrap: wrap; }
   .panel-header__titles { flex-basis: 100%; }

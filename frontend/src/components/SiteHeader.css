@@ -4,6 +4,27 @@
   z-index: 20;
   background: var(--surface-card);
   border-bottom: 1px solid var(--border-default);
+  transition: box-shadow var(--duration-fast) var(--ease-smooth-out);
+}
+
+.site-header.is-scrolled {
+  box-shadow: var(--elevation-1);
+}
+
+/* Reading progress (scaled by GSAP on scroll) */
+.site-header__progress {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 2px;
+  background: var(--brand-primary);
+  transform: scaleX(0);
+  transform-origin: left center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-header__progress { display: none; }
 }
 
 .site-header__inner {
@@ -28,12 +49,34 @@
 }
 
 .site-header__nav a {
+  position: relative;
   border-radius: 6px;
   white-space: nowrap;
+  transition: color var(--duration-quick) var(--ease-smooth-out);
+}
+
+/* Underline that grows from the left on hover */
+.site-header__nav a::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -6px;
+  height: 2px;
+  border-radius: 1px;
+  background: var(--brand-primary);
+  transform: scaleX(0);
+  transform-origin: right center;
+  transition: transform 0.45s var(--ease-smooth-out);
 }
 
 .site-header__nav a:hover {
   color: var(--brand-primary);
+}
+
+.site-header__nav a:hover::after {
+  transform: scaleX(1);
+  transform-origin: left center;
 }
 
 .site-header__actions {

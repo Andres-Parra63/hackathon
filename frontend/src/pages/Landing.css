@@ -66,6 +66,13 @@
 /* Visual · mapa y aviso: 560 × 560, 32 px radius, Elevación/2 */
 .hero__visual {
   flex-shrink: 0;
+  perspective: 1400px;
+}
+
+/* Tilted by GSAP following the pointer */
+.hero__tilt {
+  transform-style: preserve-3d;
+  will-change: transform;
 }
 
 .hero__map {
@@ -141,6 +148,63 @@
 
 @media (max-width: 400px) {
   .hero__visual { zoom: 0.54; }
+}
+
+/* ---------- Hover: movement is GSAP (useInteractions); CSS only eases colors and shadows ---------- */
+.fact,
+.step-card,
+.audience {
+  transition:
+    box-shadow var(--duration-fast) var(--ease-smooth-out),
+    background-color var(--duration-fast) var(--ease-smooth-out);
+}
+
+.step-card__number {
+  transition: color var(--duration-fast) var(--ease-smooth-out);
+}
+
+@media (hover: hover) {
+  .fact:hover,
+  .step-card:hover,
+  .audience:hover {
+    box-shadow: var(--elevation-2);
+  }
+
+  .fact:hover {
+    background: var(--brand-primary-subtle);
+  }
+
+  .step-card:hover .step-card__number {
+    color: var(--brand-primary);
+  }
+
+  .compare tbody tr {
+    transition: background-color var(--duration-fast) var(--ease-smooth-out);
+  }
+
+  .compare tbody tr:hover {
+    background: var(--brand-primary-subtle);
+  }
+}
+
+/* ---------- Cómo funciona: progress line drawn while the section is pinned ---------- */
+.how__track {
+  height: 2px;
+  margin-bottom: calc(-1 * var(--space-24));
+  overflow: hidden;
+  border-radius: 1px;
+  background: var(--border-default);
+}
+
+.how__track span {
+  display: block;
+  height: 100%;
+  background: var(--brand-primary);
+  transform-origin: left center;
+}
+
+@media (max-width: 1023px) {
+  .how__track { display: none; }
 }
 
 /* ---------- El problema ---------- */

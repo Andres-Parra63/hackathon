@@ -41,6 +41,11 @@
 .rtable tbody tr {
   border-top: 1px solid var(--border-default);
   background: var(--surface-card);
+  transition: background-color var(--duration-fast) var(--ease-smooth-out);
+}
+
+.rtable tbody tr:hover {
+  background: var(--brand-primary-subtle);
 }
 
 .rtable tbody th {
