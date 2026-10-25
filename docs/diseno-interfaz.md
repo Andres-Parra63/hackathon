@@ -10,6 +10,61 @@ página **💻 Web (escritorio)** y página **🎨 Guía de estilo y componentes
 - La guía viva está en la ruta **`/guia`** de la app: muestra los tokens y componentes reales.
 - Regla: ningún componente usa valores sueltos; si hace falta un valor nuevo, se agrega como token.
 
+## 0. Versión 2 — minimalista oscuro (25/10/2026)
+
+La interfaz pasó a un tema oscuro y minimalista tomando como referencia estética [astroteq.ai](https://astroteq.ai/).
+**Los valores de color, tipografía y radios de las secciones 2 a 4 quedan reemplazados** por los de
+`tokens.css` y `base.css`; la guía viva (`/guia`) muestra los valores vigentes. Lo demás (rutas, requisitos,
+comportamiento) sigue aplicando.
+
+| Aspecto | v2 |
+|---|---|
+| Lienzo | Negro `#000000`; tarjetas `#0B0B0D`; cristal = blanco al 3 % con borde blanco al 10 % y desenfoque de 16 px |
+| Texto | `#EBF1FF` (títulos, 18:1), `#C4C8D2` (cuerpo, 12:1), `#8F94A0` (secundario, 6,9:1) |
+| Azul (modo normal) | Dos tonos: `#0A63E6` para rellenos con texto blanco (5,4:1) y `#5C9DFF` para texto, iconos y enlaces sobre negro (7,7:1). El `#066EFF` de la referencia no llega a 4,5:1 con texto blanco |
+| Naranja (Modo Emergencia) | `#FFA733` (10,8:1), siempre junto al texto «Modo Emergencia» o «Emergencia» |
+| Tipografía | DM Sans variable a peso 510 con tracking negativo (títulos y cifras) y DM Mono para leads, etiquetas y fuentes |
+| Controles | Botones e inputs en píldora de 52 px; bordes de control blancos al 38 % (3,3:1, WCAG 1.4.11) |
+| Botones | Primario (píldora clara), Secundario (cristal), Contorno (borde azul + punto, como el CTA de la referencia), Emergencia (borde naranja + punto), Terciario |
+
+**Landing (`/`), en orden:** hero centrado con globo de puntos sobre Colombia (canvas: el anillo alrededor de
+Bogotá ilustra el radio de convocatoria; no está a escala) y cuatro cifras alrededor (metas del piloto,
+marcadas como tales) · El problema (cifras con fuente) · Cómo funciona (3 pasos) · Modo Emergencia (línea de
+tiempo de 5 pasos que se ilumina al leer, más los mensajes clave de la interfaz) · Para quién (pestañas por
+rol: voluntarios, organizaciones, coordinadores, ciudadanos) · Simulacros (carrusel de escenarios
+**ficticios** con cifras simuladas) · Comparación y garantías · Solicitud de acceso para organizaciones
+(formulario con validación; en el prototipo no envía datos a ningún servidor).
+
+**v2.1 — dinamismo (25/10/2026)**
+- **Globo** (`components/DotGlobe.jsx` + `globeGeo.js`): mundo completo en puntos con la cara trasera visible
+  en tenue; gira 360° y frena cuando Colombia mira al frente; se arrastra con inercia. Colombia se dibuja
+  **ampliada ×2,3 y elevada** sobre la superficie (la esfera no cambia de tamaño), con el radio de Bogotá,
+  barrido de radar, voluntarios que se iluminan al paso del barrido, arcos de convocatoria a otras ciudades,
+  anillo HUD y coordenadas. Es ilustrativo y la leyenda lo dice.
+- **Hero con scrollytelling** (escritorio, con movimiento): se fija durante el scroll; el texto se desvanece,
+  el escenario sube hasta centrar el globo y este gira hasta enfocar Colombia. En móvil no se fija, pero el
+  enfoque avanza con el scroll.
+- **Cinta de actividad simulada** (`LiveTicker`), con botón de pausa (WCAG 2.2.2), pausa al pasar el cursor
+  o con el foco, y estática con movimiento reducido.
+- **Navegador flotante de secciones** (`SectionNav`): anterior/siguiente con la sección actual; aparece al
+  salir del hero y se oculta (`inert`) junto al pie.
+- **Microinteracciones**: eyebrows que se "decodifican" (`data-scramble`; el texto real va en un `sr-only`),
+  resplandor que sigue al cursor en las tarjetas de cristal (`data-spotlight`), título con shimmer y píldora
+  deslizante en las pestañas (transitions-dev 15 y 16), y aurora lenta detrás del globo.
+- Rendimiento del globo medido en Edge sin GPU: mediana de 7 ms por fotograma, p95 de 13,9 ms.
+
+**Decisiones de accesibilidad nuevas**
+- Las entradas animadas usan `opacity`, no `autoAlpha`: `visibility: hidden` sacaba del orden de tabulación
+  todo lo que aún no se había revelado (el formulario y el carrusel eran inalcanzables con teclado).
+- Los pasos inactivos de la línea de tiempo se atenúan por color (título en `text-muted`), no por opacidad,
+  para no bajar de 4,5:1.
+- Pestañas con el patrón WAI-ARIA (flechas, Inicio, Fin); carrusel sin reproducción automática, con botones,
+  puntos de 24 px de área y anuncio de la posición; menú móvil como diálogo modal (Escape, foco atrapado y
+  devuelto al botón).
+- Formulario: etiquetas visibles, pista y error bajo cada campo (icono + texto, enlazados con
+  `aria-describedby`), resumen de errores con enlaces a cada campo y autorización de datos (Ley 1581).
+- Verificado con axe-core (WCAG 2.1 A/AA) en todas las rutas: 0 incidencias.
+
 ## 1. Pantallas y rutas
 
 | Figma | Pantalla | Ruta | Requisitos |
