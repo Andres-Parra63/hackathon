@@ -76,14 +76,26 @@ const AUSTRALIA = [
 
 export const WORLD = [AMERICAS_SOUTH, AMERICAS_NORTH, GREENLAND, EURASIA, AFRICA, MADAGASCAR, BRITAIN, AUSTRALIA]
 
-// Cities the call arcs reach from Bogotá (real coordinates; they are drawn on the enlarged Colombia).
+// Network nodes linked to Bogotá and to their nearest neighbors (real coordinates; drawn on the enlarged
+// Colombia). `label` marks the ones named on the globe.
 export const CITIES = [
-  { name: 'Medellín', at: [6.25, -75.56] },
-  { name: 'Cali', at: [3.45, -76.53] },
-  { name: 'Barranquilla', at: [10.96, -74.8] },
+  { name: 'Medellín', at: [6.25, -75.56], label: true },
+  { name: 'Cali', at: [3.45, -76.53], label: true },
+  { name: 'Barranquilla', at: [10.96, -74.8], label: true },
+  { name: 'Cartagena', at: [10.39, -75.48] },
+  { name: 'Santa Marta', at: [11.24, -74.2] },
+  { name: 'Riohacha', at: [11.54, -72.91] },
   { name: 'Bucaramanga', at: [7.12, -73.12] },
-  { name: 'Pasto', at: [1.21, -77.28] },
-  { name: 'Leticia', at: [-4.2, -69.94] },
+  { name: 'Cúcuta', at: [7.89, -72.5] },
+  { name: 'Montería', at: [8.75, -75.88] },
+  { name: 'Quibdó', at: [5.69, -76.66] },
+  { name: 'Pereira', at: [4.81, -75.69] },
+  { name: 'Ibagué', at: [4.44, -75.23] },
+  { name: 'Neiva', at: [2.93, -75.28] },
+  { name: 'Pasto', at: [1.21, -77.28], label: true },
+  { name: 'Villavicencio', at: [4.14, -73.63] },
+  { name: 'Yopal', at: [5.34, -72.39] },
+  { name: 'Leticia', at: [-4.2, -69.94], label: true },
 ]
 
 export const BOGOTA = [4.71, -74.07]
