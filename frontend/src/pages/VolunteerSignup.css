@@ -1,0 +1,162 @@
+/* W07 · Contenido (Figma 25:425): 56/120 padding, 72 px gap, 480 px intro column */
+.signup {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-72);
+  max-width: calc(var(--content-max) + 2 * var(--page-gutter));
+  margin: 0 auto;
+  padding: var(--space-56) var(--page-gutter);
+}
+
+.signup__intro {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-24);
+  width: 480px;
+  flex-shrink: 0;
+}
+
+.signup__steps {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-16);
+  padding: var(--space-8) 0;
+}
+
+.signup__steps li {
+  display: flex;
+  align-items: center;
+  gap: var(--space-14);
+}
+
+.signup__step-number {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--brand-primary-soft);
+  color: var(--brand-primary-strong);
+  font-size: 14px;
+  line-height: 18px;
+  font-weight: 600;
+}
+
+/* Formulario: card, 36 px padding, 28 px radius, Elevación/2 */
+.signup__card {
+  flex: 1;
+  min-width: 0;
+  padding: var(--space-36);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-4xl);
+  background: var(--surface-card);
+  box-shadow: var(--elevation-2);
+}
+
+.signup__form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-24);
+}
+
+.signup__form fieldset {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-12);
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+}
+
+.signup__form legend {
+  float: left; /* lets the legend take part in the flex gap */
+  width: 100%;
+  padding: 0;
+}
+
+.signup__skills {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-8);
+}
+
+.signup__row {
+  display: flex;
+  gap: var(--space-16);
+}
+
+.signup__row > .field {
+  flex: 1;
+}
+
+.signup__row--end {
+  align-items: flex-end;
+}
+
+/* Elegibilidad: 220 × 52 success pill */
+.signup__eligible {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: var(--space-8);
+  width: 220px;
+  height: var(--control-height);
+  padding: 0 var(--space-16) 0 var(--space-14);
+  border-radius: var(--radius-control);
+  background: var(--status-success-soft);
+  color: var(--status-success);
+  font-size: 14px;
+  line-height: 18px;
+  font-weight: 600;
+}
+
+.signup__approx {
+  display: flex;
+  align-items: center;
+  gap: var(--space-12);
+  padding: var(--space-14) var(--space-16);
+  border-radius: var(--radius-lg);
+  background: var(--surface-page);
+}
+
+.signup__approx > div {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.signup__submit {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+}
+
+.signup__done {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-20);
+}
+
+@media (max-width: 1100px) {
+  .signup {
+    flex-direction: column;
+    gap: var(--space-40);
+  }
+  .signup__intro,
+  .signup__card {
+    width: 100%;
+  }
+}
+
+@media (max-width: 640px) {
+  .signup { padding-top: var(--space-32); }
+  .signup__card { padding: var(--space-20); border-radius: var(--radius-3xl); }
+  .signup__skills { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .signup__row { flex-direction: column; align-items: stretch; }
+  .signup__eligible { width: 100%; }
+}

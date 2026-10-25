@@ -1,0 +1,120 @@
+/* W02: 720 px brand panel + form column (440 px form). */
+.login {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  min-height: 100vh;
+  background: var(--surface-card);
+}
+
+/* Panel de marca */
+.login__brand {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-40);
+  overflow: hidden;
+  padding: var(--space-64) 80px;
+  background: var(--brand-primary);
+}
+
+.login__ring {
+  position: absolute;
+  pointer-events: none;
+}
+
+/* Concentric rings centred at (560, 820); the SVGs are 2 px larger than their Figma box */
+.login__ring--lg { left: 39px;  top: 299px; }
+.login__ring--md { left: 179px; top: 439px; }
+.login__ring--sm { left: 319px; top: 579px; }
+
+.login__logo {
+  position: relative;
+  align-self: flex-start;
+  border-radius: var(--radius-lg);
+}
+
+.login__message {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-20);
+  max-width: 540px;
+  margin: auto 0;
+}
+
+.login__stats {
+  display: flex;
+  gap: var(--space-12);
+  margin: 0;
+  padding-top: var(--space-16);
+}
+
+.login__stats div {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--space-6);
+  min-width: 0;
+  padding: var(--space-16);
+  border-radius: var(--radius-xl);
+  background: rgb(255 255 255 / 0.12);
+  color: var(--text-on-color);
+}
+
+.login__stats dd {
+  margin: 0;
+}
+
+/* Formulario */
+.login__main {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: var(--space-64) 140px;
+}
+
+.login__form {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--space-20);
+  width: 100%;
+  max-width: 440px;
+}
+
+.login__form > .badge {
+  align-self: flex-start;
+}
+
+.login__options {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-12);
+}
+
+.login__remember {
+  align-items: center;
+  gap: var(--space-8);
+}
+
+.login__options a:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 1200px) {
+  .login__main { padding: var(--space-64) var(--space-48); justify-content: center; }
+  .login__brand { padding: var(--space-48); }
+}
+
+@media (max-width: 900px) {
+  .login { grid-template-columns: minmax(0, 1fr); }
+  .login__brand { padding: var(--space-32) var(--space-20) var(--space-40); }
+  .login__message { margin: 0; }
+  .login__main { padding: var(--space-40) var(--space-20) var(--space-56); }
+}
+
+@media (max-width: 480px) {
+  .login__stats { flex-wrap: wrap; }
+  .login__stats div { flex-basis: 40%; }
+}
