@@ -55,6 +55,8 @@ const PRESSABLE =
 
 const MAGNETIC = '[data-magnetic]'
 
+const SPOTLIGHT = '[data-spotlight]'
+
 export function useInteractions() {
   useEffect(() => {
     const allowed = () =>
@@ -118,6 +120,16 @@ export function useInteractions() {
         overwrite: 'auto',
       })
     }
+    // Spotlight: glass cards light their border and surface where the pointer is (CSS reads --mx/--my).
+    const onSpot = (e) => {
+      if (!window.matchMedia(FINE_POINTER).matches) return
+      const el = e.target.closest?.(SPOTLIGHT)
+      if (!el) return
+      const r = el.getBoundingClientRect()
+      el.style.setProperty('--mx', `${e.clientX - r.left}px`)
+      el.style.setProperty('--my', `${e.clientY - r.top}px`)
+    }
+
     const onMagnetOut = (e) => {
       const el = e.target.closest?.(MAGNETIC)
       if (el && !el.contains(e.relatedTarget)) gsap.to(el, { x: 0, y: 0, duration: 1, ease: EASE.out, overwrite: 'auto' })
@@ -127,6 +139,7 @@ export function useInteractions() {
     document.addEventListener('pointerout', onOut)
     document.addEventListener('pointerout', onMagnetOut)
     document.addEventListener('pointermove', onMove, { passive: true })
+    document.addEventListener('pointermove', onSpot, { passive: true })
     document.addEventListener('pointerdown', onDown)
     document.addEventListener('pointerup', onUp)
     document.addEventListener('pointercancel', onUp)
@@ -135,6 +148,7 @@ export function useInteractions() {
       document.removeEventListener('pointerout', onOut)
       document.removeEventListener('pointerout', onMagnetOut)
       document.removeEventListener('pointermove', onMove)
+      document.removeEventListener('pointermove', onSpot)
       document.removeEventListener('pointerdown', onDown)
       document.removeEventListener('pointerup', onUp)
       document.removeEventListener('pointercancel', onUp)
