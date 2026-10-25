@@ -30,14 +30,14 @@
   width: 100%;
 }
 
-/* Primario: solid light pill, dark text (the reference's main call to action) */
+/* Primario: solid ink pill (light on the dark site, near-black in the light panel theme) */
 .btn--primary {
-  background: var(--text-strong);
-  color: var(--text-on-light);
+  background: var(--surface-inverse);
+  color: var(--text-on-inverse);
 }
 .btn--primary:hover:not(:disabled) {
-  background: #ffffff;
-  box-shadow: 0 0 0 4px rgb(235 241 255 / 0.12), 0 0 32px rgb(92 157 255 / 0.35);
+  background: var(--surface-inverse-hover);
+  box-shadow: var(--hover-glow);
 }
 
 /* Primary and outline buttons: a light band sweeps across on hover */
@@ -70,14 +70,30 @@
 /* Secundario: glass pill with a hairline border */
 .btn--secondary {
   background: var(--surface-glass);
-  border-color: rgb(255 255 255 / 0.2);
+  border-color: var(--border-control);
   color: var(--text-strong);
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
 }
 .btn--secondary:hover:not(:disabled) {
-  background: rgb(255 255 255 / 0.1);
-  border-color: rgb(255 255 255 / 0.4);
+  background: var(--surface-glass-hover);
+  border-color: var(--border-control-hover);
+}
+
+/* Suave: borderless sunken pill, the quiet partner of a primary button */
+.btn--soft {
+  background: var(--surface-sunken);
+  color: var(--text-strong);
+}
+.btn--soft:hover:not(:disabled) {
+  background: var(--border-control);
+}
+
+/* Compact size for dense panel cards (still a 44 px touch target) */
+.btn--sm {
+  height: 44px;
+  padding: 0 18px;
+  font-size: 14px;
 }
 
 /* Contorno: blue border and status dot, square corners (header CTA in the reference) */

@@ -1,138 +1,201 @@
 import { useRef, useState } from 'react'
 import Badge from '../../components/Badge'
 import Button from '../../components/Button'
-import { ProgressBar } from '../../components/FormControls'
+import Icon from '../../components/Icon'
 import PanelHeader from '../../components/panel/PanelHeader'
 import ResponsesTable from '../../components/panel/ResponsesTable'
-import { HISTORY, RESPONSES } from '../../data/demo'
+import Segmented from '../../components/panel/Segmented'
+import StatTile from '../../components/panel/StatTile'
+import { CALL_ACTIVITY, HISTORY, RESPONSES } from '../../data/demo'
 import es from '../../i18n/es'
 import PageTransition from '../../motion/PageTransition'
 import { useReveal } from '../../motion/useReveal'
 import './Calls.css'
 
 const t = es.calls
+const SLOTS = 4
+
+/** Active call: the Modo Emergencia card, its instructions, who was called and the live log. */
+function ActiveCall({ covered, onCover, resent, onResend }) {
+  const root = useRef(null)
+  const [guide, setGuide] = useState(t.guide.tabs[0].id)
+  useReveal(root)
+
+  const guideTab = t.guide.tabs.find((item) => item.id === guide)
+  const filled = covered ? SLOTS : SLOTS - 1
+
+  return (
+    <div ref={root} id="calls-panel-active" role="tabpanel" aria-labelledby="calls-tab-active" className="calls" data-stagger="blur">
+      <section className="calls__hero" aria-labelledby="call-title">
+        <div className="calls__hero-top">
+          <span className="calls__chip">
+            <Icon name={covered ? 'check' : 'alert-triangle'} size={14} />
+            {covered ? t.hero.covered : t.hero.badge}
+          </span>
+          <span className="calls__hero-meta">{t.hero.activated}</span>
+        </div>
+
+        <p className="calls__hero-figure">
+          {/* Remounts on change so the count-up never fights React over the text node */}
+          <span key={filled} className="calls__hero-value" data-count>
+            {t.hero.value(filled, SLOTS)}
+          </span>
+          <span className="calls__hero-unit">{t.hero.unit}</span>
+        </p>
+
+        <div
+          className="meter calls__meter"
+          role="progressbar"
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-valuenow={(filled / SLOTS) * 100}
+          aria-label={covered ? t.progressDone : t.progress}
+          style={{ '--meter-value': filled / SLOTS }}
+          data-inview
+        >
+          <span className="meter__fill" />
+        </div>
+        <div className="calls__hero-legend">
+          <h2 id="call-title">{t.hero.place}</h2>
+          <span>{covered ? t.hero.done : t.hero.remaining}</span>
+        </div>
+
+        <div className="calls__hero-actions">
+          <Button icon="check" className="btn--sm calls__btn-light" disabled={covered} onClick={onCover}>
+            {t.markCovered}
+          </Button>
+          <Button variant="secondary" icon="refresh" className="btn--sm calls__btn-ghost" disabled={covered} onClick={onResend}>
+            {t.resend}
+          </Button>
+          <p className="calls__status" role="status">
+            {resent && !covered ? t.resent : ''}
+          </p>
+        </div>
+      </section>
+
+      <section className="card calls__guide" aria-labelledby="guide-title">
+        <h2 id="guide-title" className="card-title">
+          {t.guide.title}
+        </h2>
+        <Segmented items={t.guide.tabs} value={guide} onChange={setGuide} label={t.guide.tabsLabel} idBase="guide" />
+        <ul key={guide} id={`guide-panel-${guide}`} role="tabpanel" aria-labelledby={`guide-tab-${guide}`} className="calls__checklist">
+          {guideTab.items.map((item) => (
+            <li key={item}>
+              <span className="calls__check" aria-hidden="true">
+                <Icon name="check" size={12} />
+              </span>
+              {item}
+            </li>
+          ))}
+        </ul>
+        <p className="t-caption c-muted calls__guide-note">{t.guide.note}</p>
+      </section>
+
+      <section className="card calls__table" aria-labelledby="called-title">
+        <div className="card-head">
+          <div>
+            <h2 id="called-title" className="card-title">
+              {t.tableTitle}
+            </h2>
+            <p className="t-body-sm c-muted">{t.tableText}</p>
+          </div>
+          <Button variant="soft" icon="map" className="btn--sm" to="/panel/mapa">
+            {t.seeOnMap}
+          </Button>
+        </div>
+        <ResponsesTable rows={RESPONSES} withDetail caption={t.tableTitle} />
+      </section>
+
+      <section className="card calls__activity" aria-labelledby="activity-title">
+        <div className="card-head">
+          <h2 id="activity-title" className="card-title">
+            {t.timeline.title}
+          </h2>
+          <Badge tone="info">{t.timeline.live}</Badge>
+        </div>
+        <ol className="calls__timeline" data-stagger="left" data-delay="0.3">
+          {CALL_ACTIVITY.map((item) => (
+            <li key={`${item.time}-${item.title}`}>
+              <span className={`calls__dot calls__dot--${item.tone}`} aria-hidden="true">
+                <Icon name={item.icon} size={14} />
+              </span>
+              <div>
+                <p className="t-label c-strong">{item.title}</p>
+                <p className="t-caption c-muted">{item.text}</p>
+              </div>
+              <time className="t-caption c-muted">{item.time}</time>
+            </li>
+          ))}
+        </ol>
+      </section>
+    </div>
+  )
+}
+
+/** Closed calls, one card each. */
+function CallHistory() {
+  const root = useRef(null)
+  useReveal(root)
+
+  return (
+    <div ref={root} id="calls-panel-history" role="tabpanel" aria-labelledby="calls-tab-history" className="calls-history">
+      <section className="card calls-history__stats" aria-label={t.historyStatsLabel}>
+        <div className="calls-history__tiles" data-stagger="scale">
+          {t.historyStats.map(({ id, ...stat }) => (
+            <StatTile key={id} {...stat} />
+          ))}
+        </div>
+      </section>
+      <p className="t-body c-muted">{t.historyLead}</p>
+      <ul className="calls-history__grid" data-stagger="scale">
+        {HISTORY.map((item) => (
+          <li key={item.title} className="card calls-history__item" data-hover="lift">
+            <span className="calls-history__icon" aria-hidden="true">
+              <Icon name={item.icon} size={18} />
+            </span>
+            <div className="calls-history__text">
+              <p className="t-h3 c-strong">{item.title}</p>
+              <p className="t-body-sm c-muted">{item.text}</p>
+            </div>
+            <div className="row-between">
+              <span className="t-caption c-muted">{item.date}</span>
+              <Badge tone={item.tone}>{item.status}</Badge>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </div>
+  )
+}
 
 /** W06 · Convocatorias y respuestas (Figma 27:1395). RF-07, RF-08. */
 export default function Calls({ initialTab = 'active' }) {
   const [tab, setTab] = useState(initialTab)
   const [covered, setCovered] = useState(false)
   const [resent, setResent] = useState(false)
-  const root = useRef(null)
-  useReveal(root)
+  const head = useRef(null)
+  useReveal(head)
 
   const tabs = [
-    { id: 'active', label: t.tabs.active },
-    { id: 'history', label: t.tabs.history },
+    { id: 'active', label: t.tabs.active, count: 1 },
+    { id: 'history', label: t.tabs.history, count: HISTORY.length },
   ]
 
   return (
-    <div ref={root}>
-      <PanelHeader title={t.title} subtitle={t.subtitle} />
-      <div className="panel-content calls">
-        <div className="calls__tabs" role="tablist" aria-label={t.title}>
-          {tabs.map((item) => (
-            <button
-              key={item.id}
-              type="button"
-              role="tab"
-              id={`tab-${item.id}`}
-              aria-selected={tab === item.id}
-              aria-controls={`panel-${item.id}`}
-              className={`calls__tab ${tab === item.id ? 'is-active' : ''}`}
-              onClick={() => setTab(item.id)}
-            >
-              {item.label}
-            </button>
-          ))}
-        </div>
-
-        <PageTransition key={tab}>
-        {tab === 'active' ? (
-          <div id="panel-active" role="tabpanel" aria-labelledby="tab-active" className="calls__panel" data-stagger="up">
-
-            <section className="card card--raised calls__summary" aria-labelledby="call-title">
-              <div className="calls__head">
-                <span className="type-tile type-tile--solid" aria-hidden="true">
-                  LOG
-                </span>
-                <div className="calls__head-text">
-                  <h2 id="call-title" className="t-h2 c-strong">
-                    {t.activeTitle}
-                  </h2>
-                  <div className="badges">
-                    {covered ? (
-                      <Badge tone="success">{t.covered}</Badge>
-                    ) : (
-                      <Badge tone="warning">{es.common.emergency}</Badge>
-                    )}
-                    <Badge tone="neutral">{es.common.activatedAt}</Badge>
-                    <Badge tone="info">{es.common.radius}</Badge>
-                  </div>
-                  <p className="t-body-sm c-muted">{t.instructions}</p>
-                </div>
-                <div className="calls__actions">
-                  <Button variant="secondary" icon="refresh" disabled={covered} onClick={() => setResent(true)}>
-                    {t.resend}
-                  </Button>
-                  <Button icon="check" disabled={covered} onClick={() => setCovered(true)}>
-                    {t.markCovered}
-                  </Button>
-                </div>
-              </div>
-
-              <div className="calls__progress">
-                <div className="calls__bar">
-                  <div className="row-between t-label">
-                    <span className="c-strong">{covered ? t.progressDone : t.progress}</span>
-                    <span className="c-brand">{covered ? '100 %' : '75 %'}</span>
-                  </div>
-                  <ProgressBar value={covered ? 1 : 0.75} height={10} label={t.progress} />
-                </div>
-                <div className="badges">
-                  <Badge tone="success">{es.common.confirmed(covered ? 4 : 3)}</Badge>
-                  <Badge tone="neutral">{es.common.cannot(1)}</Badge>
-                  {!covered && <Badge tone="warning">{es.common.noAnswer(1)}</Badge>}
-                </div>
-              </div>
-              <p className="t-caption c-muted calls__status" role="status">
-                {resent && !covered ? t.resent : ''}
-              </p>
-            </section>
-
-            <section className="card" aria-labelledby="called-title">
-              <div className="row-between calls__table-head">
-                <div>
-                  <h2 id="called-title" className="t-h3 c-strong">
-                    {t.tableTitle}
-                  </h2>
-                  <p className="t-body-sm c-muted">{t.tableText}</p>
-                </div>
-                <Button variant="tertiary" icon="map" to="/panel/mapa">
-                  {t.seeOnMap}
-                </Button>
-              </div>
-              <ResponsesTable rows={RESPONSES} withDetail caption={t.tableTitle} />
-            </section>
-          </div>
-        ) : (
-          <div id="panel-history" role="tabpanel" aria-labelledby="tab-history" className="calls__panel">
-            <ul className="calls__history" data-stagger="up">
-              {HISTORY.map((item) => (
-                <li key={item.title} className="card">
-                  <div className="row-between">
-                    <div>
-                      <p className="t-h3 c-strong">{item.title}</p>
-                      <p className="t-body-sm c-muted">{item.text}</p>
-                    </div>
-                    <Badge tone={item.tone}>{item.status}</Badge>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
-        </PageTransition>
+    <>
+      <div ref={head}>
+        <PanelHeader title={t.title} subtitle={t.subtitle}>
+          <Segmented items={tabs} value={tab} onChange={setTab} label={t.tabsLabel} idBase="calls" />
+        </PanelHeader>
       </div>
-    </div>
+
+      <PageTransition key={tab}>
+        {tab === 'active' ? (
+          <ActiveCall covered={covered} onCover={() => setCovered(true)} resent={resent} onResend={() => setResent(true)} />
+        ) : (
+          <CallHistory />
+        )}
+      </PageTransition>
+    </>
   )
 }

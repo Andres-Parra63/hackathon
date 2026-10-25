@@ -21,6 +21,12 @@
   --text-muted: #8f94a0;    /* Secondary text, captions (6.9:1 on black, 6.2:1 on card) */
   --text-on-color: #ffffff; /* Text on brand fills */
   --text-on-light: #050608; /* Text on white or light fills */
+  --text-on-success: #050608; /* Text on a solid --status-success fill */
+
+  /* ---------- Color · Inverse (the solid "ink" pill: primary buttons, active nav and filters) ---------- */
+  --surface-inverse: #ebf1ff;
+  --surface-inverse-hover: #ffffff;
+  --text-on-inverse: #050608;
 
   /* ---------- Color · Surfaces & borders ---------- */
   --surface-page: #000000;
@@ -28,9 +34,28 @@
   --surface-raised: #141418;        /* Popovers, hovered rows */
   --surface-sunken: #18181d;        /* Tracks, inactive chips */
   --surface-glass: rgb(255 255 255 / 0.03);
+  --surface-glass-hover: rgb(255 255 255 / 0.1);
+  --surface-field: rgb(0 0 0 / 0.4);        /* Text fields */
+  --surface-canvas: #000000;                /* Panel: the canvas around the app frame */
+  --surface-frame: #0b0b0d;                 /* Panel: the rounded app frame */
   --border-default: rgb(255 255 255 / 0.1);  /* Hairlines between surfaces (decorative) */
   --border-strong: rgb(255 255 255 / 0.38);  /* Control outlines: 3.3:1 non-text contrast */
+  --border-strong-hover: rgb(255 255 255 / 0.55);
+  --border-control: rgb(255 255 255 / 0.2);  /* Glass button outline */
+  --border-control-hover: rgb(255 255 255 / 0.4);
   --overlay-scrim: rgb(0 0 0 / 0.6);
+
+  /* ---------- Color · Emergency fill (Modo Emergencia cards) ----------
+     White text ≥ 4.7:1 on every stop even under the 3 % highlight plus the 3 % glow of StatTile. */
+  --emergency-fill:
+    radial-gradient(120% 90% at 85% 0%, rgb(255 255 255 / 0.03), transparent 55%),
+    linear-gradient(135deg, #c2410c 0%, #b03a0a 55%, #9a3209 100%);
+  --text-on-emergency: #ffffff;
+
+  /* ---------- Color · Charts (2 categorical slots, validated with the dataviz palette checks) ---------- */
+  --chart-normal: #4f8ff7;    /* Normal mode (blue) */
+  --chart-emergency: #e8590c; /* Emergency Mode (orange) */
+  --chart-grid: rgb(255 255 255 / 0.08);
 
   /* ---------- Color · Status ---------- */
   --status-success: #3ecf8e;      /* Confirmed, available (9.9:1) */
@@ -47,6 +72,7 @@
   --map-road: #1c1d22;
   --map-park: #0f1d14;
   --map-water: #0b1626;
+  --map-filter: invert(1) hue-rotate(180deg) brightness(0.62) contrast(1.15) saturate(0.7);
 
   /* ---------- Typography ---------- */
   --font-sans: "DM Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
@@ -98,6 +124,7 @@
   --elevation-2: 0 1px 0 rgb(255 255 255 / 0.06) inset, 0 16px 40px rgb(0 0 0 / 0.55); /* Floating */
   --elevation-3: 0 1px 0 rgb(255 255 255 / 0.08) inset, 0 24px 60px rgb(0 0 0 / 0.7);  /* Notification */
   --glass-blur: blur(16px);
+  --hover-glow: 0 0 0 4px rgb(235 241 255 / 0.12), 0 0 32px rgb(92 157 255 / 0.35); /* Primary button hover */
 
   /* ---------- Sizes ---------- */
   --control-height: 52px;  /* Buttons and inputs (touch target ≥ 44 px) */
@@ -117,9 +144,9 @@
    * this brand needs to re-skin (colors, sizes); the timings stay as the library tuned them.
    */
   --tabs-text-muted: var(--text-muted);
-  --tabs-text-active: var(--text-on-light);
+  --tabs-text-active: var(--text-on-inverse);
   --tabs-bar-bg: var(--surface-sunken);
-  --tabs-pill-bg: var(--text-strong);
+  --tabs-pill-bg: var(--surface-inverse);
   --shimmer-base: var(--text-muted);
   --shimmer-highlight: var(--text-strong);
   --tt-bg: var(--surface-raised);
@@ -131,4 +158,79 @@
   --toggle-travel: 20px; /* 48 px track − 22 px thumb − 2 × 3 px inset */
   --check-len: 24;       /* Icon/check path length (22.6) rounded up */
   --tilt-glare-opacity: 0.12;
+}
+
+/*
+ * Panel themes. The organization panel sets data-theme on <html> while it is mounted (the public
+ * site keeps the default dark theme above). "dark" only lifts the surfaces so cards read as layers
+ * inside the app frame; "light" is a full palette, AA-checked on white (#fff) and the frame (#f4f4f6).
+ */
+:root[data-theme='dark'] {
+  --surface-page: #0b0b0d;
+  --surface-frame: #0b0b0d;
+  --surface-card: #131316;   /* text-muted on it: 6.0:1 */
+  --surface-raised: #1b1b20;
+  --surface-sunken: #1e1e23;
+}
+
+:root[data-theme='light'] {
+  color-scheme: light;
+
+  --brand-primary: #0a63e6;        /* White text on it: 5.4:1 */
+  --brand-primary-hover: #0852c2;
+  --brand-primary-strong: #0a56c8; /* Blue as text on white: 6.6:1 */
+  --brand-primary-soft: #e7efff;   /* Strong blue text on it: 5.7:1 */
+  --brand-primary-subtle: #f3f7ff;
+
+  --text-strong: #0f1115;   /* 18.9:1 on white */
+  --text-default: #3a3d46;  /* 10.9:1 */
+  --text-muted: #646873;    /* 5.6:1 on white, 5.1:1 on the frame */
+  --text-on-success: #ffffff;
+
+  --surface-inverse: #121419;
+  --surface-inverse-hover: #000000;
+  --text-on-inverse: #ffffff;
+
+  --surface-page: #f4f4f6;
+  --surface-canvas: #e4e4e9;
+  --surface-frame: #f4f4f6;
+  --surface-card: #ffffff;
+  --surface-raised: #ffffff;
+  --surface-sunken: #ececf0;
+  --surface-glass: rgb(255 255 255 / 0.72);
+  --surface-glass-hover: #ffffff;
+  --surface-field: #ffffff;
+  --border-default: rgb(15 17 21 / 0.07);
+  --border-strong: rgb(15 17 21 / 0.5);      /* ≈ #898a8c on white: 3.5:1 */
+  --border-strong-hover: rgb(15 17 21 / 0.7);
+  --border-control: rgb(15 17 21 / 0.1);
+  --border-control-hover: rgb(15 17 21 / 0.22);
+  --overlay-scrim: rgb(15 17 21 / 0.32);
+
+  --status-success: #0d7a4a;      /* 5.4:1 on white */
+  --status-success-soft: #e3f5eb;
+  --status-warning: #b44a07;      /* 5.4:1 on white */
+  --status-warning-soft: #fff0e3;
+  --status-danger: #c42b2b;       /* 5.6:1 on white */
+  --status-info: #0a56c8;
+  --status-info-soft: #e7efff;
+
+  --chart-normal: #0a63e6;
+  --chart-emergency: #e8590c;
+  --chart-grid: rgb(15 17 21 / 0.07);
+
+  --map-land: #eef0f3;
+  --map-block: #e9ecf0;
+  --map-road: #ffffff;
+  --map-park: #e2f1e6;
+  --map-water: #dbe9fb;
+  --map-filter: saturate(0.8);
+
+  --elevation-1: 0 1px 2px rgb(15 17 21 / 0.04), 0 6px 20px rgb(15 17 21 / 0.04);
+  --elevation-2: 0 2px 6px rgb(15 17 21 / 0.05), 0 18px 40px rgb(15 17 21 / 0.1);
+  --elevation-3: 0 4px 12px rgb(15 17 21 / 0.06), 0 28px 64px rgb(15 17 21 / 0.18);
+  --hover-glow: 0 0 0 4px rgb(10 99 230 / 0.12), 0 10px 24px rgb(15 17 21 / 0.18);
+
+  --focus-ring: 0 0 0 2px var(--surface-card), 0 0 0 4px var(--brand-primary);
+  --tilt-glare-opacity: 0.25;
 }

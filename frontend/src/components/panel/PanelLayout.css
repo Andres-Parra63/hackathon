@@ -1,35 +1,108 @@
-.panel {
-  display: grid;
-  grid-template-columns: var(--sidebar-width) minmax(0, 1fr);
+/* ---------- Shell: soft canvas, rounded app frame, top bar + rail + main ---------- */
+.shell {
   min-height: 100vh;
-  background: var(--surface-page);
+  padding: var(--space-12);
+  background: var(--surface-canvas);
 }
 
-.panel__main {
+.shell__frame {
+  display: grid;
+  grid-template-columns: 56px minmax(0, 1fr);
+  grid-template-rows: auto 1fr;
+  column-gap: var(--space-24);
+  min-height: calc(100vh - 2 * var(--space-12));
+  padding: 0 var(--space-28) var(--space-40) var(--space-16);
+  border: 1px solid var(--border-default);
+  border-radius: 32px;
+  background: var(--surface-frame);
+}
+
+.shell__main {
+  grid-column: 2;
+  grid-row: 2;
   min-width: 0;
+  outline: none;
 }
 
-/* Content area below the panel header: 4/32 vertical, 32 horizontal padding */
+.shell__skip {
+  position: fixed;
+  top: var(--space-12);
+  left: var(--space-12);
+  z-index: 60;
+  padding: var(--space-10) var(--space-16);
+  border-radius: var(--radius-pill);
+  background: var(--surface-inverse);
+  color: var(--text-on-inverse);
+  font-weight: 510;
+  translate: 0 -200%;
+}
+
+.shell__skip:focus-visible {
+  translate: 0 0;
+}
+
+/* Theme switch: the new theme spreads in a circle (usePanelTheme animates the clip-path) */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+/* ---------- Content ---------- */
 .panel-content {
   display: flex;
   flex-direction: column;
-  gap: var(--space-24);
-  padding: var(--space-4) var(--space-32) var(--space-32);
+  gap: var(--space-20);
 }
 
-/* Generic white card used across the panel (24 px radius) */
+/* Panel card: white (light) or lifted (dark), 24 px radius, quiet shadow */
 .card {
   display: flex;
   flex-direction: column;
   gap: var(--space-16);
+  min-width: 0;
   padding: var(--space-24);
   border: 1px solid var(--border-default);
-  border-radius: var(--radius-3xl);
+  border-radius: var(--radius-4xl);
   background: var(--surface-card);
+  box-shadow: var(--elevation-1);
 }
 
 .card--raised {
   box-shadow: var(--elevation-1);
+}
+
+/* Inset area inside a card (sunken well) */
+.well {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-12);
+  padding: var(--space-14);
+  border-radius: var(--radius-3xl);
+  background: var(--surface-page);
+}
+
+/* Card heading: title + optional subtitle, with an action at the end */
+.card-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-12);
+}
+
+.card-head > div {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.card-title {
+  color: var(--text-strong);
+  font-size: 17px;
+  line-height: 1.3;
+  font-weight: 560;
+  letter-spacing: -0.015em;
 }
 
 .row-between {
@@ -43,6 +116,137 @@
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-8);
+}
+
+/* Small pill with a status word and an arrow: "↑ +2" (color = direction × whether up is good) */
+.delta {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-8) var(--space-2) var(--space-4);
+  border-radius: var(--radius-pill);
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 560;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.delta--good { background: var(--status-success-soft); color: var(--status-success); }
+.delta--bad  { background: var(--status-warning-soft); color: var(--status-warning); }
+
+/* Pill tag at a card corner ("Radio 5 km", "8 habilidades") */
+.tag {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: var(--space-6);
+  padding: var(--space-4) var(--space-10);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-pill);
+  background: var(--surface-card);
+  color: var(--text-default);
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 510;
+  white-space: nowrap;
+}
+
+/* Segmented control with a sliding ink pill (Calls tabs, filters, guide tabs) */
+.seg {
+  position: relative;
+  display: inline-flex;
+  flex-shrink: 0;
+  gap: var(--space-2);
+  padding: var(--space-4);
+  border-radius: var(--radius-pill);
+  background: var(--surface-page);
+  box-shadow: inset 0 0 0 1px var(--border-default);
+}
+
+.seg__pill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  border-radius: var(--radius-pill);
+  background: var(--surface-card);
+  box-shadow: var(--elevation-1), 0 0 0 1px var(--border-default);
+  transition:
+    transform var(--duration-very-slow) var(--ease-smooth-out),
+    width var(--duration-very-slow) var(--ease-smooth-out);
+}
+
+.seg--ink .seg__pill {
+  background: var(--surface-inverse);
+  box-shadow: none;
+}
+
+.seg__item {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-6);
+  height: 36px;
+  padding: 0 var(--space-14);
+  border-radius: var(--radius-pill);
+  color: var(--text-muted);
+  font-size: 13px;
+  line-height: 18px;
+  font-weight: 510;
+  white-space: nowrap;
+  transition: color var(--duration-fast) var(--ease-smooth-out);
+}
+
+.seg__item:hover { color: var(--text-strong); }
+.seg__item[aria-selected='true'],
+.seg__item[aria-pressed='true'] { color: var(--text-strong); }
+.seg--ink .seg__item[aria-selected='true'],
+.seg--ink .seg__item[aria-pressed='true'] { color: var(--text-on-inverse); }
+
+.seg__count {
+  padding: 0 var(--space-6);
+  border-radius: var(--radius-pill);
+  background: var(--surface-sunken);
+  color: var(--text-default);
+  font-size: 11px;
+  line-height: 16px;
+  font-variant-numeric: tabular-nums;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .seg__pill { transition: none; }
+}
+
+/* Coverage meter: solid fill, striped remainder (the reference's "spending limit" bar) */
+.meter {
+  position: relative;
+  height: 12px;
+  overflow: hidden;
+  border-radius: var(--radius-pill);
+  background: repeating-linear-gradient(
+    -45deg,
+    var(--meter-stripe, var(--surface-sunken)) 0 2px,
+    transparent 2px 6px
+  );
+}
+
+.meter__fill {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--meter-fill, var(--brand-primary));
+  transform-origin: left center;
+  transform: scaleX(0);
+  transition: transform 1.6s var(--ease-smooth-out) 0.2s;
+}
+
+.is-in .meter__fill,
+.meter.is-in .meter__fill {
+  transform: scaleX(var(--meter-value));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .meter__fill { transition: none; }
 }
 
 /* Tipo: "LOG" tile */
@@ -62,22 +266,21 @@
   letter-spacing: -0.015em;
 }
 
-.type-tile--solid {
-  width: 72px;
-  height: 72px;
-  border-radius: var(--radius-2xl);
-  background: var(--brand-primary);
-  color: var(--text-on-color);
-}
-
-@media (max-width: 960px) {
-  .panel {
+/* ---------- Tablet and phone: full-bleed frame, room for the bottom dock ---------- */
+@media (max-width: 1023px) {
+  .shell { padding: 0; }
+  .shell__frame {
     grid-template-columns: minmax(0, 1fr);
-    grid-template-rows: auto 1fr; /* top bar keeps its height; main takes the rest */
+    min-height: 100vh;
+    padding: 0 var(--space-20) 112px;
+    border: 0;
+    border-radius: 0;
   }
+  .shell__main { grid-column: 1; }
 }
 
 @media (max-width: 600px) {
-  .panel-content { padding: var(--space-4) var(--space-16) var(--space-24); }
-  .card { padding: var(--space-16); }
+  .shell__frame { padding: 0 var(--space-16) 112px; }
+  .card { padding: var(--space-16); border-radius: var(--radius-3xl); }
+  .card-head { flex-wrap: wrap; }
 }
