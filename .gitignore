@@ -1,0 +1,14 @@
+# Secretos: nunca subir contraseñas
+.env
+*.env
+!.env.example
+
+# Entorno virtual y archivos generados de Python
+env/
+venv/
+__pycache__/
+*.pyc
+
+# Frontend
+node_modules/
+dist/
