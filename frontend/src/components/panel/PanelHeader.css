@@ -2,7 +2,8 @@
   display: flex;
   align-items: center;
   gap: var(--space-16);
-  padding: var(--space-28) var(--space-32) var(--space-20);
+  max-width: 1440px;
+  padding: clamp(var(--space-24), 4vw, var(--space-40)) clamp(var(--space-20), 3vw, var(--space-48)) var(--space-20);
 }
 
 .panel-header__titles {
@@ -11,6 +12,14 @@
   flex-direction: column;
   gap: var(--space-2);
   min-width: 0;
+}
+
+.panel-header__titles h1 {
+  letter-spacing: -0.045em;
+}
+
+.panel-header__titles p {
+  max-width: 62ch;
 }
 
 /* Búsqueda: 280 × 44, 12 px radius */

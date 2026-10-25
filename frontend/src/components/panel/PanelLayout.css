@@ -2,7 +2,9 @@
   display: grid;
   grid-template-columns: var(--sidebar-width) minmax(0, 1fr);
   min-height: 100vh;
-  background: var(--surface-page);
+  background:
+    radial-gradient(circle at 80% -10%, rgb(10 99 230 / 0.12), transparent 34rem),
+    var(--surface-page);
 }
 
 .panel__main {
@@ -13,19 +15,31 @@
 .panel-content {
   display: flex;
   flex-direction: column;
-  gap: var(--space-24);
-  padding: var(--space-4) var(--space-32) var(--space-32);
+  gap: var(--space-28);
+  max-width: 1440px;
+  padding: var(--space-4) clamp(var(--space-20), 3vw, var(--space-48)) var(--space-48);
 }
 
 /* Generic white card used across the panel (24 px radius) */
 .card {
   display: flex;
   flex-direction: column;
-  gap: var(--space-16);
-  padding: var(--space-24);
+  gap: var(--space-20);
+  padding: clamp(var(--space-20), 2vw, var(--space-28));
   border: 1px solid var(--border-default);
   border-radius: var(--radius-3xl);
   background: var(--surface-card);
+  box-shadow: 0 1px 0 rgb(255 255 255 / 0.025) inset;
+  transition:
+    border-color var(--duration-fast) var(--ease-smooth-out),
+    background-color var(--duration-fast) var(--ease-smooth-out),
+    box-shadow var(--duration-fast) var(--ease-smooth-out);
+}
+
+.card:hover {
+  border-color: rgb(92 157 255 / 0.24);
+  background: var(--surface-raised);
+  box-shadow: var(--elevation-1);
 }
 
 .card--raised {
