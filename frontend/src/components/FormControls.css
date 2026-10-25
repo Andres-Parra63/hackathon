@@ -7,9 +7,10 @@
 }
 
 .field__label {
-  font-size: 14px;
+  margin-left: var(--space-12);
+  font-size: 13px;
   line-height: 18px;
-  font-weight: 600;
+  font-weight: 510;
   color: var(--text-default);
 }
 
@@ -18,11 +19,15 @@
   align-items: center;
   gap: var(--space-10);
   height: var(--control-height);
-  padding: 0 var(--space-16);
+  padding: 0 22px;
   border-radius: var(--radius-control);
-  border: 1.5px solid var(--border-strong);
-  background: var(--surface-card);
+  border: 1px solid var(--border-strong);
+  background: rgb(0 0 0 / 0.4);
   transition: border-color var(--duration-quick) var(--ease-smooth-out);
+}
+
+.field__control:hover {
+  border-color: rgb(255 255 255 / 0.55);
 }
 
 .field__icon {
@@ -30,12 +35,71 @@
 }
 
 .field__control:focus-within {
-  border: 2px solid var(--brand-primary);
-  padding: 0 15.5px; /* keeps the content in place when the border grows */
+  border: 2px solid var(--brand-primary-strong);
+  padding: 0 21px; /* keeps the content in place when the border grows */
+}
+
+/* Select: the native arrow is replaced by a rotated chevron */
+.field__select {
+  appearance: none;
+  height: 100%;
+  cursor: pointer;
+}
+
+.field__select option {
+  background: var(--surface-raised);
+  color: var(--text-strong);
+}
+
+.field__select:invalid,
+.field__select:has(option[value='']:checked) {
+  color: var(--text-muted);
+}
+
+.field__chevron {
+  flex-shrink: 0;
+  color: var(--text-muted);
+  rotate: 90deg;
+  pointer-events: none;
+}
+
+.field__hint {
+  margin-left: var(--space-12);
+  color: var(--text-muted);
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.field__error {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-6);
+  margin-left: var(--space-12);
+  color: var(--status-danger);
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.field__error .icon {
+  margin-top: 1px;
+}
+
+.field.is-invalid .field__control {
+  border-color: var(--status-danger);
+}
+
+.checkbox-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+}
+
+.checkbox-field.is-invalid .checkbox__box {
+  border-color: var(--status-danger);
 }
 
 .field__control:focus-within .field__icon {
-  color: var(--brand-primary);
+  color: var(--brand-primary-strong);
 }
 
 .field__input {
@@ -63,9 +127,9 @@
 .field__textarea {
   height: 96px;
   padding: var(--space-14) var(--space-16);
-  border-radius: var(--radius-control);
-  border: 1.5px solid var(--border-strong);
-  background: var(--surface-card);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--border-strong);
+  background: rgb(0 0 0 / 0.4);
   font-size: 15px;
   line-height: 22px;
   color: var(--text-strong);
@@ -74,8 +138,8 @@
 }
 
 .field__textarea:focus {
-  border: 2px solid var(--brand-primary);
-  padding: 13.5px 15.5px;
+  border: 2px solid var(--brand-primary-strong);
+  padding: 13px 15px;
 }
 
 /* ---------- Checkbox ---------- */
@@ -158,7 +222,7 @@
   height: 22px;
   border-radius: 50%;
   background: var(--surface-card);
-  box-shadow: 0 1px 2px rgb(22 24 39 / 0.2);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.4);
   transition:
     transform var(--duration-fast) var(--ease-bounce),
     width var(--duration-fast) var(--ease-smooth-out);
