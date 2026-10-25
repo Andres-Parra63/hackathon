@@ -8,89 +8,95 @@ import SkillChip from '../components/SkillChip'
 import es from '../i18n/es'
 import './StyleGuide.css'
 
-// Developer-facing reference: token names and specs stay as in Figma (not translated UI copy).
+// Developer-facing reference: token names and specs mirror styles/tokens.css (not translated UI copy).
 const COLORS = [
   {
-    group: 'Marca',
+    group: 'Marca (azul · modo normal)',
     tokens: [
-      ['brand-primary', '#1F5FBF', 'Acción principal, enlaces'],
-      ['brand-primary-strong', '#164A96', 'Presionado, texto sobre suave'],
-      ['brand-primary-soft', '#E3ECFA', 'Fondos de acento'],
-      ['brand-primary-subtle', '#F3F7FD', 'Fondos muy suaves'],
+      ['brand-primary', '#0A63E6', 'Rellenos con texto blanco (5,4:1)'],
+      ['brand-primary-hover', '#0852C2', 'Relleno en hover / presionado'],
+      ['brand-primary-strong', '#5C9DFF', 'Azul como texto, iconos y enlaces (7,7:1)'],
+      ['brand-primary-soft', '#0D2147', 'Fondos de acento'],
+      ['brand-primary-subtle', '#070F1F', 'Fondos muy suaves'],
     ],
   },
   {
     group: 'Texto',
     tokens: [
-      ['text-strong', '#161827', 'Títulos, valores'],
-      ['text-default', '#3B3F54', 'Cuerpo'],
-      ['text-muted', '#6C7086', 'Secundario'],
-      ['text-on-color', '#FFFFFF', 'Sobre color'],
+      ['text-strong', '#EBF1FF', 'Títulos, valores (18:1)'],
+      ['text-default', '#C4C8D2', 'Cuerpo (12:1)'],
+      ['text-muted', '#8F94A0', 'Secundario (6,9:1)'],
+      ['text-on-color', '#FFFFFF', 'Sobre azul'],
+      ['text-on-light', '#050608', 'Sobre rellenos claros'],
     ],
   },
   {
     group: 'Superficies y bordes',
     tokens: [
-      ['surface-page', '#F5F6F8', 'Fondo de página'],
-      ['surface-card', '#FFFFFF', 'Tarjetas'],
-      ['surface-sunken', '#ECEEF2', 'Hundido, pistas'],
-      ['border-default', '#E2E4E9', 'Bordes de tarjeta'],
-      ['border-strong', '#C6CAD2', 'Bordes de control'],
-      ['overlay-scrim', '#161827 · 45 %', 'Velo de paneles'],
+      ['surface-page', '#000000', 'Lienzo'],
+      ['surface-card', '#0B0B0D', 'Tarjetas, paneles'],
+      ['surface-raised', '#141418', 'Menús, filas en hover'],
+      ['surface-sunken', '#18181D', 'Pistas, chips inactivos'],
+      ['surface-glass', 'Blanco · 3 %', 'Cristal sobre negro'],
+      ['border-default', 'Blanco · 10 %', 'Líneas finas (decorativas)'],
+      ['border-strong', 'Blanco · 38 %', 'Bordes de control (3,3:1)'],
+      ['overlay-scrim', 'Negro · 60 %', 'Velo de paneles'],
     ],
   },
   {
     group: 'Estados',
     tokens: [
-      ['status-success', '#12805A', 'Confirmado, disponible'],
-      ['status-success-soft', '#E2F4EC', ''],
-      ['status-warning', '#A55F00', 'Emergencia, pendiente'],
-      ['status-warning-soft', '#FFF1D9', ''],
-      ['status-info', '#2456C9', 'Información, en vivo'],
-      ['status-info-soft', '#E7EEFC', ''],
+      ['status-success', '#3ECF8E', 'Confirmado, disponible'],
+      ['status-success-soft', '#0B2A1D', ''],
+      ['status-warning', '#FFA733', 'Modo Emergencia, pendiente'],
+      ['status-warning-soft', '#2E1D05', ''],
+      ['status-danger', '#FF7A7A', 'Errores de formulario'],
+      ['status-info', '#5C9DFF', 'Información, en vivo'],
+      ['status-info-soft', '#0D2147', ''],
     ],
   },
   {
     group: 'Mapa',
     tokens: [
-      ['map-land', '#EEF0EA', ''],
-      ['map-block', '#E3E6DE', ''],
-      ['map-road', '#FFFFFF', ''],
-      ['map-park', '#D6EBD0', ''],
-      ['map-water', '#C7DFF1', ''],
+      ['map-land', '#101114', ''],
+      ['map-block', '#0D0E11', ''],
+      ['map-road', '#1C1D22', ''],
+      ['map-park', '#0F1D14', ''],
+      ['map-water', '#0B1626', ''],
     ],
   },
 ]
 
 const TYPE = [
-  ['t-display', 'Web/Display', '64 / 72 · ExtraBold · −3 %'],
-  ['t-h1-web', 'Web/H1', '44 / 52 · Bold · −2 %'],
-  ['t-h2-web', 'Web/H2', '32 / 40 · Bold · −1,5 %'],
-  ['t-h2', 'Heading/H2', '20 / 26 · Bold · −1 %'],
-  ['t-h3', 'Heading/H3', '17 / 22 · Bold · −0,5 %'],
-  ['t-body-xl', 'Web/Body XL', '20 / 30 · Regular'],
-  ['t-body-lg', 'Body/Large', '16 / 24 · Regular'],
-  ['t-body', 'Body/Default', '15 / 22 · Regular'],
-  ['t-body-strong', 'Body/Strong', '15 / 22 · SemiBold'],
-  ['t-body-sm', 'Body/Small', '13 / 18 · Regular'],
-  ['t-label', 'Label/Default', '14 / 18 · SemiBold'],
-  ['t-label-sm', 'Label/Small', '12 / 16 · SemiBold'],
-  ['t-caption', 'Caption', '12 / 16 · Medium'],
-  ['t-overline', 'Overline', '11 / 14 · Bold · +8 % · MAYÚSCULAS'],
-  ['t-button', 'Button', '16 / 20 · Bold'],
-  ['t-numeral-lg', 'Numeral/Large', '44 / 48 · ExtraBold · −2 %'],
-  ['t-numeral-md', 'Numeral/Medium', '28 / 32 · ExtraBold · −2 %'],
+  ['t-display', 'Display', '64 · 1,05 · 520 · −3,5 %'],
+  ['t-h1-web', 'H1', '44 · 1,1 · 510 · −3 %'],
+  ['t-h2-web', 'H2', '30 · 1,2 · 510 · −2 %'],
+  ['t-h2', 'Heading/H2', '20 · 1,3 · 510 · −1,5 %'],
+  ['t-h3', 'Heading/H3', '17 · 1,3 · 510 · −1 %'],
+  ['t-body-xl', 'Body XL', '19 · 1,55 · 400'],
+  ['t-body-lg', 'Body/Large', '16 · 1,5 · 400'],
+  ['t-body', 'Body/Default', '15 · 1,5 · 400'],
+  ['t-body-strong', 'Body/Strong', '15 · 1,5 · 510'],
+  ['t-body-sm', 'Body/Small', '13 · 1,4 · 400'],
+  ['t-label', 'Label/Default', '14 · 1,3 · 510'],
+  ['t-label-sm', 'Label/Small', '12 · 1,3 · 510'],
+  ['t-caption', 'Caption', '12 · 1,35 · 400'],
+  ['t-overline', 'Overline (DM Mono)', '12 / 16 · 400 · +6 % · MAYÚSCULAS'],
+  ['t-button', 'Button', '15 / 20 · 510'],
+  ['t-numeral-lg', 'Numeral/Large', '56 · 1 · 510 · −2 % · tabulares'],
+  ['t-numeral-md', 'Numeral/Medium', '30 · 1,1 · 510 · −2 % · tabulares'],
+  ['t-mono', 'Mono (DM Mono)', 'Leads y etiquetas de datos'],
 ]
 
 const RADII = [
-  ['radius-xs', 7], ['radius-sm', 10], ['radius-md', 12], ['radius-control', 14], ['radius-lg', 16],
-  ['radius-xl', 18], ['radius-2xl', 20], ['radius-3xl', 24], ['radius-4xl', 28], ['radius-5xl', 32],
+  ['radius-xs', 6], ['radius-sm', 8], ['radius-md', 10], ['radius-lg', 12], ['radius-xl', 16],
+  ['radius-2xl', 18], ['radius-3xl', 22], ['radius-4xl', 24], ['radius-5xl', 28], ['radius-control', 999],
 ]
 
 const ELEVATIONS = [
-  ['elevation-1', 'Tarjeta', '0 1 2 · 5 %  +  0 4 12 · 5 %'],
-  ['elevation-2', 'Flotante', '0 2 6 · 5 %  +  0 8 24 · 10 %'],
-  ['elevation-3', 'Notificación', '0 4 10 · 8 %  +  0 18 40 · 22 %'],
+  ['elevation-1', 'Tarjeta', 'Brillo interior 4 %  +  0 8 24 · negro 40 %'],
+  ['elevation-2', 'Flotante', 'Brillo interior 6 %  +  0 16 40 · negro 55 %'],
+  ['elevation-3', 'Notificación', 'Brillo interior 8 %  +  0 24 60 · negro 70 %'],
 ]
 
 function Section({ title, children }) {
@@ -195,12 +201,14 @@ export default function StyleGuide() {
             </div>
           </div>
           <div className="sg__demo">
-            <h3 className="t-label c-default">Botón · Primario, Secundario, Terciario (52 px, radio 14)</h3>
+            <h3 className="t-label c-default">Botón · Primario, Secundario, Contorno, Emergencia, Terciario (52 px, píldora)</h3>
             <div className="sg__inline">
               <Button icon="heart">Primario</Button>
               <Button variant="secondary" icon="building">
                 Secundario
               </Button>
+              <Button variant="outline">Contorno</Button>
+              <Button variant="emergency">Emergencia</Button>
               <Button variant="tertiary" icon="map">
                 Terciario
               </Button>

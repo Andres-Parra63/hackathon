@@ -52,6 +52,11 @@
   border-radius: var(--radius-md);
 }
 
+/* The bell artwork is a light tile: invert lightness, keep the blue badge hue */
+.panel-header__bell img {
+  filter: invert(1) hue-rotate(180deg) brightness(0.9);
+}
+
 .panel-header__search {
   transition: border-color var(--duration-fast) var(--ease-smooth-out), box-shadow var(--duration-fast) var(--ease-smooth-out);
 }

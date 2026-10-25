@@ -1,7 +1,8 @@
 # Manos en Red — frontend
 
-Interfaz web (React + Vite) implementada desde el diseño de Figma. Especificación completa de colores,
-tipografía, tamaños y componentes: [`docs/diseno-interfaz.md`](../docs/diseno-interfaz.md).
+Interfaz web (React + Vite) con tema oscuro y minimalista (v2, referencia estética: astroteq.ai), construida
+sobre el diseño original de Figma. Especificación de colores, tipografía, tamaños y componentes:
+[`docs/diseno-interfaz.md`](../docs/diseno-interfaz.md) (la sección 0 resume la v2).
 
 ```bash
 npm install

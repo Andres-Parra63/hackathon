@@ -4,20 +4,84 @@ import Icon from './Icon'
 import './FormControls.css'
 
 /**
- * Campo de formulario (Figma 4:85). Label 14/18 SemiBold + 52 px control with a 20 px icon.
- * Normal: 1.5 px border/strong. Focus: 2 px brand/primary and the icon turns brand.
+ * Campo de formulario: visible label, optional hint, and an error shown right under the control
+ * (icon + text, never color alone). `hint` and `error` are wired through aria-describedby.
  */
-export function TextField({ label, icon, className = '', ...inputProps }) {
+function FieldMessages({ id, hint, error }) {
+  return (
+    <>
+      {hint && (
+        <p id={`${id}-hint`} className="field__hint">
+          {hint}
+        </p>
+      )}
+      {error && (
+        <p id={`${id}-error`} className="field__error">
+          <Icon name="alert-triangle" size={16} />
+          {error}
+        </p>
+      )}
+    </>
+  )
+}
+
+const describedBy = (id, hint, error) =>
+  [hint && `${id}-hint`, error && `${id}-error`].filter(Boolean).join(' ') || undefined
+
+export function TextField({ label, icon, hint, error, className = '', inputRef, ...inputProps }) {
   const id = useId()
   return (
-    <div className={`field ${className}`}>
+    <div className={`field ${error ? 'is-invalid' : ''} ${className}`}>
       <label className="field__label" htmlFor={id}>
         {label}
       </label>
       <div className="field__control">
         {icon && <Icon name={icon} size={20} className="field__icon" />}
-        <input id={id} className="field__input" {...inputProps} />
+        <input
+          ref={inputRef}
+          id={id}
+          className="field__input"
+          aria-invalid={error ? true : undefined}
+          aria-describedby={describedBy(id, hint, error)}
+          {...inputProps}
+        />
       </div>
+      <FieldMessages id={id} hint={hint} error={error} />
+    </div>
+  )
+}
+
+/** Native select styled like the text field (keeps the platform picker on phones). */
+export function SelectField({ label, placeholder, options, hint, error, className = '', inputRef, ...selectProps }) {
+  const id = useId()
+  return (
+    <div className={`field ${error ? 'is-invalid' : ''} ${className}`}>
+      <label className="field__label" htmlFor={id}>
+        {label}
+      </label>
+      <div className="field__control field__control--select">
+        <select
+          ref={inputRef}
+          id={id}
+          className="field__input field__select"
+          aria-invalid={error ? true : undefined}
+          aria-describedby={describedBy(id, hint, error)}
+          {...selectProps}
+        >
+          {placeholder && (
+            <option value="" disabled>
+              {placeholder}
+            </option>
+          )}
+          {options.map((option) => (
+            <option key={option} value={option}>
+              {option}
+            </option>
+          ))}
+        </select>
+        <Icon name="chevron-right" size={18} className="field__chevron" />
+      </div>
+      <FieldMessages id={id} hint={hint} error={error} />
     </div>
   )
 }
@@ -34,16 +98,29 @@ export function TextArea({ label, className = '', ...props }) {
   )
 }
 
-/** Casilla (Figma "Formulario/Casilla"): 24 px, 7 px radius. */
-export function Checkbox({ checked, onChange, children, className = '' }) {
+/** Casilla: 24 px box; `error` is announced through aria-describedby like the text fields. */
+export function Checkbox({ checked, onChange, children, error, inputRef, className = '', ...inputProps }) {
+  const id = useId()
   return (
-    <label className={`checkbox ${className}`}>
-      <input type="checkbox" className="sr-only" checked={checked} onChange={(e) => onChange(e.target.checked)} />
-      <span className="checkbox__box" aria-hidden="true">
-        <Icon name="check" size={16} />
-      </span>
-      <span className="checkbox__text">{children}</span>
-    </label>
+    <div className={`checkbox-field ${error ? 'is-invalid' : ''} ${className}`}>
+      <label className="checkbox">
+        <input
+          ref={inputRef}
+          type="checkbox"
+          className="sr-only"
+          checked={checked}
+          onChange={(e) => onChange(e.target.checked)}
+          aria-invalid={error ? true : undefined}
+          aria-describedby={error ? `${id}-error` : undefined}
+          {...inputProps}
+        />
+        <span className="checkbox__box" aria-hidden="true">
+          <Icon name="check" size={16} />
+        </span>
+        <span className="checkbox__text">{children}</span>
+      </label>
+      <FieldMessages id={id} error={error} />
+    </div>
   )
 }
 
@@ -81,7 +158,8 @@ export function ProgressBar({ value, height = 8, tone = 'brand', label }) {
   const fill = useRef(null)
   const mounted = useRef(false)
   // The fill is full width and slides in from the left inside the clipped track (GPU transform,
-  // no layout work, and the rounded end keeps its shape).
+  // no layout work, and the rounded end keeps its shape). `x: 0` pins the pixel offset: on a
+  // remount GSAP could otherwise carry a stale px translate next to xPercent and hide the fill.
   const offset = (value - 1) * 100
 
   useGSAP(
@@ -89,12 +167,13 @@ export function ProgressBar({ value, height = 8, tone = 'brand', label }) {
       const first = !mounted.current
       mounted.current = true
       if (prefersReducedMotion()) {
-        gsap.set(fill.current, { xPercent: offset })
+        gsap.set(fill.current, { x: 0, xPercent: offset })
       } else if (first) {
         gsap.fromTo(
           fill.current,
-          { xPercent: -100 },
+          { x: 0, xPercent: -100 },
           {
+            x: 0,
             xPercent: offset,
             duration: 1.8,
             delay: 0.25,
@@ -103,7 +182,7 @@ export function ProgressBar({ value, height = 8, tone = 'brand', label }) {
           },
         )
       } else {
-        gsap.to(fill.current, { xPercent: offset, duration: 1.2, ease: 'expo.out' })
+        gsap.to(fill.current, { x: 0, xPercent: offset, duration: 1.2, ease: 'expo.out' })
       }
       // Only runs on unmount (revertOnUpdate: false); a remount fills from zero again.
       return () => {

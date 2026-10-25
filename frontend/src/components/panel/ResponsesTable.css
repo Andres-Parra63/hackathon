@@ -1,7 +1,7 @@
 .rtable {
   overflow-x: auto;
   border: 1px solid var(--border-default);
-  border-radius: var(--radius-control);
+  border-radius: var(--radius-xl);
 }
 
 .rtable table {
@@ -33,7 +33,7 @@
   color: var(--text-muted);
   font-size: 11px;
   line-height: 14px;
-  font-weight: 700;
+  font-weight: 560;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
@@ -51,7 +51,7 @@
 .rtable tbody th {
   font-size: 14px;
   line-height: 18px;
-  font-weight: 600;
+  font-weight: 510;
   color: var(--text-strong);
   white-space: nowrap;
 }

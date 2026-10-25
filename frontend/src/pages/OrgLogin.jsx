@@ -60,13 +60,13 @@ export default function OrgLogin() {
           <Logo boxed />
         </Link>
         <div className="login__message">
-          <p className="t-overline c-on" data-reveal="fade">
+          <p className="eyebrow" data-reveal="fade">
             {t.eyebrow}
           </p>
-          <h1 className="t-h1-web c-on" data-split>
+          <h1 className="t-h1-web c-strong" data-split>
             {t.title}
           </h1>
-          <p className="t-body-xl c-on" data-reveal="up" data-delay="0.3">
+          <p className="t-body-xl t-mono c-muted" data-reveal="up" data-delay="0.3">
             {t.lead}
           </p>
           <dl className="login__stats" data-stagger="scale" data-delay="0.5">

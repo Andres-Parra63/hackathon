@@ -1,9 +1,21 @@
+import { Link } from 'react-router-dom'
 import es from '../i18n/es'
 import Icon from './Icon'
 import Logo from './Logo'
 import './SiteFooter.css'
 
-/** Pie de página (Figma 24:535). */
+function FooterLink({ link }) {
+  if (link.to) return <Link to={link.to}>{link.label}</Link>
+  const external = link.href.startsWith('http')
+  return (
+    <a href={link.href} {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}>
+      {link.label}
+      {external && <span className="sr-only"> {es.footer.newTab}</span>}
+    </a>
+  )
+}
+
+/** Glass footer: brand, three link columns, credits and SDG line. */
 export default function SiteFooter() {
   return (
     <footer className="site-footer">
@@ -11,26 +23,20 @@ export default function SiteFooter() {
         <div className="site-footer__content">
           <div className="site-footer__brand">
             <Logo />
-            <p className="t-body c-muted">
-              {es.footer.description[0]}
-              <br />
-              {es.footer.description[1]}
-            </p>
+            <p className="t-body c-muted">{es.footer.description}</p>
           </div>
           {es.footer.columns.map((column) => (
             <nav key={column.title} className="site-footer__column" aria-label={column.title}>
-              <p className="t-overline c-muted">{column.title}</p>
+              <p className="site-footer__title">{column.title}</p>
               {column.links.map((link) => (
-                <a key={link} href={link.startsWith('github.com') ? `https://${link}` : '#'} className="t-body c-default">
-                  {link}
-                </a>
+                <FooterLink key={link.label} link={link} />
               ))}
             </nav>
           ))}
         </div>
-        <hr className="site-footer__divider" />
-        <div className="site-footer__credits t-caption c-muted">
+        <div className="site-footer__credits">
           <p>{es.footer.credits}</p>
+          <p className="t-mono">{es.footer.ods}</p>
           <p className="site-footer__lang">
             <Icon name="globe" size={16} />
             {es.footer.language}

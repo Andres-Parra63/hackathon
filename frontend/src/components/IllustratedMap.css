@@ -16,13 +16,18 @@
   height: 760px;
 }
 
+/* The base artwork is light: invert lightness but keep the hues (parks stay green, water blue) */
+.imap__tile img {
+  filter: invert(1) hue-rotate(180deg) brightness(0.62) contrast(1.15) saturate(0.7);
+}
+
 /* Neighborhood labels: Label/Small in text/muted; the river in status/info */
 .imap__label {
   position: absolute;
   color: var(--text-muted);
   font-size: 12px;
   line-height: 16px;
-  font-weight: 600;
+  font-weight: 510;
   white-space: nowrap;
 }
 
@@ -37,6 +42,11 @@
   position: absolute;
   translate: -50% -50%;
   pointer-events: none;
+}
+
+/* The radius art is a solid blue disc; on the dark map it reads as a tint, the dashed edge stays */
+.imap__radius {
+  opacity: 0.4;
 }
 
 .imap__dot {
@@ -88,10 +98,10 @@
   border-radius: var(--radius-pill);
   background: var(--surface-card);
   box-shadow: var(--elevation-1);
-  color: var(--brand-primary);
+  color: var(--brand-primary-strong);
   font-size: 12px;
   line-height: 16px;
-  font-weight: 600;
+  font-weight: 510;
   white-space: nowrap;
 }
 

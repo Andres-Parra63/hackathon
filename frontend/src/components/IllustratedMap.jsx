@@ -102,8 +102,9 @@ export default function IllustratedMap({
   )
 
   return (
-    <div ref={root} className={`imap imap--${scene} ${className}`} role="img" aria-label={alt}>
-      <div ref={layer} className="imap__layer" style={{ transformOrigin: origin }}>
+    <div ref={root} className={`imap imap--${scene} ${className}`}>
+      {/* The drawing is the image; overlaid controls (children) stay outside it so they remain operable */}
+      <div ref={layer} className="imap__layer" style={{ transformOrigin: origin }} role="img" aria-label={alt}>
         {data.base.map((tile) => (
           <div key={tile.top} className="imap__tile" style={{ left: tile.left, top: tile.top }}>
             <img src={baseMap} width="1000" height="760" alt="" />

@@ -30,7 +30,7 @@
   color: var(--text-strong);
   font-size: 12px;
   line-height: 16px;
-  font-weight: 600;
+  font-weight: 510;
   white-space: nowrap;
   transition:
     background-color var(--duration-fast) var(--ease-smooth-out),
@@ -39,7 +39,7 @@
 
 .live__filter.is-active {
   background: var(--text-strong);
-  color: var(--text-on-color);
+  color: var(--text-on-light);
 }
 
 .live__zoom {

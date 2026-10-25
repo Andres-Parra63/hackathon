@@ -31,6 +31,7 @@ body {
   font-family: var(--font-sans);
   font-size: 16px;
   line-height: 24px;
+  font-optical-sizing: auto;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -96,37 +97,46 @@ button {
 }
 
 /*
- * Type scale. Figma letter spacing is in percent; here it is in em so it scales with size.
+ * Type scale (v2, after astroteq.ai): DM Sans at weight 510 with tight negative tracking for
+ * headings and numerals; DM Mono for leads, overlines and data labels.
  *   Name            size / line-height · weight · tracking
  */
-.t-display      { font-size: 64px; line-height: 72px; font-weight: 800; letter-spacing: -0.03em; }  /* Web/Display */
-.t-h1-web       { font-size: 44px; line-height: 52px; font-weight: 700; letter-spacing: -0.02em; }  /* Web/H1 */
-.t-h2-web       { font-size: 32px; line-height: 40px; font-weight: 700; letter-spacing: -0.015em; } /* Web/H2 */
-.t-h2           { font-size: 20px; line-height: 26px; font-weight: 700; letter-spacing: -0.01em; }  /* Heading/H2 */
-.t-h3           { font-size: 17px; line-height: 22px; font-weight: 700; letter-spacing: -0.005em; } /* Heading/H3 */
-.t-body-xl      { font-size: 20px; line-height: 30px; font-weight: 400; }                           /* Web/Body XL */
-.t-body-lg      { font-size: 16px; line-height: 24px; font-weight: 400; }                           /* Body/Large */
-.t-body         { font-size: 15px; line-height: 22px; font-weight: 400; }                           /* Body/Default */
-.t-body-strong  { font-size: 15px; line-height: 22px; font-weight: 600; }                           /* Body/Strong */
-.t-body-sm      { font-size: 13px; line-height: 18px; font-weight: 400; }                           /* Body/Small */
-.t-label        { font-size: 14px; line-height: 18px; font-weight: 600; }                           /* Label/Default */
-.t-label-sm     { font-size: 12px; line-height: 16px; font-weight: 600; }                           /* Label/Small */
-.t-caption      { font-size: 12px; line-height: 16px; font-weight: 500; }                           /* Caption */
-.t-overline     { font-size: 11px; line-height: 14px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; } /* Overline */
-.t-button       { font-size: 16px; line-height: 20px; font-weight: 700; }                           /* Button */
-.t-numeral-lg   { font-size: 44px; line-height: 48px; font-weight: 800; letter-spacing: -0.02em; }  /* Numeral/Large */
-.t-numeral-md   { font-size: 28px; line-height: 32px; font-weight: 800; letter-spacing: -0.02em; }  /* Numeral/Medium */
+.t-display      { font-size: 64px; line-height: 1.05; font-weight: 520; letter-spacing: -0.035em; text-wrap: balance; }
+.t-h1-web       { font-size: 44px; line-height: 1.1;  font-weight: 510; letter-spacing: -0.03em;  text-wrap: balance; }
+.t-h2-web       { font-size: 30px; line-height: 1.2;  font-weight: 510; letter-spacing: -0.02em; }
+.t-h2           { font-size: 20px; line-height: 1.3;  font-weight: 510; letter-spacing: -0.015em; }
+.t-h3           { font-size: 17px; line-height: 1.3;  font-weight: 510; letter-spacing: -0.01em; }
+.t-body-xl      { font-size: 19px; line-height: 1.55; font-weight: 400; letter-spacing: -0.01em; }
+.t-body-lg      { font-size: 16px; line-height: 1.5;  font-weight: 400; letter-spacing: -0.01em; }
+.t-body         { font-size: 15px; line-height: 1.5;  font-weight: 400; letter-spacing: -0.01em; }
+.t-body-strong  { font-size: 15px; line-height: 1.5;  font-weight: 510; letter-spacing: -0.01em; }
+.t-body-sm      { font-size: 13px; line-height: 1.4;  font-weight: 400; }
+.t-label        { font-size: 14px; line-height: 1.3;  font-weight: 510; letter-spacing: -0.01em; }
+.t-label-sm     { font-size: 12px; line-height: 1.3;  font-weight: 510; }
+.t-caption      { font-size: 12px; line-height: 1.35; font-weight: 400; }
+.t-overline     { font-family: var(--font-mono); font-size: 12px; line-height: 16px; font-weight: 400; letter-spacing: 0.06em; text-transform: uppercase; }
+.t-button       { font-size: 15px; line-height: 20px; font-weight: 510; letter-spacing: -0.01em; }
+.t-numeral-lg   { font-size: 56px; line-height: 1;    font-weight: 510; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+.t-numeral-md   { font-size: 30px; line-height: 1.1;  font-weight: 510; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+.t-mono         { font-family: var(--font-mono); letter-spacing: -0.02em; }
+.t-body-xl.t-mono,
+.t-body-lg.t-mono { font-size: 16px; line-height: 1.6; } /* Mono runs wide: one step smaller than the sans lead */
 
-/* Mobile prototype scale (📱 Prototipo page): Display 32/38, H1 26/32. */
 @media (max-width: 720px) {
-  .t-display { font-size: 40px; line-height: 46px; }
-  .t-h1-web  { font-size: 30px; line-height: 36px; }
-  .t-h2-web  { font-size: 26px; line-height: 32px; }
-  .t-body-xl { font-size: 17px; line-height: 26px; }
+  .t-display    { font-size: 38px; }
+  .t-h1-web     { font-size: 30px; }
+  .t-h2-web     { font-size: 24px; }
+  .t-body-xl    { font-size: 17px; }
+  .t-numeral-lg { font-size: 36px; }
 }
 
 .c-strong  { color: var(--text-strong); }
 .c-default { color: var(--text-default); }
 .c-muted   { color: var(--text-muted); }
-.c-brand   { color: var(--brand-primary); }
+.c-brand   { color: var(--brand-primary-strong); }
 .c-on      { color: var(--text-on-color); }
+
+::selection {
+  background: var(--brand-primary);
+  color: var(--text-on-color);
+}

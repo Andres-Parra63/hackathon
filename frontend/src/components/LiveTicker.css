@@ -1,0 +1,121 @@
+.ticker {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--space-16);
+  padding: var(--space-12) var(--page-gutter);
+  border-block: 1px solid var(--border-default);
+  background: var(--surface-glass);
+  overflow: hidden;
+}
+
+.ticker__label {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: var(--space-8);
+  padding: var(--space-4) var(--space-12);
+  border: 1px solid rgb(255 167 51 / 0.35);
+  border-radius: var(--radius-pill);
+  color: var(--status-warning);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* Blinking "live" dot (the word next to it says it is simulated) */
+.ticker__live {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--status-warning);
+  animation: ticker-blink 1.6s ease-in-out infinite;
+}
+
+@keyframes ticker-blink {
+  50% { opacity: 0.25; }
+}
+
+.ticker__viewport {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  mask-image: linear-gradient(90deg, transparent, black 6%, black 94%, transparent);
+  -webkit-mask-image: linear-gradient(90deg, transparent, black 6%, black 94%, transparent);
+}
+
+.ticker__track {
+  display: flex;
+  width: max-content;
+  animation: ticker-scroll 70s linear infinite;
+}
+
+@keyframes ticker-scroll {
+  to { transform: translateX(-50%); }
+}
+
+.ticker.is-paused .ticker__track,
+.ticker:hover .ticker__track,
+.ticker:focus-within .ticker__track {
+  animation-play-state: paused;
+}
+
+.ticker__row {
+  display: flex;
+  flex-shrink: 0;
+}
+
+.ticker__row li {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-10);
+  padding-right: var(--space-40);
+  color: var(--text-default);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+}
+
+.ticker__dot {
+  width: 4px;
+  height: 4px;
+  background: var(--brand-primary-strong);
+}
+
+.ticker__toggle {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid rgb(255 255 255 / 0.2);
+  border-radius: 50%;
+  color: var(--text-default);
+  transition: border-color var(--duration-fast) var(--ease-smooth-out);
+}
+
+.ticker__toggle:hover {
+  border-color: rgb(255 255 255 / 0.45);
+}
+
+/* Pause glyph: two bars */
+.ticker__pause {
+  width: 8px;
+  height: 10px;
+  border-inline: 2.5px solid currentColor;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ticker__track,
+  .ticker__live {
+    animation: none;
+  }
+}
+
+@media (max-width: 600px) {
+  .ticker__label { font-size: 11px; }
+}

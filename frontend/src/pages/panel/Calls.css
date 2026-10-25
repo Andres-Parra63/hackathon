@@ -15,7 +15,7 @@
   color: var(--text-muted);
   font-size: 14px;
   line-height: 18px;
-  font-weight: 600;
+  font-weight: 510;
 }
 
 .calls__tab {
@@ -41,7 +41,7 @@
 }
 
 .calls__tab.is-active {
-  color: var(--brand-primary);
+  color: var(--brand-primary-strong);
 }
 
 .calls__tab.is-active::after {
