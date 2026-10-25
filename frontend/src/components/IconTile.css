@@ -12,4 +12,4 @@
 .icon-tile--card          { background: var(--surface-card);        color: var(--status-info); }
 .icon-tile--card-brand    { background: var(--surface-card);        color: var(--brand-primary-strong); }
 .icon-tile--card-success  { background: var(--surface-card);        color: var(--status-success); }
-.icon-tile--solid-success { background: var(--status-success);      color: var(--text-on-light); }
+.icon-tile--solid-success { background: var(--status-success);      color: var(--text-on-success); }

@@ -7,8 +7,9 @@
 .live__map {
   flex: 1;
   min-width: 0;
-  height: 860px;
-  border-radius: var(--radius-3xl);
+  height: 760px;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-4xl);
   box-shadow: var(--elevation-1);
 }
 
@@ -38,8 +39,8 @@
 }
 
 .live__filter.is-active {
-  background: var(--text-strong);
-  color: var(--text-on-light);
+  background: var(--surface-inverse);
+  color: var(--text-on-inverse);
 }
 
 .live__zoom {
@@ -129,7 +130,7 @@
   align-items: center;
   gap: var(--space-14);
   padding: var(--space-16);
-  border-radius: var(--radius-2xl);
+  border-radius: var(--radius-4xl);
   background: var(--status-success-soft);
 }
 
@@ -143,10 +144,11 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-12);
-  padding: var(--space-20);
+  padding: var(--space-20) var(--space-24) var(--space-24);
   border: 1px solid var(--border-default);
-  border-radius: var(--radius-2xl);
+  border-radius: var(--radius-4xl);
   background: var(--surface-card);
+  box-shadow: var(--elevation-1);
 }
 
 .live__card--raised {
