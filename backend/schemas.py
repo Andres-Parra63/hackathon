@@ -396,3 +396,49 @@ class AsistenciaSalida(Salida):
     check_in: datetime
     check_out: datetime | None = None
     horas: Decimal | None = None
+
+
+# ---------------------------------------------------------------------------
+# Sesión
+# ---------------------------------------------------------------------------
+class LoginEntrada(BaseModel):
+    correo: EmailStr
+    contrasena: str = Field(min_length=1, max_length=128)
+
+
+class UsuarioSesion(Salida):
+    id: uuid.UUID
+    nombre: str
+    correo: str
+    rol: str
+    # Solo para usuarios de organización
+    organizacion_id: uuid.UUID | None = None
+    organizacion_nombre: str | None = None
+    estado_verificacion: EstadoVerificacion | None = None
+
+
+class SesionSalida(BaseModel):
+    token: str
+    usuario: UsuarioSesion
+
+
+class MiParticipacion(Salida):
+    """Lo que ve el voluntario de su propia participación, con la convocatoria."""
+
+    id: int
+    estado: EstadoParticipacion
+    puntaje: Decimal | None = None
+    distancia_km: Decimal | None = None
+    convocatoria: ConvocatoriaSalida
+    check_in: datetime | None = None
+    check_out: datetime | None = None
+
+
+class AuditoriaSalida(Salida):
+    id: int
+    tabla: str
+    registro_id: str
+    accion: str
+    usuario_id: uuid.UUID | None = None
+    usuario_nombre: str | None = None
+    creado_en: datetime
