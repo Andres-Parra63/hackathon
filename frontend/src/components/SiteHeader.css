@@ -80,6 +80,28 @@
   color: var(--text-strong);
 }
 
+/* Underline that grows from the center on hover / focus */
+.site-header__nav a {
+  position: relative;
+}
+
+.site-header__nav a::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -6px;
+  height: 1px;
+  background: var(--brand-primary-strong);
+  transform: scaleX(0);
+  transition: transform var(--duration-very-slow) var(--ease-smooth-out);
+}
+
+.site-header__nav a:hover::after,
+.site-header__nav a:focus-visible::after {
+  transform: scaleX(1);
+}
+
 .site-header__actions {
   justify-content: flex-end;
   gap: var(--space-20);
