@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import legendMatch from '../../assets/map/live/legend-match.svg'
 import legendOther from '../../assets/map/live/legend-other.svg'
 import Badge from '../../components/Badge'
@@ -9,6 +9,7 @@ import IconTile from '../../components/IconTile'
 import IllustratedMap from '../../components/IllustratedMap'
 import PanelHeader from '../../components/panel/PanelHeader'
 import es from '../../i18n/es'
+import { useReveal } from '../../motion/useReveal'
 import './LiveMap.css'
 
 const t = es.liveMap
@@ -28,9 +29,11 @@ const ZOOM_STEP = 0.2
 export default function LiveMap() {
   const [filter, setFilter] = useState('all')
   const [zoom, setZoom] = useState(1)
+  const root = useRef(null)
+  useReveal(root)
 
   return (
-    <>
+    <div ref={root}>
       <PanelHeader title={t.title} subtitle={t.subtitle} />
       <div className="panel-content live">
         <IllustratedMap
@@ -67,7 +70,7 @@ export default function LiveMap() {
             </button>
           </div>
 
-          <div className="live__legend">
+          <div className="live__legend" data-reveal="up" data-delay="1.2">
             <p className="t-label c-strong">{t.legendTitle}</p>
             <ul>
               {t.legend.map((item) => (
@@ -85,7 +88,7 @@ export default function LiveMap() {
           </div>
         </IllustratedMap>
 
-        <aside className="live__side">
+        <aside className="live__side" data-stagger="right" data-delay="0.2">
           <div className="live__sent" role="status">
             <IconTile icon="check" tone="solid-success" size={44} iconSize={24} round />
             <div>
@@ -136,6 +139,6 @@ export default function LiveMap() {
           </section>
         </aside>
       </div>
-    </>
+    </div>
   )
 }

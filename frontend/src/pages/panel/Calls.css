@@ -18,6 +18,15 @@
   font-weight: 600;
 }
 
+.calls__tab {
+  transition: color var(--duration-fast) var(--ease-smooth-out);
+}
+
+.calls__tab:hover {
+  color: var(--text-strong);
+}
+
+/* Indicator grows from the center when the tab becomes active */
 .calls__tab::after {
   content: '';
   position: absolute;
@@ -26,6 +35,9 @@
   bottom: 0;
   height: 3px;
   border-radius: 2px;
+  background: var(--brand-primary);
+  scale: 0 1;
+  transition: scale var(--duration-fast) var(--ease-smooth-out);
 }
 
 .calls__tab.is-active {
@@ -33,7 +45,7 @@
 }
 
 .calls__tab.is-active::after {
-  background: var(--brand-primary);
+  scale: 1 1;
 }
 
 .calls__panel {

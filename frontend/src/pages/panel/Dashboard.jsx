@@ -1,3 +1,4 @@
+import { useRef } from 'react'
 import Badge from '../../components/Badge'
 import Button from '../../components/Button'
 import { Note, ProgressBar } from '../../components/FormControls'
@@ -9,6 +10,7 @@ import PanelHeader from '../../components/panel/PanelHeader'
 import ResponsesTable from '../../components/panel/ResponsesTable'
 import { HISTORY, RESPONSES } from '../../data/demo'
 import es from '../../i18n/es'
+import { useReveal } from '../../motion/useReveal'
 import './Dashboard.css'
 
 const t = es.dashboard
@@ -16,12 +18,14 @@ const t = es.dashboard
 /** W03 · Panel de la organización (Figma 26:507). */
 export default function Dashboard() {
   const { open } = useNewCall()
+  const root = useRef(null)
+  useReveal(root)
 
   return (
-    <>
+    <div ref={root}>
       <PanelHeader title={t.title} subtitle={t.subtitle} />
       <div className="panel-content">
-        <div className="dash__metrics">
+        <div className="dash__metrics" data-stagger="up">
           {t.metrics.map((metric) => (
             <MetricCard key={metric.label} {...metric} />
           ))}
@@ -29,7 +33,7 @@ export default function Dashboard() {
 
         <div className="dash__columns">
           <div className="dash__left">
-            <section className="card card--raised" aria-labelledby="active-call">
+            <section className="card card--raised" aria-labelledby="active-call" data-reveal="up" data-delay="0.2">
               <div className="dash__active-head">
                 <span className="type-tile" aria-hidden="true">
                   LOG
@@ -56,11 +60,11 @@ export default function Dashboard() {
               <ResponsesTable rows={RESPONSES.slice(0, 3)} caption={t.activeTitle} />
             </section>
 
-            <section className="card dash__history" aria-labelledby="recent-history">
+            <section className="card dash__history" aria-labelledby="recent-history" data-reveal="up">
               <h2 id="recent-history" className="t-h3 c-strong">
                 {t.historyTitle}
               </h2>
-              <ul>
+              <ul data-stagger="up" data-delay="0.15">
                 {HISTORY.map((item) => (
                   <li key={item.title}>
                     <div>
@@ -74,7 +78,7 @@ export default function Dashboard() {
             </section>
           </div>
 
-          <div className="dash__right">
+          <div className="dash__right" data-stagger="right" data-delay="0.3">
             <section className="dash__map" aria-labelledby="map-summary">
               <IllustratedMap scene="panel" alt={es.liveMap.mapAlt} className="dash__map-view" />
               <div className="dash__map-foot">
@@ -106,6 +110,6 @@ export default function Dashboard() {
           </div>
         </div>
       </div>
-    </>
+    </div>
   )
 }
