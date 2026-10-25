@@ -1,0 +1,11 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="44" height="44" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Notificaciones">
+<rect x="0.5" y="0.5" width="43" height="43" rx="11.5" fill="white"/>
+<rect x="0.5" y="0.5" width="43" height="43" rx="11.5" stroke="#E2E4E9"/>
+<g id="&#195;&#141;cono/bell">
+<path id="Vector" d="M17 18.6667C17 17.3406 17.5268 16.0688 18.4645 15.1311C19.4021 14.1935 20.6739 13.6667 22 13.6667C23.3261 13.6667 24.5979 14.1935 25.5355 15.1311C26.4732 16.0688 27 17.3406 27 18.6667C27 24.5 29.5 26.1667 29.5 26.1667H14.5C14.5 26.1667 17 24.5 17 18.6667Z" stroke-width="1.66667" stroke-linecap="round" stroke-linejoin="round" stroke="#161827"/>
+<path id="Vector_2" d="M20.5833 29.5C20.7228 29.7537 20.9279 29.9653 21.1771 30.1127C21.4263 30.26 21.7105 30.3378 22 30.3378C22.2895 30.3378 22.5737 30.26 22.8229 30.1127C23.0721 29.9653 23.2772 29.7537 23.4167 29.5" stroke-width="1.66667" stroke-linecap="round" stroke-linejoin="round" stroke="#161827"/>
+</g>
+<path id="Nuevo" d="M37 14.5C37 17.5376 34.5376 20 31.5 20C28.4624 20 26 17.5376 26 14.5C26 11.4624 28.4624 9 31.5 9C34.5376 9 37 11.4624 37 14.5Z" fill="#1F5FBF" stroke-width="2" stroke="white"/>
+</g>
+</svg>

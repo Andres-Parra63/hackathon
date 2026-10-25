@@ -1,0 +1,62 @@
+.btn {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-8);
+  height: var(--control-height);
+  padding: 0 22px;
+  border-radius: var(--radius-control);
+  border: 1.5px solid transparent;
+  font-size: 16px;
+  line-height: 20px;
+  font-weight: 700;
+  white-space: nowrap;
+  transition:
+    background-color var(--duration-fast) var(--ease-out),
+    border-color var(--duration-fast) var(--ease-out),
+    transform var(--duration-fast) var(--ease-out);
+}
+
+.btn:active {
+  transform: translateY(1px);
+}
+
+.btn:disabled,
+.btn[aria-disabled='true'] {
+  cursor: not-allowed;
+  opacity: 0.5;
+  transform: none;
+}
+
+.btn--block {
+  width: 100%;
+}
+
+/* Primario: fill brand/primary, text on-color */
+.btn--primary {
+  background: var(--brand-primary);
+  color: var(--text-on-color);
+}
+.btn--primary:hover:not(:disabled) {
+  background: var(--brand-primary-strong);
+}
+
+/* Secundario: white fill, 1.5 px border/strong, text strong */
+.btn--secondary {
+  background: var(--surface-card);
+  border-color: var(--border-strong);
+  color: var(--text-strong);
+}
+.btn--secondary:hover:not(:disabled) {
+  background: var(--surface-page);
+}
+
+/* Terciario: no fill, brand text; less padding on the trailing side */
+.btn--tertiary {
+  padding: 0 var(--space-4) 0 22px;
+  color: var(--brand-primary);
+}
+.btn--tertiary:hover:not(:disabled) {
+  background: var(--brand-primary-subtle);
+}
