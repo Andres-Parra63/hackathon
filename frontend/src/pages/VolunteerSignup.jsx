@@ -1,36 +1,110 @@
 import { useRef, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { api } from '../api/client'
+import { useApi } from '../api/useApi'
+import { useAuth } from '../auth/authContext'
+import AvailabilityGrid from '../components/AvailabilityGrid'
 import Button from '../components/Button'
-import { Checkbox, Note, Switch, TextField } from '../components/FormControls'
-import Icon from '../components/Icon'
+import { Checkbox, Note, SelectField, TextField } from '../components/FormControls'
 import IconTile from '../components/IconTile'
+import LoadState, { ActionError } from '../components/LoadState'
 import SiteHeader from '../components/SiteHeader'
 import SkillChip from '../components/SkillChip'
-import { SKILLS } from '../data/demo'
+import { MUNICIPALITY, PLACE_NAMES, placeByName } from '../data/places'
 import es from '../i18n/es'
+import { fromGrid } from '../lib/availability'
 import PageTransition from '../motion/PageTransition'
 import { useReveal } from '../motion/useReveal'
 import './VolunteerSignup.css'
 
 const t = es.signup
 
-/** W07 · Registro de voluntario (Figma 25:400). One-page form, three steps. */
+const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+const PHONE = /^[0-9 +()-]{7,20}$/
+
+const validate = (f) => {
+  const errors = {}
+  if (f.name.trim().length < 2) errors.name = t.errors.name
+  if (!EMAIL.test(f.email.trim())) errors.email = t.errors.email
+  if (f.password.length < 8) errors.password = t.errors.password
+  if (f.phone && !PHONE.test(f.phone)) errors.phone = t.errors.phone
+  if (!f.zone) errors.zone = t.errors.zone
+  if (f.skills.length === 0) errors.skills = t.errors.skills
+  if (!f.consent) errors.consent = t.errors.consent
+  return errors
+}
+
+/** W07 · Registro de voluntario (Figma 25:400). Creates the account in the API and signs in. */
 export default function VolunteerSignup() {
-  const [skills, setSkills] = useState(['Logística'])
-  const [approximate, setApproximate] = useState(true)
-  // Consent must be prior, express and informed (Ley 1581): never pre-checked.
-  const [consent, setConsent] = useState(false)
+  const skillsApi = useApi(() => api.skills(), [])
+  const [form, setForm] = useState({
+    name: '',
+    email: '',
+    password: '',
+    phone: '',
+    zone: '',
+    skills: [],
+    availability: { 'Sáb-Mañana': true, 'Dom-Mañana': true },
+    radius: 5,
+    // Consent must be prior, express and informed (Ley 1581): never pre-checked.
+    consent: false,
+  })
+  const [errors, setErrors] = useState({})
+  const [serverError, setServerError] = useState(null)
+  const [busy, setBusy] = useState(false)
   const [done, setDone] = useState(false)
+  const { login } = useAuth()
+  const navigate = useNavigate()
   const main = useRef(null)
   useReveal(main)
 
-  const canSubmit = skills.length > 0 && consent
+  const change = (patch) => {
+    setForm((current) => ({ ...current, ...patch }))
+    setErrors((current) => {
+      const next = { ...current }
+      Object.keys(patch).forEach((key) => delete next[key])
+      return next
+    })
+  }
 
-  const toggleSkill = (skill) =>
-    setSkills((current) => (current.includes(skill) ? current.filter((s) => s !== skill) : [...current, skill]))
+  const toggleSkill = (id) =>
+    change({ skills: form.skills.includes(id) ? form.skills.filter((s) => s !== id) : [...form.skills, id] })
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault()
-    if (canSubmit) setDone(true)
+    const formEl = event.currentTarget
+    const found = validate(form)
+    setErrors(found)
+    if (Object.keys(found).length > 0) {
+      // Move focus to the first invalid field once the errors render.
+      requestAnimationFrame(() => formEl.querySelector('[aria-invalid="true"]')?.focus())
+      return
+    }
+    const place = placeByName(form.zone)
+    setBusy(true)
+    setServerError(null)
+    try {
+      await api.registerVolunteer({
+        nombre: form.name.trim(),
+        correo: form.email.trim().toLowerCase(),
+        telefono: form.phone || null,
+        contrasena: form.password,
+        barrio: place.name,
+        municipio: MUNICIPALITY,
+        lat: place.lat,
+        lon: place.lon,
+        radio_km: form.radius,
+        habilidad_ids: form.skills,
+        disponibilidades: fromGrid(form.availability),
+        acepta_tratamiento_datos: form.consent,
+      })
+      await login(form.email, form.password)
+      setDone(true)
+    } catch (err) {
+      setServerError(err)
+    } finally {
+      setBusy(false)
+    }
   }
 
   return (
@@ -75,73 +149,121 @@ export default function VolunteerSignup() {
               <IconTile icon="check" tone="solid-success" size={56} iconSize={28} round />
               <h2 className="t-h2-web c-strong">{t.doneTitle}</h2>
               <p className="t-body-lg c-default">{t.doneText}</p>
-              <Button variant="secondary" onClick={() => setDone(false)}>
-                {t.doneAgain}
+              <Button icon="arrow-right" onClick={() => navigate('/voluntario')}>
+                {es.volunteer.signupDone.cta}
               </Button>
             </div>
           ) : (
-            <form className="signup__form" onSubmit={handleSubmit}>
+            <form className="signup__form" onSubmit={handleSubmit} noValidate>
               <fieldset>
-                <legend className="t-label c-default">{t.skillsLegend}</legend>
-                <div className="signup__skills" data-stagger="up" data-delay="0.5">
-                  {SKILLS.map((skill) => (
-                    <SkillChip
-                      key={skill}
-                      label={skill}
-                      selected={skills.includes(skill)}
-                      onToggle={() => toggleSkill(skill)}
-                    />
-                  ))}
+                <legend className="t-label c-default">{t.accountLegend}</legend>
+                <TextField
+                  label={t.nameLabel}
+                  icon="user"
+                  autoComplete="name"
+                  value={form.name}
+                  error={errors.name}
+                  onChange={(e) => change({ name: e.target.value })}
+                />
+                <div className="signup__row">
+                  <TextField
+                    label={t.emailLabel}
+                    icon="mail"
+                    type="email"
+                    autoComplete="email"
+                    value={form.email}
+                    error={errors.email}
+                    onChange={(e) => change({ email: e.target.value })}
+                  />
+                  <TextField
+                    label={t.passwordLabel}
+                    icon="lock"
+                    type="password"
+                    autoComplete="new-password"
+                    hint={t.passwordHint}
+                    value={form.password}
+                    error={errors.password}
+                    onChange={(e) => change({ password: e.target.value })}
+                  />
                 </div>
               </fieldset>
 
               <fieldset>
-                <legend className="t-label c-default">{t.availabilityLegend}</legend>
-                <div className="signup__row signup__row--end">
-                  <TextField label={t.availabilityLabel} icon="calendar" defaultValue={t.availabilityValue} />
-                  <p className="signup__eligible">
-                    <Icon name="check" size={18} />
-                    {t.availabilityOk}
+                <legend className="t-label c-default">{t.skillsLegend}</legend>
+                <LoadState loading={skillsApi.loading} error={skillsApi.error} onRetry={skillsApi.reload} rows={1}>
+                  <div className="signup__skills">
+                    {(skillsApi.data ?? []).map((skill) => (
+                      <SkillChip
+                        key={skill.id}
+                        label={skill.nombre}
+                        selected={form.skills.includes(skill.id)}
+                        onToggle={() => toggleSkill(skill.id)}
+                      />
+                    ))}
+                  </div>
+                </LoadState>
+                {errors.skills && (
+                  <p className="field__error" role="alert">
+                    {errors.skills}
                   </p>
-                </div>
+                )}
+              </fieldset>
+
+              <fieldset>
+                <legend className="t-label c-default">{t.availabilityLegend}</legend>
+                <p className="t-body-sm c-muted">{t.availabilityLabel}</p>
+                <AvailabilityGrid value={form.availability} onChange={(availability) => change({ availability })} />
+                <label className="signup__radius">
+                  <span className="t-label c-default">{t.radiusLabel}</span>
+                  <input
+                    type="range"
+                    min="1"
+                    max="20"
+                    value={form.radius}
+                    aria-valuetext={`${form.radius} km`}
+                    onChange={(e) => change({ radius: Number(e.target.value) })}
+                  />
+                  <output className="t-label c-brand">{form.radius} km</output>
+                </label>
               </fieldset>
 
               <fieldset>
                 <legend className="t-label c-default">{t.zoneLegend}</legend>
                 <div className="signup__row">
+                  <SelectField
+                    label={t.zoneLabel}
+                    placeholder={t.zonePlaceholder}
+                    options={PLACE_NAMES}
+                    value={form.zone}
+                    error={errors.zone}
+                    onChange={(e) => change({ zone: e.target.value })}
+                  />
                   <TextField
                     label={t.phoneLabel}
                     icon="phone"
                     type="tel"
                     inputMode="tel"
                     autoComplete="tel-national"
-                    defaultValue={t.phoneValue}
+                    hint={t.phoneHint}
+                    value={form.phone}
+                    error={errors.phone}
+                    onChange={(e) => change({ phone: e.target.value })}
                   />
-                  <TextField label={t.zoneLabel} icon="map-pin" defaultValue={t.zoneValue} />
                 </div>
+                <Note icon="eye-off" tone="sunken">
+                  {t.approxText}
+                </Note>
               </fieldset>
 
-              <div className="signup__approx">
-                <div>
-                  <p className="t-label c-strong">{t.approxTitle}</p>
-                  <p className="t-body-sm c-muted">{t.approxText}</p>
-                </div>
-                <Switch checked={approximate} onChange={setApproximate} label={t.approxTitle} />
-              </div>
-
-              <Checkbox checked={consent} onChange={setConsent}>
+              <Checkbox checked={form.consent} error={errors.consent} onChange={(consent) => change({ consent })}>
                 {t.consent}
               </Checkbox>
 
               <div className="signup__submit">
-                <Button type="submit" icon="heart" block disabled={!canSubmit} aria-describedby="signup-missing">
-                  {t.submit}
+                <Button type="submit" icon="heart" block disabled={busy} aria-busy={busy}>
+                  {busy ? t.submitting : t.submit}
                 </Button>
-                {!canSubmit && (
-                  <p id="signup-missing" className="t-caption c-muted">
-                    {t.missing}
-                  </p>
-                )}
+                <ActionError error={serverError} />
               </div>
             </form>
           )}

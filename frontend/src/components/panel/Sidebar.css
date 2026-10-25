@@ -170,3 +170,18 @@
   }
   .sidebar__link { flex-shrink: 0; }
 }
+
+/* Sign-out is a button now: reset the native look. */
+button.sidebar__user {
+  width: 100%;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+button.sidebar__user:hover .sidebar__avatar {
+  background: var(--surface-raised);
+}

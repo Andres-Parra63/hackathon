@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from 'react'
-import { SKILLS } from '../../data/demo'
 import es from '../../i18n/es'
 import { EASE, gsap, prefersReducedMotion, useGSAP } from '../../motion/gsap'
 import { getLenis } from '../../motion/smoothScroll'
@@ -15,8 +14,8 @@ const MIN_SLOTS = 1
 const MAX_SLOTS = 50
 
 /** W04 · Nueva convocatoria (Figma 26:1005): 520 px side panel over a scrim. */
-export default function NewCallDrawer({ onClose, onSubmit }) {
-  const [skills, setSkills] = useState(['Logística'])
+export default function NewCallDrawer({ onClose, onSubmit, skillOptions = [], organizationId, userId }) {
+  const [skills, setSkills] = useState([])
   const [slots, setSlots] = useState(4)
   const [type, setType] = useState(t.types[2])
   const rootRef = useRef(null)
@@ -85,7 +84,7 @@ export default function NewCallDrawer({ onClose, onSubmit }) {
 
   const handleSubmit = (event) => {
     event.preventDefault()
-    if (skills.length) leave(() => onSubmit({ skills, slots, type }))
+    if (skills.length) leave(() => onSubmit({ skills, slots, type: type === 'Desastre' ? 'desastre' : type === 'Prioritaria' ? 'prioritaria' : 'normal', organizationId, userId }))
   }
 
   return (
@@ -116,12 +115,12 @@ export default function NewCallDrawer({ onClose, onSubmit }) {
           <fieldset className="drawer__group">
             <legend className="t-label c-default">{t.skillLabel}</legend>
             <div className="drawer__skills">
-              {SKILLS.map((skill) => (
+              {skillOptions.map((skill) => (
                 <SkillChip
-                  key={skill}
-                  label={skill}
-                  selected={skills.includes(skill)}
-                  onToggle={() => toggleSkill(skill)}
+                  key={skill.id}
+                  label={skill.nombre}
+                  selected={skills.includes(skill.id)}
+                  onToggle={() => toggleSkill(skill.id)}
                 />
               ))}
             </div>

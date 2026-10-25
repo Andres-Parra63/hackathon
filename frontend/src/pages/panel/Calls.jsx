@@ -1,4 +1,6 @@
 import { useRef, useState } from 'react'
+import { api } from '../../api/client'
+import { useApi } from '../../api/useApi'
 import Badge from '../../components/Badge'
 import Button from '../../components/Button'
 import { ProgressBar } from '../../components/FormControls'
@@ -9,11 +11,16 @@ import es from '../../i18n/es'
 import PageTransition from '../../motion/PageTransition'
 import { useReveal } from '../../motion/useReveal'
 import './Calls.css'
+import LoadState from '../../components/LoadState'
+import { useOrgData, pickActiveCall } from './useOrgData'
 
 const t = es.calls
 
 /** W06 · Convocatorias y respuestas (Figma 27:1395). RF-07, RF-08. */
 export default function Calls({ initialTab = 'active' }) {
+  const { data: orgData, loading, error, reload } = useOrgData()
+  const activeCall = pickActiveCall(orgData?.calls ?? [])
+  const { data: summary } = useApi(() => (activeCall ? api.callSummary(activeCall.id) : Promise.resolve(null)), [activeCall?.id])
   const [tab, setTab] = useState(initialTab)
   const [covered, setCovered] = useState(false)
   const [resent, setResent] = useState(false)
@@ -29,6 +36,7 @@ export default function Calls({ initialTab = 'active' }) {
     <div ref={root}>
       <PanelHeader title={t.title} subtitle={t.subtitle} />
       <div className="panel-content calls">
+        <LoadState loading={loading} error={error} onRetry={reload} empty={!loading && (orgData?.calls ?? []).length === 0} emptyText="No hay convocatorias.">
         <div className="calls__tabs" role="tablist" aria-label={t.title}>
           {tabs.map((item) => (
             <button
@@ -57,7 +65,7 @@ export default function Calls({ initialTab = 'active' }) {
                 </span>
                 <div className="calls__head-text">
                   <h2 id="call-title" className="t-h2 c-strong">
-                    {t.activeTitle}
+                    {activeCall?.titulo ?? t.activeTitle}
                   </h2>
                   <div className="badges">
                     {covered ? (
@@ -89,7 +97,7 @@ export default function Calls({ initialTab = 'active' }) {
                   <ProgressBar value={covered ? 1 : 0.75} height={10} label={t.progress} />
                 </div>
                 <div className="badges">
-                  <Badge tone="success">{es.common.confirmed(covered ? 4 : 3)}</Badge>
+                  <Badge tone="success">{es.common.confirmed(summary?.confirmados ?? (covered ? 4 : 3))}</Badge>
                   <Badge tone="neutral">{es.common.cannot(1)}</Badge>
                   {!covered && <Badge tone="warning">{es.common.noAnswer(1)}</Badge>}
                 </div>
@@ -132,6 +140,7 @@ export default function Calls({ initialTab = 'active' }) {
           </div>
         )}
         </PageTransition>
+        </LoadState>
       </div>
     </div>
   )

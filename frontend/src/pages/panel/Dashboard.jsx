@@ -1,4 +1,6 @@
 import { useRef } from 'react'
+import { api } from '../../api/client'
+import { useApi } from '../../api/useApi'
 import Badge from '../../components/Badge'
 import Button from '../../components/Button'
 import { Note, ProgressBar } from '../../components/FormControls'
@@ -9,6 +11,8 @@ import { useNewCall } from '../../components/panel/newCallContext'
 import PanelHeader from '../../components/panel/PanelHeader'
 import ResponsesTable from '../../components/panel/ResponsesTable'
 import { HISTORY, RESPONSES } from '../../data/demo'
+import LoadState from '../../components/LoadState'
+import { pickActiveCall, useOrgData } from './useOrgData'
 import es from '../../i18n/es'
 import { useReveal } from '../../motion/useReveal'
 import './Dashboard.css'
@@ -17,6 +21,9 @@ const t = es.dashboard
 
 /** W03 · Panel de la organización (Figma 26:507). */
 export default function Dashboard() {
+  const { data: orgData, loading, error, reload } = useOrgData()
+  const activeCall = pickActiveCall(orgData?.calls ?? [])
+  const { data: summary } = useApi(() => (activeCall ? api.callSummary(activeCall.id) : Promise.resolve(null)), [activeCall?.id])
   const { open } = useNewCall()
   const root = useRef(null)
   useReveal(root)
@@ -25,9 +32,12 @@ export default function Dashboard() {
     <div ref={root}>
       <PanelHeader title={t.title} subtitle={t.subtitle} />
       <div className="panel-content">
+        <LoadState loading={loading} error={error} onRetry={reload}>
+        {orgData && (
+        <>
         <div className="dash__metrics" data-stagger="up">
-          {t.metrics.map((metric) => (
-            <MetricCard key={metric.label} {...metric} />
+          {t.metrics.map((metric, index) => (
+            <MetricCard key={metric.label} {...metric} value={index === 0 ? String(orgData.calls.length) : index === 1 ? String(orgData.active ? 1 : 0) : index === 2 ? String(summary?.confirmados ?? 0) : metric.value} />
           ))}
         </div>
 
@@ -40,7 +50,7 @@ export default function Dashboard() {
                 </span>
                 <div className="dash__active-text">
                   <h2 id="active-call" className="t-h2 c-strong">
-                    {t.activeTitle}
+                    {activeCall?.titulo ?? t.activeTitle}
                   </h2>
                   <div className="badges">
                     <Badge tone="warning">{es.common.emergency}</Badge>
@@ -57,7 +67,7 @@ export default function Dashboard() {
                 <span className="c-brand">75 %</span>
               </div>
               <ProgressBar value={0.75} height={10} label={t.progress} />
-              <ResponsesTable rows={RESPONSES.slice(0, 3)} caption={t.activeTitle} />
+              <ResponsesTable rows={RESPONSES.slice(0, 3)} caption={activeCall?.titulo ?? t.activeTitle} />
             </section>
 
             <section className="card dash__history" aria-labelledby="recent-history" data-reveal="up">
@@ -109,6 +119,9 @@ export default function Dashboard() {
             </Note>
           </div>
         </div>
+        </>
+        )}
+        </LoadState>
       </div>
     </div>
   )
