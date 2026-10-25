@@ -1,6 +1,8 @@
+import { useRef } from 'react'
 import { Link } from 'react-router-dom'
 import es from '../i18n/es'
 import Icon from './Icon'
+import { useReveal } from '../motion/useReveal'
 import Logo from './Logo'
 import './SiteFooter.css'
 
@@ -15,12 +17,15 @@ function FooterLink({ link }) {
   )
 }
 
-/** Glass footer: brand, three link columns, credits and SDG line. */
+/** Glass footer: brand, three link columns, credits, SDG line and a large wordmark that rises in. */
 export default function SiteFooter() {
+  const ref = useRef(null)
+  useReveal(ref)
+
   return (
-    <footer className="site-footer">
+    <footer ref={ref} className="site-footer">
       <div className="site-footer__inner">
-        <div className="site-footer__content">
+        <div className="site-footer__content" data-stagger="blur">
           <div className="site-footer__brand">
             <Logo />
             <p className="t-body c-muted">{es.footer.description}</p>
@@ -34,6 +39,9 @@ export default function SiteFooter() {
             </nav>
           ))}
         </div>
+        <p className="site-footer__wordmark" aria-hidden="true" data-split>
+          {es.brand.name}
+        </p>
         <div className="site-footer__credits">
           <p>{es.footer.credits}</p>
           <p className="t-mono">{es.footer.ods}</p>

@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
+import CursorGlow from './components/CursorGlow'
 import PanelLayout from './components/panel/PanelLayout'
 import { useInteractions } from './motion/interactions'
 import PageTransition from './motion/PageTransition'
@@ -31,6 +32,7 @@ export default function App() {
 
   return (
     <>
+      <CursorGlow />
       <ScrollToTop />
       <PageTransition key={section}>
         <Routes>
