@@ -5,26 +5,19 @@
   justify-content: center;
   gap: var(--space-8);
   height: var(--control-height);
-  padding: 0 22px;
+  padding: 0 24px;
   border-radius: var(--radius-control);
-  border: 1.5px solid transparent;
-  font-size: 16px;
+  border: 1px solid transparent;
+  font-size: 15px;
   line-height: 20px;
-  font-weight: 700;
+  font-weight: 510;
+  letter-spacing: -0.01em;
   white-space: nowrap;
   transition:
     background-color var(--duration-fast) var(--ease-smooth-out),
     border-color var(--duration-fast) var(--ease-smooth-out),
+    color var(--duration-fast) var(--ease-smooth-out),
     box-shadow var(--duration-fast) var(--ease-smooth-out);
-}
-
-/* Lift and press are GSAP timelines (motion/interactions.js); CSS adds the shadow */
-.btn:hover:not(:disabled) {
-  box-shadow: var(--elevation-2);
-}
-
-.btn--tertiary:hover:not(:disabled) {
-  box-shadow: none;
 }
 
 .btn:disabled,
@@ -37,29 +30,68 @@
   width: 100%;
 }
 
-/* Primario: fill brand/primary, text on-color */
+/* Primario: solid light pill, dark text (the reference's main call to action) */
 .btn--primary {
-  background: var(--brand-primary);
-  color: var(--text-on-color);
+  background: var(--text-strong);
+  color: var(--text-on-light);
 }
 .btn--primary:hover:not(:disabled) {
-  background: var(--brand-primary-strong);
+  background: #ffffff;
+  box-shadow: 0 0 0 4px rgb(235 241 255 / 0.12);
 }
 
-/* Secundario: white fill, 1.5 px border/strong, text strong */
+/* Secundario: glass pill with a hairline border */
 .btn--secondary {
-  background: var(--surface-card);
-  border-color: var(--border-strong);
+  background: var(--surface-glass);
+  border-color: rgb(255 255 255 / 0.2);
   color: var(--text-strong);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
 }
 .btn--secondary:hover:not(:disabled) {
-  background: var(--surface-page);
+  background: rgb(255 255 255 / 0.1);
+  border-color: rgb(255 255 255 / 0.4);
 }
 
-/* Terciario: no fill, brand text; less padding on the trailing side */
+/* Contorno: blue border and status dot, square corners (header CTA in the reference) */
+.btn--outline {
+  border-color: var(--brand-primary);
+  border-radius: 0;
+  color: var(--text-strong);
+}
+.btn--outline::before {
+  content: '';
+  flex-shrink: 0;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--brand-primary-strong);
+}
+.btn--outline:hover:not(:disabled) {
+  background: rgb(10 99 230 / 0.14);
+}
+
+/* Emergencia: orange outline + dot; always paired with the word "Emergencia" in its label */
+.btn--emergency {
+  border-color: var(--status-warning);
+  color: var(--text-strong);
+}
+.btn--emergency::before {
+  content: '';
+  flex-shrink: 0;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--status-warning);
+}
+.btn--emergency:hover:not(:disabled) {
+  background: var(--status-warning-soft);
+}
+
+/* Terciario: no fill, blue text; less padding on the trailing side */
 .btn--tertiary {
-  padding: 0 var(--space-4) 0 22px;
-  color: var(--brand-primary);
+  padding: 0 var(--space-4) 0 var(--space-16);
+  color: var(--brand-primary-strong);
 }
 .btn--tertiary:hover:not(:disabled) {
   background: var(--brand-primary-subtle);

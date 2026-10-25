@@ -1,4 +1,5 @@
 import { DISTANCE, DURATION, EASE, gsap, MOTION_OK, REDUCED, SplitText, useGSAP } from './gsap'
+import { scrambleText } from './scramble'
 
 /*
  * Declarative scroll animations. Inside `scope`:
@@ -7,12 +8,17 @@ import { DISTANCE, DURATION, EASE, gsap, MOTION_OK, REDUCED, SplitText, useGSAP 
  *   data-split                              heading rises line by line behind a mask
  *   data-count                              the first number in the text counts up (once)
  *   data-parallax="-12"                     drifts that many % of its height while scrolling past
+ *   data-scramble                           a short mono label decodes out of random glyphs (once)
  *   data-delay="0.2"                        extra delay in seconds
  * Entrances play on the way down and reverse on the way up ("play none none reverse").
  * With reduced motion the same elements only fade: no travel, no parallax, no masks.
  *
  * Entrances move with xPercent/yPercent; hover effects (useHoverFx) move with x/y/scale.
  * GSAP composes both, so a card can be revealed and hovered without the tweens fighting.
+ *
+ * Entrances fade `opacity`, never `autoAlpha`: autoAlpha sets visibility: hidden, which removes
+ * not-yet-revealed links and fields from the Tab order (keyboard users would skip whole sections).
+ * With opacity the element stays focusable; focusing it scrolls it into view, which reveals it.
  */
 
 // Converts a pixel distance into a percentage of the element's own size.
@@ -93,7 +99,7 @@ export function useReveal(scope, dependencies = []) {
         q('[data-reveal]').forEach((el) =>
           gsap.from(el, {
             ...MOTION_FROM[el.dataset.reveal || 'up'],
-            autoAlpha: 0,
+            opacity: 0,
             duration: DURATION.slow,
             delay: delayOf(el),
             scrollTrigger: { trigger: el, ...ENTER },
@@ -103,7 +109,7 @@ export function useReveal(scope, dependencies = []) {
         q('[data-stagger]').forEach((parent) =>
           gsap.from(parent.children, {
             ...MOTION_FROM[parent.dataset.stagger || 'up'],
-            autoAlpha: 0,
+            opacity: 0,
             duration: DURATION.slow,
             stagger: 0.09,
             delay: delayOf(parent),
@@ -114,6 +120,11 @@ export function useReveal(scope, dependencies = []) {
         q('[data-count]').forEach((el) =>
           countUp(el, { delay: delayOf(el) + 0.2, scrollTrigger: { trigger: el, start: 'top 85%', once: true } }),
         )
+
+        const restores = q('[data-scramble]').map((el) =>
+          scrambleText(el, { delay: delayOf(el), scrollTrigger: { trigger: el, start: 'top 85%', once: true } }),
+        )
+        return () => restores.forEach((restore) => restore())
       })
 
       // Subtle parallax only where there is room for it.
@@ -135,7 +146,7 @@ export function useReveal(scope, dependencies = []) {
       mm.add(REDUCED, () => {
         const fade = (targets, trigger, extra = {}) =>
           gsap.from(targets, {
-            autoAlpha: 0,
+            opacity: 0,
             duration: 0.6,
             ease: 'power1.out',
             scrollTrigger: { trigger, ...ENTER },

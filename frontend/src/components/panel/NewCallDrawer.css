@@ -111,7 +111,7 @@
   align-items: center;
   gap: var(--space-10);
   padding: var(--space-10) var(--space-12);
-  border-radius: var(--radius-control);
+  border-radius: var(--radius-lg);
   background: var(--status-info-soft);
   color: var(--text-default);
   font-size: 13px;
@@ -162,7 +162,7 @@
 }
 
 .stepper__btn--less { background: var(--surface-sunken);     color: var(--text-strong); }
-.stepper__btn--more { background: var(--brand-primary-soft); color: var(--brand-primary); }
+.stepper__btn--more { background: var(--brand-primary-soft); color: var(--brand-primary-strong); }
 
 .stepper__value {
   flex: 1;
@@ -191,7 +191,7 @@
   color: var(--text-muted);
   font-size: 14px;
   line-height: 18px;
-  font-weight: 600;
+  font-weight: 510;
   cursor: pointer;
   white-space: nowrap;
   transition: background-color var(--duration-quick) var(--ease-smooth-out);
@@ -200,7 +200,7 @@
 .segmented__item.is-selected {
   background: var(--surface-card);
   box-shadow: var(--elevation-1);
-  color: var(--brand-primary);
+  color: var(--brand-primary-strong);
 }
 
 .segmented__item:has(input:focus-visible) {

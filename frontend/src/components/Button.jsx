@@ -3,7 +3,8 @@ import Icon from './Icon'
 import './Button.css'
 
 /**
- * Botón (Figma 4:23). Variants: primary, secondary, tertiary. 52 px tall, 14 px radius.
+ * Botón. Variants: primary (light pill), secondary (glass pill), outline (blue border + dot),
+ * emergency (orange border + dot), tertiary (text). 52 px tall.
  * Renders a router <Link> when `to` is set, an <a> when `href` is set, a <button> otherwise.
  */
 export default function Button({

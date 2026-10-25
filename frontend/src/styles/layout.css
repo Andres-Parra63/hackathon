@@ -1,6 +1,6 @@
-/* Page layout helpers for the public site (1440 frame: 1200 content + 2 × 120 gutters). */
+/* Page layout helpers for the public site: one black canvas, generous vertical rhythm. */
 .section {
-  padding: var(--space-96) 0;
+  padding: var(--space-120) 0;
 }
 
 .section--page { background: var(--surface-page); }
@@ -14,6 +14,7 @@
 
 .stack-40 { display: flex; flex-direction: column; gap: var(--space-40); }
 .stack-48 { display: flex; flex-direction: column; gap: var(--space-48); }
+.stack-64 { display: flex; flex-direction: column; gap: var(--space-64); }
 
 .grid-2,
 .grid-3 {
@@ -23,21 +24,100 @@
 .grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 
-/* Encabezado de sección: overline + Web/H1 + Web/Body XL, 860 px wide, 14 px gap */
+/* Encabezado de sección: eyebrow + heading + mono lead */
 .section-header {
   display: flex;
   flex-direction: column;
-  gap: var(--space-14);
-  max-width: 860px;
+  align-items: flex-start;
+  gap: var(--space-20);
+  max-width: 820px;
+}
+
+.section-header__lead {
+  max-width: 680px;
 }
 
 .section-header--center {
   align-self: center;
+  align-items: center;
   text-align: center;
 }
 
+/* Eyebrow: mono label with a status dot (blue by default, orange for Emergency Mode) */
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-10);
+  color: var(--text-default);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 16px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.eyebrow::before {
+  content: '';
+  flex-shrink: 0;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--brand-primary-strong);
+  box-shadow: 0 0 12px var(--brand-primary-strong);
+}
+
+.eyebrow--emergency {
+  color: var(--status-warning);
+}
+
+.eyebrow--emergency::before {
+  background: var(--status-warning);
+  box-shadow: 0 0 12px var(--status-warning);
+}
+
+/*
+ * Spotlight (data-spotlight): a light that follows the pointer across a glass card.
+ * ::before tints the surface, ::after lights the 1 px border through a mask. --mx/--my are set by
+ * motion/interactions.js on mouse/trackpad devices; without them the effect stays off.
+ */
+[data-spotlight] {
+  position: relative;
+  isolation: isolate;
+}
+
+[data-spotlight]::before,
+[data-spotlight]::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--duration-medium) var(--ease-smooth-out);
+}
+
+[data-spotlight]::before {
+  z-index: -1;
+  background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 50%), rgb(92 157 255 / 0.09), transparent 60%);
+}
+
+[data-spotlight]::after {
+  padding: 1px;
+  background: radial-gradient(280px circle at var(--mx, 50%) var(--my, 50%), rgb(92 157 255 / 0.75), transparent 65%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  [data-spotlight]:hover::before,
+  [data-spotlight]:hover::after {
+    opacity: 1;
+  }
+}
+
 @media (max-width: 960px) {
-  .section { padding: var(--space-64) 0; }
+  .section { padding: var(--space-72) 0; }
   .grid-3 { grid-template-columns: minmax(0, 1fr); }
 }
 
