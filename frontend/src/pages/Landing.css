@@ -48,7 +48,6 @@
 /* Desktop with motion: the hero pins for its scroll story, so it takes exactly one screen */
 .hero.is-pinned {
   height: 100vh;
-  min-height: 680px;
   padding-bottom: 0;
 }
 
@@ -83,16 +82,19 @@
 
 .hero__stage {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 640px) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr) minmax(0, clamp(300px, calc(100vh - 250px), 640px)) minmax(0, 1fr);
   align-items: center;
   gap: var(--space-24);
   width: 100%;
 }
 
+/* The globe scales with the window height so globe + legend always fit a pinned screen
+   (header 72 + legend ~60 + gaps ~110), at any browser zoom. */
 .hero__globe {
   position: relative;
   z-index: 1;
-  max-width: 640px;
+  width: 100%;
+  max-width: clamp(300px, calc(100vh - 250px), 640px);
   margin: 0 auto;
 }
 
@@ -111,6 +113,11 @@
 
 .hero-stat dd {
   margin: 0;
+}
+
+/* Figures like "≤ 30 min" never break across lines */
+.hero-stat dt {
+  white-space: nowrap;
 }
 
 .hero-stat--end {
