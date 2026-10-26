@@ -27,7 +27,32 @@ export const RESPONSES = [
   { id: 'E05', skill: 'Logística', distance: '4,6 km', status: 'Sin respuesta', time: '10:24', detail: 'Avisado por push y correo' },
 ]
 
+// Statuses that count as a confirmed slot.
+export const CONFIRMED_STATUSES = ['En camino', 'Confirmó']
+
 export const HISTORY = [
-  { title: 'Salud · 2 cupos', text: 'Ayer · 6 voluntarios convocados · cubierta en 48 min', status: 'Cubierta', tone: 'success' },
-  { title: 'Psicosocial · 1 cupo', text: '20 oct · 3 voluntarios convocados', status: 'Cerrada', tone: 'neutral' },
+  { title: 'Salud · 2 cupos', text: '6 voluntarios convocados · cubierta en 48 min', date: 'Ayer', icon: 'droplet', status: 'Cubierta', tone: 'success' },
+  { title: 'Simulacro distrital · 6 cupos', text: '14 voluntarios convocados · cubierta en 26 min', date: '22 oct', icon: 'alert-triangle', status: 'Cubierta', tone: 'success' },
+  { title: 'Psicosocial · 1 cupo', text: '3 voluntarios convocados', date: '20 oct', icon: 'heart', status: 'Cerrada', tone: 'neutral' },
+  { title: 'Cocina · 3 cupos', text: '8 voluntarios convocados · cubierta en 1 h 10 min', date: '17 oct', icon: 'glass-water', status: 'Cubierta', tone: 'success' },
+]
+
+// Volunteers called per day this week (Mon 19 – Sun 25 Oct); null = the day hasn't happened yet.
+export const WEEK_CALLS = [
+  { day: 'Lun', label: 'Lunes 19', normal: 6, emergency: 0 },
+  { day: 'Mar', label: 'Martes 20', normal: 9, emergency: 0 },
+  { day: 'Mié', label: 'Miércoles 21', normal: 4, emergency: 0 },
+  { day: 'Jue', label: 'Jueves 22 (simulacro)', normal: 3, emergency: 6 },
+  { day: 'Vie', label: 'Viernes 23', normal: 5, emergency: 0 },
+  { day: 'Sáb', label: 'Sábado 24', normal: 2, emergency: 5, today: true },
+  { day: 'Dom', label: 'Domingo 25', normal: null, emergency: null },
+]
+
+// Live log of the active call, newest first.
+export const CALL_ACTIVITY = [
+  { time: '10:35', icon: 'check', tone: 'success', title: 'Voluntario #C33 confirmó', text: 'Irá en la tarde' },
+  { time: '10:31', icon: 'navigation', tone: 'success', title: 'Voluntario #A12 va en camino', text: 'Llega en ~10 min' },
+  { time: '10:31', icon: 'check', tone: 'success', title: 'Voluntario #B07 confirmó', text: 'Irá antes de las 12:00' },
+  { time: '10:29', icon: 'x', tone: 'neutral', title: 'Voluntario #D19 no puede', text: 'Respondió «No puedo ahora»' },
+  { time: '10:24', icon: 'send', tone: 'info', title: 'Convocatoria enviada', text: '5 voluntarios por push y correo' },
 ]

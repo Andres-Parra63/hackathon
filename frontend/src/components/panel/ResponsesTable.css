@@ -1,13 +1,13 @@
 .rtable {
   overflow-x: auto;
-  border: 1px solid var(--border-default);
   border-radius: var(--radius-xl);
 }
 
 .rtable table {
   width: 100%;
   min-width: 560px;
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0;
 }
 
 .rtable th,
@@ -19,29 +19,32 @@
 
 .rtable th:first-child,
 .rtable td:first-child {
-  padding-left: var(--space-20);
+  padding-left: var(--space-16);
 }
 
 .rtable th:last-child,
 .rtable td:last-child {
-  padding-right: var(--space-20);
+  padding-right: var(--space-16);
 }
 
-/* Encabezado tabla: overline on surface/page */
+/* Header: a soft rounded band, sentence-case muted labels */
 .rtable thead th {
   background: var(--surface-page);
   color: var(--text-muted);
-  font-size: 11px;
-  line-height: 14px;
-  font-weight: 560;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 510;
 }
 
+.rtable thead th:first-child { border-radius: var(--radius-lg) 0 0 var(--radius-lg); }
+.rtable thead th:last-child  { border-radius: 0 var(--radius-lg) var(--radius-lg) 0; }
+
 .rtable tbody tr {
-  border-top: 1px solid var(--border-default);
-  background: var(--surface-card);
   transition: background-color var(--duration-fast) var(--ease-smooth-out);
+}
+
+.rtable tbody tr + tr > * {
+  border-top: 1px solid var(--border-default);
 }
 
 .rtable tbody tr:hover {

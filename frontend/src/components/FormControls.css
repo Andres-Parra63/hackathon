@@ -22,12 +22,12 @@
   padding: 0 22px;
   border-radius: var(--radius-control);
   border: 1px solid var(--border-strong);
-  background: rgb(0 0 0 / 0.4);
+  background: var(--surface-field);
   transition: border-color var(--duration-quick) var(--ease-smooth-out);
 }
 
 .field__control:hover {
-  border-color: rgb(255 255 255 / 0.55);
+  border-color: var(--border-strong-hover);
 }
 
 .field__icon {
@@ -129,7 +129,7 @@
   padding: var(--space-14) var(--space-16);
   border-radius: var(--radius-xl);
   border: 1px solid var(--border-strong);
-  background: rgb(0 0 0 / 0.4);
+  background: var(--surface-field);
   font-size: 15px;
   line-height: 22px;
   color: var(--text-strong);

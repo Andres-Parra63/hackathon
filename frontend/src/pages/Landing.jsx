@@ -15,6 +15,11 @@ import './Landing.css'
 
 const t = es.landing
 
+// Pinned hero needs room for the globe + legend: tall viewports only (zoom shrinks the viewport).
+const TALL = '(min-height: 600px)'
+const SHORT = '(max-height: 599px)'
+const NARROW = '(max-width: 1023px)'
+
 function SectionHeader({ eyebrow, title, lead, id, center = false, tone, shimmer = false }) {
   return (
     <header className={`section-header ${center ? 'section-header--center' : ''}`}>
@@ -32,7 +37,7 @@ function SectionHeader({ eyebrow, title, lead, id, center = false, tone, shimmer
         </h2>
       )}
       {lead && (
-        <p className="t-body-xl t-mono c-muted section-header__lead" data-reveal="up" data-delay="0.15">
+        <p className="t-body-xl t-mono c-muted section-header__lead" data-reveal="blur" data-delay="0.15">
           {lead}
         </p>
       )}
@@ -84,15 +89,20 @@ function Hero() {
       })
 
       // Desktop: scrollytelling. The hero pins; the copy fades away, the stage glides up until the
-      // globe sits in the middle of the screen and the globe turns to face Colombia. The sphere
-      // never changes size; the figures close in around it.
-      mm.add(`${MOTION_OK} and ${DESKTOP}`, () => {
+      // globe (and its legend) sit in the middle of the screen and the globe turns to face Colombia.
+      // Only on screens tall enough to hold them: at high zoom the viewport gets short, the hero
+      // stays in normal flow and nothing is clipped.
+      mm.add(`${MOTION_OK} and ${DESKTOP} and ${TALL}`, () => {
         const section = ref.current
         section.classList.add('is-pinned')
         const stage = q('.hero__stage')[0]
+        const legend = q('.hero__legend')[0]
         const travel = () => {
           const pad = parseFloat(getComputedStyle(section).paddingTop)
-          return -(stage.offsetTop + pad - Math.max(0, (window.innerHeight - stage.offsetHeight) / 2))
+          const group = legend.offsetTop + legend.offsetHeight - stage.offsetTop // globe + legend as one block
+          const header = 72
+          const top = Math.max(header + 8, header + (window.innerHeight - header - group) / 2)
+          return -(stage.offsetTop + pad - top)
         }
         gsap
           .timeline({
@@ -116,8 +126,9 @@ function Hero() {
         return () => section.classList.remove('is-pinned')
       })
 
-      // Tablet / phone: no pin; the copy lifts away and the globe turns toward Colombia as it scrolls in.
-      mm.add(`${MOTION_OK} and (max-width: 1023px)`, () => {
+      // Tablet / phone / short windows: no pin; the copy lifts away and the globe turns toward
+      // Colombia as it scrolls in.
+      mm.add(`${MOTION_OK} and ${NARROW}, ${MOTION_OK} and ${SHORT}`, () => {
         gsap.to(q('.hero__message'), {
           y: -40,
           opacity: 0.25,
@@ -196,11 +207,11 @@ function Hero() {
 function Problem() {
   return (
     <section id="impacto" className="section" aria-labelledby="problem-title">
-      <div className="section__inner stack-64">
+      <div className="section__inner stack-64" data-depth>
         <SectionHeader id="problem-title" eyebrow={t.problem.eyebrow} title={t.problem.title} lead={t.problem.lead} />
-        <ul className="facts" data-stagger="up">
+        <ul className="facts" data-stagger="card">
           {t.problem.facts.map((fact) => (
-            <li key={fact.value} className="fact">
+            <li key={fact.value} className="fact" data-inview>
               <p className="t-numeral-lg c-strong" data-count>
                 {fact.value}
               </p>
@@ -235,16 +246,16 @@ function HowItWorks() {
 
   return (
     <section ref={ref} id="como-funciona" className="section" aria-labelledby="how-title">
-      <div className="section__inner stack-64">
+      <div className="section__inner stack-64" data-depth>
         <SectionHeader id="how-title" eyebrow={t.how.eyebrow} title={t.how.title} lead={t.how.lead} />
         <div>
           <div className="how__track" aria-hidden="true">
             <span />
           </div>
-          <ol className="steps" data-stagger="up">
+          <ol className="steps" data-stagger="card">
             {t.how.steps.map((step) => (
               <li key={step.number} className="step">
-                <span className="step__number t-mono" aria-hidden="true">
+                <span className="step__number t-mono" aria-hidden="true" data-scramble>
                   {step.number}
                 </span>
                 <h3 className="t-h2 c-strong">{step.title}</h3>
@@ -313,7 +324,7 @@ function Emergency() {
             lead={t.emergency.lead}
             tone="emergency"
           />
-          <figure className="messages" data-reveal="up" data-delay="0.2" data-spotlight>
+          <figure className="messages" data-reveal="card" data-delay="0.2" data-spotlight data-tilt>
             <figcaption className="t-overline c-muted">{t.emergency.messagesTitle}</figcaption>
             <ul>
               {t.emergency.messages.map((message) => (
@@ -328,7 +339,7 @@ function Emergency() {
         <ol className="timeline">
           <span className="timeline__progress" aria-hidden="true" />
           {t.emergency.steps.map((step, i) => (
-            <li key={step.title} className="timeline__item">
+            <li key={step.title} className="timeline__item" data-reveal="blur">
               <span className="timeline__icon" aria-hidden="true">
                 <Icon name={step.icon} size={18} />
               </span>
@@ -354,7 +365,9 @@ function Audiences() {
   const roles = t.audiences.roles
   const role = roles[active]
 
+  const switched = useRef(false)
   const select = (index, focus = false) => {
+    switched.current = true
     setActive(index)
     if (focus) tabs.current[index]?.focus()
   }
@@ -369,10 +382,55 @@ function Audiences() {
     }
   }
 
+  // Tabs cascade in when the section arrives.
+  const section = useRef(null)
   useGSAP(
     () => {
-      if (prefersReducedMotion()) return
-      gsap.from(panel.current.children, { y: 16, opacity: 0, duration: 0.7, stagger: 0.06, ease: EASE.out })
+      const mm = gsap.matchMedia()
+      mm.add(MOTION_OK, () => {
+        gsap.fromTo(
+          section.current.querySelectorAll('.tabs__tab'),
+          { y: 26, opacity: 0, scale: 0.9, filter: 'blur(6px)' },
+          {
+            y: 0,
+            opacity: 1,
+            scale: 1,
+            filter: 'blur(0px)',
+            clearProps: 'filter',
+            duration: 0.8,
+            ease: EASE.smooth,
+            stagger: 0.08,
+            scrollTrigger: { trigger: section.current.querySelector('.tabs'), start: 'top 85%', toggleActions: 'play none none reverse' },
+          },
+        )
+      })
+      return () => mm.revert()
+    },
+    { scope: section },
+  )
+
+  // Switching roles: the visual wipes open, its icon pops, the figure counts, the copy follows.
+  useGSAP(
+    () => {
+      if (prefersReducedMotion() || !switched.current) return
+      const q = gsap.utils.selector(panel)
+      gsap
+        .timeline({ defaults: { ease: EASE.out } })
+        .fromTo(
+          q('.role__visual'),
+          { clipPath: 'inset(0% 100% 0% 0% round 24px)' },
+          { clipPath: 'inset(0% 0% 0% 0% round 24px)', duration: 0.9, ease: EASE.smooth, clearProps: 'clipPath' },
+        )
+        .from(q('.role__icon'), { scale: 0.4, rotation: -30, opacity: 0, duration: 0.8, ease: 'back.out(2.2)' }, 0.15)
+        .add(() => countUp(q('.role__metric')[0], { duration: 1.1 }), 0.2)
+        .fromTo(
+          q('.role__body h3'),
+          { y: 22, opacity: 0, filter: 'blur(6px)' },
+          { y: 0, opacity: 1, filter: 'blur(0px)', clearProps: 'filter', duration: 0.6 },
+          0.1,
+        )
+        .from(q('.role__benefits li'), { x: -26, opacity: 0, stagger: 0.07, duration: 0.55 }, 0.22)
+        .from(q('.role__body .btn'), { y: 14, opacity: 0, duration: 0.5 }, 0.42)
     },
     { dependencies: [active], scope: panel },
   )
@@ -409,8 +467,8 @@ function Audiences() {
   })
 
   return (
-    <section id="para-quien" className="section" aria-labelledby="audiences-title">
-      <div className="section__inner stack-48">
+    <section ref={section} id="para-quien" className="section" aria-labelledby="audiences-title">
+      <div className="section__inner stack-48" data-depth>
         <SectionHeader id="audiences-title" eyebrow={t.audiences.eyebrow} title={t.audiences.title} center shimmer />
         <div className="tabs" role="tablist" aria-label={t.audiences.tabsLabel} data-reveal="fade">
           <span ref={pill} className="t-tabs-pill tabs__pill" aria-hidden="true" />
@@ -440,11 +498,13 @@ function Audiences() {
           className="role"
           tabIndex={0}
         >
-          <div className="role__visual" data-spotlight>
+          <div className="role__visual" data-spotlight data-tilt>
             <span className="role__icon" aria-hidden="true">
               <Icon name={role.icon} size={28} />
             </span>
-            <p className="t-numeral-lg c-strong">{role.metric.value}</p>
+            <p key={role.id} className="t-numeral-lg c-strong role__metric">
+              {role.metric.value}
+            </p>
             <p className="t-body c-muted">{role.metric.label}</p>
           </div>
           <div className="role__body">
@@ -475,20 +535,27 @@ function Scenarios() {
   const item = s.items[index]
   const coverage = Number.parseInt(item.coverage, 10) / 100
 
-  const go = (next) => setIndex((next + total) % total)
+  const dir = useRef(1) // 1 = forward, -1 = back: the card slides in from that side
+  const go = (next) => {
+    dir.current = next >= index ? 1 : -1
+    setIndex((next + total) % total)
+  }
   // Relative moves read the latest index, so fast repeated presses never skip or stall.
-  const step = (delta) => setIndex((i) => (i + delta + total) % total)
+  const step = (delta) => {
+    dir.current = delta
+    setIndex((i) => (i + delta + total) % total)
+  }
 
   useGSAP(
     () => {
       if (prefersReducedMotion()) return
-      gsap.from(card.current.querySelectorAll('[data-animate]'), {
-        y: 14,
-        opacity: 0,
-        duration: 0.6,
-        stagger: 0.04,
-        ease: EASE.out,
-      })
+      const q = gsap.utils.selector(card)
+      gsap.fromTo(
+        q('[data-animate]'),
+        { x: 56 * dir.current, opacity: 0, filter: 'blur(6px)' },
+        { x: 0, opacity: 1, filter: 'blur(0px)', clearProps: 'filter', duration: 0.7, stagger: 0.05, ease: EASE.smooth },
+      )
+      q('.scenario__metrics dd').forEach((el, i) => countUp(el, { duration: 1, delay: 0.15 + i * 0.06 }))
     },
     { dependencies: [index], scope: card },
   )
@@ -502,10 +569,10 @@ function Scenarios() {
 
   return (
     <section id="escenarios" className="section" aria-labelledby="scenarios-title">
-      <div className="section__inner scenarios">
+      <div className="section__inner scenarios" data-depth>
         <div className="scenarios__intro">
           <SectionHeader id="scenarios-title" eyebrow={s.eyebrow} title={s.title} lead={s.lead} />
-          <dl className="scenarios__summary" data-stagger="up">
+          <dl className="scenarios__summary" data-stagger="card">
             {s.summary.map((stat) => (
               <div key={stat.label}>
                 <dt className="t-numeral-md c-strong">{stat.value}</dt>
@@ -520,7 +587,7 @@ function Scenarios() {
           role="group"
           aria-roledescription="carrusel"
           aria-label={s.title}
-          data-reveal="up"
+          data-reveal="card"
           onKeyDown={(e) => {
             if (e.key === 'ArrowRight') step(1)
             if (e.key === 'ArrowLeft') step(-1)
@@ -552,7 +619,7 @@ function Scenarios() {
             </div>
           </div>
 
-          <article ref={card} className="scenario" data-spotlight aria-roledescription="diapositiva" aria-label={s.position(index + 1, total)}>
+          <article ref={card} className="scenario" data-spotlight data-tilt aria-roledescription="diapositiva" aria-label={s.position(index + 1, total)}>
             <div className="scenario__tags" data-animate>
               <Badge tone="warning">{`${es.common.emergency} · ${item.type}`}</Badge>
               <Badge tone="neutral">{s.simulated}</Badge>
@@ -572,7 +639,7 @@ function Scenarios() {
             </dl>
             <dl className="scenario__metrics">
               {metrics.map(([key, value]) => (
-                <div key={key} data-animate>
+                <div key={`${index}-${key}`} data-animate>
                   <dt className="t-body-sm c-muted">{s.labels[key]}</dt>
                   <dd className="t-numeral-md c-strong">{value}</dd>
                 </div>
@@ -601,11 +668,29 @@ function Mark({ yes }) {
 }
 
 function Comparison() {
+  const ref = useRef(null)
+
+  useGSAP(
+    () => {
+      const mm = gsap.matchMedia()
+      const q = gsap.utils.selector(ref)
+      mm.add(MOTION_OK, () => {
+        const scrollTrigger = { trigger: q('.compare')[0], start: 'top 75%', toggleActions: 'play none none reverse' }
+        gsap
+          .timeline({ scrollTrigger })
+          .from(q('.compare tbody tr'), { x: -30, opacity: 0, duration: 0.6, stagger: 0.08, ease: EASE.out }, 0.2)
+          .from(q('.compare .mark'), { scale: 0, rotation: -120, duration: 0.6, stagger: 0.06, ease: 'back.out(2.4)' }, 0.45)
+      })
+      return () => mm.revert()
+    },
+    { scope: ref },
+  )
+
   return (
-    <section id="por-que" className="section" aria-labelledby="comparison-title">
-      <div className="section__inner stack-48">
+    <section ref={ref} id="por-que" className="section" aria-labelledby="comparison-title">
+      <div className="section__inner stack-48" data-depth>
         <SectionHeader id="comparison-title" eyebrow={t.comparison.eyebrow} title={t.comparison.title} lead={t.comparison.lead} />
-        <div className="compare" data-reveal="up" data-spotlight>
+        <div className="compare" data-reveal="clip" data-spotlight>
           <table>
             <thead>
               <tr>
@@ -637,7 +722,7 @@ function Comparison() {
             </tbody>
           </table>
         </div>
-        <ul className="trust" aria-label={t.trustLabel} data-stagger="up">
+        <ul className="trust" aria-label={t.trustLabel} data-stagger="card">
           {t.trust.map((item) => (
             <li key={item.title}>
               <span className="trust__icon" aria-hidden="true">
@@ -720,8 +805,8 @@ function AccessRequest() {
 
   return (
     <section id="acceso" className="section" aria-labelledby="access-title">
-      <div className="section__inner">
-        <div className="access" data-reveal="up" data-spotlight>
+      <div className="section__inner" data-depth>
+        <div className="access" data-reveal="card" data-spotlight>
           <div className="access__intro">
             <p className="eyebrow">{a.eyebrow}</p>
             <h2 id="access-title" className="t-h1-web c-strong">
@@ -739,8 +824,11 @@ function AccessRequest() {
 
           {done ? (
             <div ref={doneRef} className="access__done" role="status" tabIndex={-1}>
-              <span className="access__done-icon" aria-hidden="true">
-                <Icon name="check" size={28} />
+              {/* Success check (transitions-dev 10): fade + rotate + blur + bob, then the stroke draws */}
+              <span className="access__done-icon t-success-check" data-state="in" aria-hidden="true">
+                <svg viewBox="0 0 48 48" width="30" height="30" fill="none">
+                  <path d="M13 24.5l7.5 7.5L35 17.5" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
               </span>
               <h3 className="t-h2-web c-strong">{a.doneTitle}</h3>
               <p className="t-body-lg c-muted">{a.doneText}</p>
@@ -749,7 +837,7 @@ function AccessRequest() {
               </Button>
             </div>
           ) : (
-            <form className="access__form" noValidate onSubmit={onSubmit}>
+            <form className="access__form" noValidate onSubmit={onSubmit} data-stagger="blur" data-delay="0.2">
               {submitted && shownErrors.length > 0 && (
                 <div ref={summary} className="access__summary" role="alert" tabIndex={-1}>
                   <Icon name="alert-triangle" size={18} />
@@ -825,7 +913,7 @@ export default function Landing() {
       <SiteHeader />
       <main ref={main}>
         <Hero />
-        <LiveTicker label={t.ticker.label} items={t.ticker.items} pauseLabel={t.ticker.pause} playLabel={t.ticker.play} />
+        <LiveTicker copy={t.ticker} />
         <Problem />
         <HowItWorks />
         <Emergency />

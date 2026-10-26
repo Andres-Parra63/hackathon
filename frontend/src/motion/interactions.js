@@ -29,21 +29,18 @@ const HOVERS = [
     },
   },
   { selector: '.skill-chip, .live__filter', build: (tl, el) => tl.to(el, { y: -2 }, 0) },
-  {
-    selector: '.dash__cta',
-    build: (tl, el) => tl.to(el, { y: -3 }, 0).to(el.querySelector('.dash__cta-plus'), { rotation: 90, scale: 1.06 }, 0),
-  },
-  {
-    selector: '.sidebar__link',
-    build: (tl, el) => tl.to(el.querySelectorAll('.icon, .sidebar__label'), { x: 3, stagger: 0.03 }, 0),
-  },
-  { selector: '.dash__history li, .calls__history .card', build: (tl, el) => tl.to(el, { x: 4 }, 0) },
+  { selector: '.dash__history li', build: (tl, el) => tl.to(el, { x: 4 }, 0) },
   { selector: '.drawer__close', build: (tl, el) => tl.to(el, { rotation: 90, duration: 0.5 }, 0) },
+  // Panel rail and top-bar icons: the glyph grows a touch; the bell rings.
   {
-    selector: '.panel-header__bell',
+    selector: '.prail__btn, .ptop__icon:not(.ptop__icon--unread)',
+    build: (tl, el) => tl.to(el.querySelector('.icon'), { scale: 1.14 }, 0),
+  },
+  {
+    selector: '.ptop__icon--unread',
     build: (tl, el) =>
-      tl.to(el.querySelector('img'), {
-        keyframes: { rotation: [0, 10, -8, 5, -2, 0] },
+      tl.to(el.querySelector('.icon'), {
+        keyframes: { rotation: [0, 12, -9, 5, -2, 0] },
         duration: 0.8,
         ease: 'none',
       }),
@@ -51,11 +48,15 @@ const HOVERS = [
 ]
 
 const PRESSABLE =
-  '.btn:not(:disabled), .skill-chip, .live__filter, .dash__cta, .stepper__btn:not(:disabled), .segmented__item, .live__zoom button'
+  '.btn:not(:disabled), .skill-chip, .live__filter, .stepper__btn:not(:disabled), .segmented__item, .live__zoom button, .seg__item, .prail__btn, .ptop__icon, .ptop__user, .pnav__link'
 
 const MAGNETIC = '[data-magnetic]'
 
 const SPOTLIGHT = '[data-spotlight]'
+
+// Cards that lean toward the pointer in 3D (max degrees).
+const TILT = '[data-tilt]'
+const TILT_MAX = 6
 
 export function useInteractions() {
   useEffect(() => {
@@ -130,6 +131,35 @@ export function useInteractions() {
       el.style.setProperty('--my', `${e.clientY - r.top}px`)
     }
 
+    // Tilt: rotate toward the pointer with smoothed setters; settle back flat on leave.
+    const tilters = new WeakMap()
+    const tilterFor = (el) => {
+      if (!tilters.has(el)) {
+        gsap.set(el, { transformPerspective: 900 })
+        tilters.set(el, {
+          rx: gsap.quickTo(el, 'rotationX', { duration: 0.6, ease: EASE.out }),
+          ry: gsap.quickTo(el, 'rotationY', { duration: 0.6, ease: EASE.out }),
+        })
+      }
+      return tilters.get(el)
+    }
+    const onTilt = (e) => {
+      if (!allowed()) return
+      const el = e.target.closest?.(TILT)
+      if (!el) return
+      const r = el.getBoundingClientRect()
+      const t = tilterFor(el)
+      t.ry(((e.clientX - r.left) / r.width - 0.5) * 2 * TILT_MAX)
+      t.rx(-((e.clientY - r.top) / r.height - 0.5) * 2 * TILT_MAX)
+    }
+    const onTiltOut = (e) => {
+      const el = e.target.closest?.(TILT)
+      if (!el || el.contains(e.relatedTarget) || !tilters.has(el)) return
+      const t = tilters.get(el)
+      t.rx(0)
+      t.ry(0)
+    }
+
     const onMagnetOut = (e) => {
       const el = e.target.closest?.(MAGNETIC)
       if (el && !el.contains(e.relatedTarget)) gsap.to(el, { x: 0, y: 0, duration: 1, ease: EASE.out, overwrite: 'auto' })
@@ -140,6 +170,8 @@ export function useInteractions() {
     document.addEventListener('pointerout', onMagnetOut)
     document.addEventListener('pointermove', onMove, { passive: true })
     document.addEventListener('pointermove', onSpot, { passive: true })
+    document.addEventListener('pointermove', onTilt, { passive: true })
+    document.addEventListener('pointerout', onTiltOut)
     document.addEventListener('pointerdown', onDown)
     document.addEventListener('pointerup', onUp)
     document.addEventListener('pointercancel', onUp)
@@ -149,6 +181,8 @@ export function useInteractions() {
       document.removeEventListener('pointerout', onMagnetOut)
       document.removeEventListener('pointermove', onMove)
       document.removeEventListener('pointermove', onSpot)
+      document.removeEventListener('pointermove', onTilt)
+      document.removeEventListener('pointerout', onTiltOut)
       document.removeEventListener('pointerdown', onDown)
       document.removeEventListener('pointerup', onUp)
       document.removeEventListener('pointercancel', onUp)
