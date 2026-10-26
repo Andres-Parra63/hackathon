@@ -1,0 +1,181 @@
+.vmap {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background: var(--map-land);
+}
+
+.vmap__canvas {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: var(--map-land);
+}
+
+.vmap .leaflet-container { font: inherit; background: var(--map-land); }
+
+/* Dark tiles: invert the light OSM raster so the map matches the theme (same as the public map). */
+.vmap .leaflet-tile-pane {
+  filter: invert(1) hue-rotate(180deg) brightness(0.8) contrast(0.92) saturate(0.6);
+}
+
+.vmap .leaflet-control-attribution {
+  background: rgb(0 0 0 / 0.6);
+  color: var(--text-muted);
+  font-size: 10px;
+}
+
+.vmap .leaflet-control-attribution a { color: var(--text-default); }
+
+/* Convocation radius */
+.vmap__radius {
+  fill: var(--brand-primary);
+  fill-opacity: 0.08;
+  stroke: var(--brand-primary-strong);
+  stroke-width: 1.5;
+  stroke-dasharray: 6 6;
+}
+
+.vmap__radius.is-emergency {
+  fill: var(--status-warning);
+  stroke: var(--status-warning);
+}
+
+/* Volunteer clusters (one per ~1 km cell) */
+.vmap__cluster span {
+  display: grid;
+  place-items: center;
+  width: var(--size);
+  height: var(--size);
+  border-radius: 50%;
+  font-size: 11px;
+  line-height: 1;
+  font-weight: 620;
+  font-variant-numeric: tabular-nums;
+  transition:
+    opacity var(--duration-fast) var(--ease-smooth-out),
+    transform var(--duration-fast) var(--ease-smooth-out);
+}
+
+.vmap__cluster:hover span,
+.vmap__cluster:focus-visible span { transform: scale(1.12); }
+
+.vmap__cluster:focus-visible { outline: none; }
+.vmap__cluster:focus-visible span { box-shadow: var(--focus-ring); }
+
+/* Skill + available in the slot: solid blue */
+.vmap__cluster--match span {
+  border: 2px solid #fff;
+  background: var(--brand-primary);
+  color: var(--text-on-color);
+  box-shadow: 0 0 0 6px rgb(10 99 230 / 0.25), 0 4px 12px rgb(0 0 0 / 0.5);
+}
+
+/* Skill, not available: blue ring */
+.vmap__cluster--unavailable span {
+  border: 2px solid var(--brand-primary-strong);
+  background: var(--brand-primary-soft);
+  color: var(--text-strong);
+}
+
+/* Other skills inside the radius */
+.vmap__cluster--other span {
+  border: 1px solid rgb(255 255 255 / 0.45);
+  background: rgb(30 31 37 / 0.92);
+  color: var(--text-default);
+}
+
+/* Outside the radius */
+.vmap__cluster--outside span {
+  border: 1px dashed rgb(255 255 255 / 0.3);
+  background: rgb(15 15 18 / 0.85);
+  color: var(--text-muted);
+}
+
+.vmap__cluster.is-dimmed span { opacity: 0.22; }
+
+.vmap--compact .vmap__cluster--match span { box-shadow: 0 0 0 3px rgb(10 99 230 / 0.3); }
+.vmap--compact .vmap__cluster--match span,
+.vmap--compact .vmap__cluster--unavailable span { border-width: 1.5px; }
+
+/* Operation point: pulsing pin (orange in Emergency Mode; the tooltip says it in words) */
+.vmap__site {
+  position: relative;
+}
+
+.vmap__site span {
+  position: absolute;
+  inset: 0;
+  border: 3px solid #fff;
+  border-radius: 50%;
+  background: var(--brand-primary);
+  box-shadow: 0 2px 10px rgb(0 0 0 / 0.6);
+}
+
+.vmap__site i {
+  position: absolute;
+  inset: -10px;
+  border-radius: 50%;
+  background: rgb(92 157 255 / 0.35);
+  animation: vmap-pulse 2.2s ease-out infinite;
+}
+
+.vmap__site.is-emergency span { background: var(--status-warning); }
+.vmap__site.is-emergency i { background: rgb(255 167 51 / 0.4); }
+
+.vmap__site--secondary span {
+  border-width: 2px;
+  background: var(--surface-raised);
+}
+
+@keyframes vmap-pulse {
+  from { opacity: 0.9; transform: scale(0.5); }
+  to   { opacity: 0; transform: scale(1.6); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vmap__site i { animation: none; opacity: 0.4; }
+}
+
+/* Tooltip in the app's style */
+.vmap__tip.leaflet-tooltip {
+  padding: var(--space-6) var(--space-10);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-sm);
+  background: var(--surface-raised);
+  box-shadow: var(--elevation-2);
+  color: var(--text-strong);
+  font-size: 12px;
+  line-height: 16px;
+}
+
+.vmap__tip.leaflet-tooltip-top::before { border-top-color: var(--surface-raised); }
+
+/* Zoom / recenter */
+.vmap__controls {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  z-index: 500;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-control);
+  background: var(--surface-card);
+  box-shadow: var(--elevation-1);
+}
+
+.vmap__controls button {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  color: var(--text-strong);
+  transition: background-color var(--duration-fast) var(--ease-smooth-out);
+}
+
+.vmap__controls button:hover { background: var(--surface-raised); }
+
+/* Overlays (filters, legend) sit above the Leaflet panes */
+.vmap > :not(.vmap__canvas) { z-index: 500; }

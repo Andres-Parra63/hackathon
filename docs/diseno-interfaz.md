@@ -316,3 +316,18 @@ pin, hover con movimiento ni Lenis.
 - El tipo de convocatoria «Desastre» usa el azul de marca en Figma. CLAUDE.md pide naranja para el Modo
   Emergencia: en el código, el badge «Emergencia» ya usa el tono de alerta, pero el segmento sigue al diseño.
 - Falta implementar la página **📱 Prototipo** (app móvil del voluntario).
+
+## Áreas por rol (25/10/2026)
+
+Sesión de demostración (`frontend/src/auth/`): el ingreso valida contra cuentas ficticias y redirige según el rol;
+`RequireRole` protege las rutas. No hay JWT todavía: se sustituye cuando el backend lo tenga.
+
+| Ruta | Rol | Contenido |
+|---|---|---|
+| `/voluntario` | Voluntario | Inicio con recomendaciones y puntaje explicado, `/turnos` (aceptar, seguridad, check-in/out), `/horas`, `/perfil` (disponibilidad, radio, revocar autorización, eliminar cuenta) |
+| `/panel` | Organización | Panel, mapa, convocatorias, historial, `/actividades` (publicar, candidatos, asistencia, calificación) y `/emergencia` (solicitar, puntos, turnos, cierre con reporte) |
+| `/admin` | Administrador | Resumen y pesos, `/organizaciones` (verificar o rechazar con motivo), `/emergencias` (confirmar, cerrar, auditoría), `/habilidades` |
+| `/mapa` | Ciudadano (sin cuenta) | Puntos de operación en Leaflet + OpenStreetMap, datos GeoJSON ficticios |
+
+Los pesos del emparejamiento viven solo en `frontend/src/data/matching.js`. Todos los datos son ficticios y
+locales al navegador; conectar a la API queda pendiente.

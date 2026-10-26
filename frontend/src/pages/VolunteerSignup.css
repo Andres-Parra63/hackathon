@@ -179,3 +179,10 @@
   .signup__row { flex-direction: column; align-items: stretch; }
   .signup__eligible { width: 100%; }
 }
+
+.signup__radius {
+  display: flex;
+  align-items: center;
+  gap: var(--space-16);
+}
+.signup__radius input { flex: 1; accent-color: var(--brand-primary-strong); }

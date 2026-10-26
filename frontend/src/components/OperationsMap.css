@@ -1,0 +1,33 @@
+.opmap {
+  width: 100%;
+  min-height: 460px;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-3xl);
+  overflow: hidden;
+  background: var(--map-land);
+}
+
+/* Dark tiles: invert the light OSM raster so the map matches the theme. */
+.opmap .leaflet-tile-pane {
+  filter: invert(1) hue-rotate(180deg) brightness(0.85) contrast(0.9);
+}
+
+.opmap .leaflet-container { font: inherit; }
+
+.opmap__pin span {
+  display: block;
+  width: 28px;
+  height: 28px;
+  border: 3px solid var(--text-on-color);
+  border-radius: 50%;
+  background: var(--brand-primary);
+  box-shadow: 0 2px 8px rgb(0 0 0 / 0.5);
+  transition: transform var(--duration-fast) var(--ease-smooth-out);
+}
+
+.opmap__pin.is-selected span {
+  background: var(--status-warning);
+  transform: scale(1.3);
+}
+
+.opmap__pin:focus-visible span { box-shadow: var(--focus-ring); }

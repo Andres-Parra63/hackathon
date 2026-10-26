@@ -66,7 +66,7 @@
   --status-info: #5c9dff;         /* Information, live */
   --status-info-soft: #0d2147;
 
-  /* ---------- Color · Illustrative map (the light SVG base is inverted in IllustratedMap.css) ---------- */
+  /* ---------- Color · Illustrative map (dark backdrop behind the OpenStreetMap tiles) ---------- */
   --map-land: #101114;
   --map-block: #0d0e11;
   --map-road: #1c1d22;

@@ -43,36 +43,6 @@
   color: var(--text-on-inverse);
 }
 
-.live__zoom {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  border-radius: var(--radius-control);
-  background: var(--surface-card);
-  box-shadow: var(--elevation-1);
-}
-
-.live__zoom button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 44px;
-  height: 44px;
-  color: var(--text-strong);
-}
-
-.live__zoom button {
-  transition: background-color var(--duration-fast) var(--ease-smooth-out);
-}
-
-.live__zoom button:hover {
-  background: var(--surface-page);
-}
-
-
 /* Leyenda: 300 px, Elevación/2 */
 .live__legend {
   position: absolute;
@@ -100,11 +70,10 @@
   gap: var(--space-10);
 }
 
-.live__legend li img {
-  width: 12px;
-  flex-shrink: 0;
-  object-fit: none;
-}
+.live__dot { flex-shrink: 0; width: 14px; }
+
+.live__legend li { transition: opacity var(--duration-fast) var(--ease-smooth-out); }
+.live__legend li.is-dimmed { opacity: 0.45; }
 
 .live__legend li .t-body-sm {
   flex: 1;
@@ -174,11 +143,7 @@
 }
 
 @media (max-width: 600px) {
-  .live__map { height: 520px; }
-  /* Keep the operation point (362, 420 in the 724 × 860 frame) in the middle of the viewport */
-  .live__map .imap__layer {
-    inset: calc(50% - 420px) auto auto calc(50% - 362px);
-    width: 724px;
-    height: 860px;
-  }
+  .live__map { height: 560px; }
+  .live__filters { right: 76px; }
+  .live__legend { width: calc(100% - 40px); padding: var(--space-12); }
 }

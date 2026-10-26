@@ -216,6 +216,7 @@ export function useReveal(scope, dependencies = []) {
 
       return () => mm.revert()
     },
-    { scope, dependencies },
+    // Revert before re-running: a second gsap.from() on a half-faded element would freeze it there.
+    { scope, dependencies, revertOnUpdate: true },
   )
 }

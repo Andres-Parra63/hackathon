@@ -1,144 +1,86 @@
-/* Active call: emergency card + instructions on top, table + live log below */
 .calls {
-  display: grid;
-  grid-template-columns: minmax(0, 1.65fr) minmax(0, 1fr);
   gap: var(--space-20);
 }
 
-/* ---------- Modo Emergencia card ---------- */
-.calls__hero {
-  position: relative;
+/* Pestañas: 28 px gap, 3 px indicator */
+/* Segmented pill tabs (the reference's "Silver · Gold · Platinum" switch) */
+.calls__tabs {
+  display: flex;
+  gap: var(--space-4);
+  width: fit-content;
+  max-width: 100%;
+  padding: var(--space-4);
+  overflow-x: auto;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-pill);
+  background: var(--surface-card);
+}
+
+.calls__tab {
+  flex-shrink: 0;
+  min-height: 40px;
+  padding: 0 var(--space-16);
+  border-radius: var(--radius-pill);
+  color: var(--text-muted);
+  font-size: 14px;
+  line-height: 18px;
+  font-weight: 510;
+  white-space: nowrap;
+  transition:
+    background-color var(--duration-fast) var(--ease-smooth-out),
+    color var(--duration-fast) var(--ease-smooth-out);
+}
+
+.calls__tab:hover {
+  background: var(--surface-raised);
+  color: var(--text-strong);
+}
+
+.calls__tab.is-active {
+  background: var(--text-strong);
+  color: var(--text-on-light);
+}
+
+.calls__panel {
   display: flex;
   flex-direction: column;
+  gap: var(--space-20);
+}
+
+.calls__summary {
+  gap: 18px;
+}
+
+.calls__head {
+  display: flex;
+  align-items: center;
   gap: var(--space-16);
-  min-width: 0;
-  padding: var(--space-24) var(--space-28) var(--space-28);
-  overflow: hidden;
-  border-radius: var(--radius-4xl);
-  background: var(--emergency-fill);
-  box-shadow: 0 18px 44px rgb(176 58 10 / 0.3);
-  color: var(--text-on-emergency);
-  isolation: isolate;
 }
 
-/* Soft orb drifting in the corner, as in the reference card; kept away from the text */
-.calls__hero::before {
-  content: '';
-  position: absolute;
-  top: -30%;
-  right: -12%;
-  z-index: -1;
-  width: 60%;
-  aspect-ratio: 1;
-  border-radius: 50%;
-  background: radial-gradient(closest-side, rgb(255 255 255 / 0.1), transparent);
-  animation: hero-orb 9s ease-in-out infinite alternate;
-}
-
-@keyframes hero-orb {
-  to { translate: -14% 18%; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .calls__hero::before { animation: none; }
-}
-
-.calls__hero-top {
+.calls__head-text {
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
+  flex: 1;
+  flex-direction: column;
   gap: var(--space-8);
+  min-width: 0;
 }
 
-.calls__chip {
-  display: inline-flex;
+.calls__actions {
+  display: flex;
+  gap: var(--space-12);
+}
+
+.calls__progress {
+  display: flex;
   align-items: center;
-  gap: var(--space-6);
-  padding: var(--space-4) var(--space-12) var(--space-4) var(--space-10);
-  border-radius: var(--radius-pill);
-  background: rgb(0 0 0 / 0.18);
-  font-size: 13px;
-  line-height: 18px;
-  font-weight: 560;
+  gap: var(--space-24);
 }
 
-.calls__hero-meta {
-  font-size: 13px;
-  line-height: 18px;
-  font-weight: 510;
-}
-
-.calls__hero-figure {
+.calls__bar {
   display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: var(--space-4) var(--space-12);
-  margin-top: var(--space-8);
-}
-
-.calls__hero-value {
-  font-size: 64px;
-  line-height: 1;
-  font-weight: 560;
-  letter-spacing: -0.045em;
-}
-
-.calls__hero-unit {
-  font-size: 16px;
-  line-height: 1.4;
-  font-weight: 510;
-}
-
-/* White meter on orange; the remainder keeps the striped track */
-.calls__meter {
-  --meter-fill: #ffffff;
-  --meter-stripe: rgb(255 255 255 / 0.35);
-  height: 10px;
-}
-
-.calls__hero-legend {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  gap: var(--space-4) var(--space-12);
-  font-size: 13px;
-  line-height: 18px;
-  font-weight: 510;
-}
-
-.calls__hero-legend h2 {
-  font: inherit;
-}
-
-.calls__hero-actions {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--space-10);
-  margin-top: var(--space-4);
-}
-
-/* Buttons that sit on the orange card: a white pill and a translucent one */
-.calls__btn-light {
-  --surface-inverse: #ffffff;
-  --surface-inverse-hover: #ffffff;
-  --text-on-inverse: #2b1204;
-  --hover-glow: 0 0 0 4px rgb(255 255 255 / 0.22);
-}
-
-.calls__btn-ghost {
-  --surface-glass: rgb(0 0 0 / 0.16);
-  --surface-glass-hover: rgb(0 0 0 / 0.26);
-  --border-control: rgb(255 255 255 / 0.4);
-  --border-control-hover: rgb(255 255 255 / 0.7);
-  --text-strong: #ffffff;
-}
-
-.calls__status {
-  font-size: 13px;
-  line-height: 18px;
-  font-weight: 510;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--space-8);
 }
 
 /* Keeps the live region in the accessibility tree without taking up space while empty */
@@ -150,154 +92,25 @@
   clip: rect(0, 0, 0, 0);
 }
 
-/* ---------- Instructions ---------- */
-.calls__guide .seg {
-  align-self: flex-start;
+.calls__table-head > div {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
 }
 
-.calls__checklist {
+.calls__history {
   display: flex;
   flex-direction: column;
   gap: var(--space-12);
-  animation: guide-in var(--duration-slow) var(--ease-smooth-out);
 }
 
-@keyframes guide-in {
-  from { opacity: 0; translate: 0 6px; filter: blur(3px); }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .calls__checklist { animation: none; }
-}
-
-.calls__checklist li {
-  display: flex;
-  align-items: flex-start;
-  gap: var(--space-10);
-  color: var(--text-default);
-  font-size: 14px;
-  line-height: 20px;
-}
-
-.calls__check {
-  display: flex;
-  flex-shrink: 0;
-  align-items: center;
-  justify-content: center;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: var(--status-warning-soft);
-  color: var(--status-warning);
-}
-
-.calls__guide-note {
-  margin-top: auto;
-}
-
-/* ---------- Live log ---------- */
-.calls__timeline {
-  display: flex;
-  flex-direction: column;
-}
-
-.calls__timeline li {
-  position: relative;
-  display: flex;
-  align-items: flex-start;
-  gap: var(--space-12);
-  padding: var(--space-10) 0;
-}
-
-/* Connector between the dots */
-.calls__timeline li:not(:last-child)::before {
-  content: '';
-  position: absolute;
-  top: 42px;
-  bottom: -6px;
-  left: 15px;
-  width: 2px;
-  border-radius: 1px;
-  background: var(--border-default);
-}
-
-.calls__timeline li > div {
-  flex: 1;
-  min-width: 0;
-}
-
-.calls__timeline time {
-  flex-shrink: 0;
-  font-variant-numeric: tabular-nums;
-}
-
-.calls__dot {
-  display: flex;
-  flex-shrink: 0;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-}
-
-.calls__dot--success { background: var(--status-success-soft); color: var(--status-success); }
-.calls__dot--neutral { background: var(--surface-sunken);      color: var(--text-default); }
-.calls__dot--info    { background: var(--status-info-soft);    color: var(--status-info); }
-
-/* ---------- History ---------- */
-.calls-history {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-16);
-}
-
-.calls-history__stats {
-  padding: var(--space-12);
-}
-
-.calls-history__tiles {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: var(--space-12);
-}
-
-.calls-history__grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: var(--space-20);
-}
-
-.calls-history__item {
-  gap: var(--space-14);
-}
-
-.calls-history__icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 44px;
-  height: 44px;
-  border-radius: var(--radius-lg);
-  background: var(--surface-page);
-  color: var(--text-strong);
-  box-shadow: inset 0 0 0 1px var(--border-default);
-}
-
-.calls-history__text {
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  gap: var(--space-4);
-}
-
-/* ---------- Responsive ---------- */
 @media (max-width: 1180px) {
-  .calls { grid-template-columns: minmax(0, 1fr); }
+  .calls__head { flex-wrap: wrap; }
+  .calls__actions { flex-basis: 100%; flex-wrap: wrap; }
+  .calls__progress { flex-direction: column; align-items: stretch; }
 }
 
 @media (max-width: 600px) {
-  .calls__hero { padding: var(--space-20); }
-  .calls__hero-value { font-size: 48px; }
-  .calls__hero-actions .btn { flex: 1 1 100%; }
+  .calls__actions .btn { flex: 1; }
+  .calls__table-head { flex-direction: column; align-items: flex-start; }
 }

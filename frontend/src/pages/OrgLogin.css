@@ -125,3 +125,13 @@
   .login__stats { flex-wrap: wrap; }
   .login__stats div { flex-basis: 40%; }
 }
+
+.login__demo {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-4);
+  padding: var(--space-16);
+  border: 1px dashed var(--border-default);
+  border-radius: var(--radius-xl);
+}

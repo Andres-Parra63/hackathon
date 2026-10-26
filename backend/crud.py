@@ -64,6 +64,11 @@ def hash_contrasena(contrasena: str) -> str:
 
 
 def verificar_contrasena(contrasena: str, guardado: str) -> bool:
+    # Los datos de ejemplo (datos_ejemplo.sql) guardan bcrypt generado con pgcrypto.
+    if guardado.startswith(("$2a$", "$2b$", "$2y$")):
+        import bcrypt
+
+        return bcrypt.checkpw(contrasena.encode(), guardado.encode())
     try:
         _, n, r, p, sal, clave = guardado.split("$")
     except ValueError:

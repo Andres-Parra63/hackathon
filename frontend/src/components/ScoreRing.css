@@ -1,0 +1,38 @@
+.score-ring {
+  position: relative;
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+}
+
+.score-ring svg { transform: rotate(-90deg); }
+
+.score-ring__track {
+  fill: none;
+  stroke: var(--surface-sunken);
+  stroke-width: 5;
+}
+
+.score-ring__fill {
+  fill: none;
+  stroke-width: 5;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 900ms var(--ease-smooth-out);
+}
+
+.score-ring--high .score-ring__fill { stroke: var(--status-success); }
+.score-ring--mid .score-ring__fill  { stroke: var(--brand-primary-strong); }
+.score-ring--low .score-ring__fill  { stroke: var(--text-muted); }
+
+.score-ring__value {
+  position: absolute;
+  color: var(--text-strong);
+  font-size: 15px;
+  font-weight: 560;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+.score-ring__value small { font-size: 10px; color: var(--text-muted); }

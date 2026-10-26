@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { ROLE_HOME, useAuth } from '../auth/authContext'
 import ringLg from '../assets/misc/ring-lg.svg'
 import ringMd from '../assets/misc/ring-md.svg'
 import ringSm from '../assets/misc/ring-sm.svg'
@@ -14,11 +15,18 @@ import { useReveal } from '../motion/useReveal'
 import './OrgLogin.css'
 
 const t = es.login
+const a = es.auth
 
 /** W02 · Ingreso de la organización (Figma 25:549). Access by role (RNF-02). */
 export default function OrgLogin() {
   const navigate = useNavigate()
+  const { state } = useLocation()
+  const { login } = useAuth()
   const [remember, setRemember] = useState(false)
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [error, setError] = useState('')
+  const [busy, setBusy] = useState(false)
   const root = useRef(null)
   useReveal(root)
 
@@ -45,9 +53,33 @@ export default function OrgLogin() {
     { scope: root },
   )
 
+  const signIn = async (mail, pass) => {
+    setBusy(true)
+    setError('')
+    try {
+      enter(await login(mail, pass))
+    } catch (err) {
+      setError(err.message)
+      setBusy(false)
+    }
+  }
+
   const handleSubmit = (event) => {
     event.preventDefault()
-    navigate('/panel')
+    signIn(email, password)
+  }
+
+  // Demo accounts fill the form, so the visitor sees which credentials were used.
+  const signInAs = (role) => {
+    setEmail(a.demoAccounts[role])
+    setPassword(a.demoPassword)
+    signIn(a.demoAccounts[role], a.demoPassword)
+  }
+
+  // Back to the page that sent the visitor here, as long as it belongs to their role.
+  const enter = (user) => {
+    const home = ROLE_HOME[user.role]
+    navigate(state?.from?.startsWith(home) ? state.from : home)
   }
 
   return (
@@ -93,7 +125,11 @@ export default function OrgLogin() {
             icon="mail"
             type="email"
             autoComplete="username"
-            defaultValue={t.emailValue}
+            value={email}
+            onChange={(e) => {
+              setEmail(e.target.value)
+              setError('')
+            }}
             autoFocus
             required
           />
@@ -102,7 +138,12 @@ export default function OrgLogin() {
             icon="lock"
             type="password"
             autoComplete="current-password"
-            defaultValue="demo-12345"
+            value={password}
+            onChange={(e) => {
+              setPassword(e.target.value)
+              setError('')
+            }}
+            error={error}
             required
           />
           <div className="login__options">
@@ -113,12 +154,21 @@ export default function OrgLogin() {
               {t.forgot}
             </a>
           </div>
-          <Button type="submit" block>
-            {t.submit}
+          <Button type="submit" block disabled={busy} aria-busy={busy}>
+            {busy ? a.signingIn : t.submit}
           </Button>
-          <Button variant="secondary" block>
+          <Button variant="secondary" block to="/#acceso">
             {t.requestAccess}
           </Button>
+          <fieldset className="login__demo">
+            <legend className="t-label c-strong">{a.demoTitle}</legend>
+            <p className="t-caption c-muted">{a.demoText}</p>
+            {Object.keys(a.demoAs).map((role) => (
+              <Button key={role} variant="tertiary" icon="arrow-right" disabled={busy} onClick={() => signInAs(role)}>
+                {a.demoAs[role]}
+              </Button>
+            ))}
+          </fieldset>
           <Note icon="shield-check" tone="success">
             {t.note}
           </Note>

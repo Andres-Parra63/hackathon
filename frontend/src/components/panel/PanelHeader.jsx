@@ -5,23 +5,16 @@ import './PanelHeader.css'
 
 const t = es.panel
 
-/**
- * Page heading: large title whose words rise out of focus, a one-line lead, and the page actions
- * (extra `children` first, then "Nueva convocatoria", the panel's main call to action).
- */
+/** Web/Encabezado panel (Figma 22:632): title, subtitle and the primary action. Notifications live in the top bar. */
 export default function PanelHeader({ title, subtitle, children }) {
   const { open } = useNewCall()
   return (
-    <header className="phead">
-      <div className="phead__titles">
-        <h1 className="phead__title" data-split>
-          {title}
-        </h1>
-        <p className="t-body-lg c-muted" data-reveal="blur" data-delay="0.15">
-          {subtitle}
-        </p>
+    <header className="panel-header">
+      <div className="panel-header__titles" data-stagger="up">
+        <h1 className="t-h2-web c-strong">{title}</h1>
+        <p className="t-body c-muted">{subtitle}</p>
       </div>
-      <div className="phead__actions" data-reveal="blur" data-delay="0.25">
+      <div className="panel-header__actions">
         {children}
         <Button icon="plus" onClick={open}>
           {t.newCall}

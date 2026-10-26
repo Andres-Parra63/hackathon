@@ -14,6 +14,7 @@ const LINKS = [
   { to: '/#para-quien', label: es.site.nav.audiences },
   { to: '/#escenarios', label: es.site.nav.scenarios },
   { to: '/#impacto', label: es.site.nav.impact },
+  { to: '/mapa', label: es.site.nav.map },
 ]
 
 /** Floating site header: logo, centered dimmed links, outline CTA; side drawer below 1080 px. */
