@@ -1,0 +1,156 @@
+/*
+ * Gradient hero card. White text sits on the darkest part of each gradient:
+ * blue #0a63e6 → #06367f (5.4:1 and up), orange #c93f0c → #7f2805 (5.0:1 and up).
+ */
+.hero-card {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-12);
+  min-height: 280px;
+  padding: clamp(var(--space-20), 2.4vw, var(--space-28));
+  overflow: hidden;
+  border-radius: var(--radius-5xl);
+  color: var(--text-on-color);
+  box-shadow: var(--elevation-2);
+}
+
+.hero-card::before,
+.hero-card::after {
+  position: absolute;
+  z-index: -1;
+  border-radius: 50%;
+  content: '';
+  pointer-events: none;
+}
+
+/* Soft light bloom and a faint ring, like the reference's glossy card */
+.hero-card::before {
+  top: -40%;
+  right: -12%;
+  width: 70%;
+  aspect-ratio: 1;
+  background: radial-gradient(circle, rgb(255 255 255 / 0.16), transparent 62%);
+}
+
+.hero-card::after {
+  bottom: -55%;
+  left: -18%;
+  width: 80%;
+  aspect-ratio: 1;
+  border: 1px solid rgb(255 255 255 / 0.1);
+}
+
+.hero-card--brand {
+  background: linear-gradient(135deg, #0a63e6 0%, #084fbf 48%, #06367f 100%);
+}
+
+.hero-card--emergency {
+  background: linear-gradient(135deg, #c93f0c 0%, #a3330a 50%, #7f2805 100%);
+}
+
+.hero-card__top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-8);
+}
+
+.hero-card__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-8);
+  padding: var(--space-6) var(--space-12);
+  border: 1px solid rgb(255 255 255 / 0.24);
+  border-radius: var(--radius-pill);
+  background: rgb(255 255 255 / 0.12);
+  font-size: 13px;
+  line-height: 18px;
+  font-weight: 510;
+  backdrop-filter: blur(8px);
+}
+
+.hero-card__badge-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0 0 4px rgb(255 255 255 / 0.18);
+}
+
+.hero-card__meta {
+  font-size: 13px;
+  line-height: 18px;
+  opacity: 0.86;
+}
+
+.hero-card__value {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-10);
+  margin-top: auto;
+}
+
+.hero-card__number {
+  font-size: clamp(3rem, 6vw, 4.5rem);
+  line-height: 1;
+  font-weight: 560;
+  letter-spacing: -0.06em;
+  font-variant-numeric: tabular-nums;
+}
+
+.hero-card__unit {
+  font-size: 18px;
+  line-height: 24px;
+  font-weight: 510;
+  opacity: 0.92;
+}
+
+.hero-card__text {
+  max-width: 52ch;
+  font-size: 14px;
+  line-height: 20px;
+  opacity: 0.92;
+}
+
+.hero-card__progress {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+}
+
+.hero-card__progress-labels {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-12);
+  font-size: 12px;
+  line-height: 16px;
+  opacity: 0.86;
+}
+
+.hero-card__foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-12) var(--space-16);
+  margin-top: var(--space-4);
+}
+
+.hero-card__foot .btn {
+  height: 44px;
+  padding: 0 var(--space-20);
+}
+
+.hero-card__footnote {
+  font-size: 13px;
+  line-height: 18px;
+  opacity: 0.9;
+}
+
+@media (max-width: 600px) {
+  .hero-card { min-height: 0; border-radius: var(--radius-4xl); }
+  .hero-card__foot .btn { width: 100%; }
+}

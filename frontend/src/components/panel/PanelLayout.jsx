@@ -1,21 +1,33 @@
 import { useCallback, useMemo, useState } from 'react'
 import { createPortal } from 'react-dom'
-import { Outlet, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { api } from '../../api/client'
 import { useApi } from '../../api/useApi'
 import { useAuth } from '../../auth/authContext'
-import PageTransition from '../../motion/PageTransition'
+import es from '../../i18n/es'
+import AppShell, { ShellAction } from '../area/AppShell'
+import Icon from '../Icon'
 import { NewCallContext } from './newCallContext'
 import NewCallDrawer from './NewCallDrawer'
-import Sidebar from './Sidebar'
 import { createQuickCall } from '../../pages/panel/useOrgData'
 import './PanelLayout.css'
 
-/** Organization panel shell (W03–W06): 248 px sidebar + main column + W04 drawer. */
+const t = es.panel
+
+const NAV = [
+  { to: '/panel', end: true, icon: 'dashboard', label: t.nav.dashboard },
+  { to: '/panel/mapa', icon: 'map', label: t.nav.map },
+  { to: '/panel/actividades', icon: 'calendar', label: es.orgArea.nav.activities },
+  { to: '/panel/emergencia', icon: 'alert-triangle', label: es.orgArea.nav.emergency },
+  { to: '/panel/convocatorias', icon: 'bell', label: t.nav.calls, count: 1 },
+  { to: '/panel/historial', icon: 'list', label: t.nav.history },
+]
+const IDENTITY = { icon: 'building', ...t.org }
+
+/** Organization panel (W03–W06): app shell + W04 "Nueva convocatoria" drawer. */
 export default function PanelLayout() {
   const { user } = useAuth()
   const navigate = useNavigate()
-  const { pathname } = useLocation()
   const [params] = useSearchParams()
   // `?nueva=1` opens the drawer directly (deep link to W04).
   const [drawerOpen, setDrawerOpen] = useState(params.has('nueva'))
@@ -35,14 +47,20 @@ export default function PanelLayout() {
 
   return (
     <NewCallContext.Provider value={context}>
-      <div className="panel">
-        <Sidebar />
-        <main className="panel__main">
-          <PageTransition key={pathname}>
-            <Outlet />
-          </PageTransition>
-        </main>
-      </div>
+      <AppShell
+        nav={NAV}
+        identity={IDENTITY}
+        help={t.help}
+        actions={<ShellAction to="/panel/convocatorias" icon="bell" label={t.notifications} dot />}
+        railActions={
+          <button type="button" className="shell__rail-link shell__rail-link--cta" aria-label={t.newCall} onClick={context.open}>
+            <Icon name="plus" size={18} />
+            <span className="shell__tip" aria-hidden="true">
+              {t.newCall}
+            </span>
+          </button>
+        }
+      />
       {drawerOpen &&
         createPortal(
           <NewCallDrawer

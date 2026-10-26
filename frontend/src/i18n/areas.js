@@ -24,3 +24,11 @@ export const loadState = {
   errorTitle: 'No pudimos cargar esta información',
   retry: 'Reintentar',
 }
+
+// Shared shell of the organization, volunteer and admin areas.
+export const shell = {
+  menu: 'Menú principal',
+  shortcuts: 'Accesos rápidos',
+  logout: 'Cerrar sesión',
+  close: 'Cerrar',
+}

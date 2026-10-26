@@ -8,7 +8,7 @@ export default function AreaHeader({ title, subtitle, children }) {
         <h1 className="t-h2-web c-strong">{title}</h1>
         <p className="t-body c-muted">{subtitle}</p>
       </div>
-      {children}
+      {children && <div className="panel-header__actions">{children}</div>}
     </header>
   )
 }

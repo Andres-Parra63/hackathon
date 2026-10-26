@@ -1,23 +1,10 @@
-.panel {
-  display: grid;
-  grid-template-columns: var(--sidebar-width) minmax(0, 1fr);
-  min-height: 100vh;
-  background:
-    radial-gradient(circle at 80% -10%, rgb(10 99 230 / 0.12), transparent 34rem),
-    var(--surface-page);
-}
-
-.panel__main {
-  min-width: 0;
-}
-
 /* Content area below the panel header: 4/32 vertical, 32 horizontal padding */
 .panel-content {
   display: flex;
   flex-direction: column;
-  gap: var(--space-28);
+  gap: var(--space-24);
   max-width: 1440px;
-  padding: var(--space-4) clamp(var(--space-20), 3vw, var(--space-48)) var(--space-48);
+  padding: 0 clamp(var(--space-20), 3vw, var(--space-40)) var(--space-48);
 }
 
 /* Generic white card used across the panel (24 px radius) */
@@ -84,14 +71,104 @@
   color: var(--text-on-color);
 }
 
-@media (max-width: 960px) {
-  .panel {
-    grid-template-columns: minmax(0, 1fr);
-    grid-template-rows: auto 1fr; /* top bar keeps its height; main takes the rest */
-  }
-}
-
 @media (max-width: 600px) {
   .panel-content { padding: var(--space-4) var(--space-16) var(--space-24); }
   .card { padding: var(--space-16); }
+}
+
+/* Feed list (the reference's "Points history"): icon, title + caption, value on the right */
+.feed {
+  display: flex;
+  flex-direction: column;
+}
+
+.feed li {
+  display: flex;
+  align-items: center;
+  gap: var(--space-12);
+  padding: var(--space-12) 0;
+}
+
+.feed li + li { border-top: 1px solid var(--border-default); }
+
+.feed__icon {
+  display: grid;
+  flex-shrink: 0;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: var(--surface-raised);
+  color: var(--text-default);
+}
+
+.feed__icon--success { background: var(--status-success-soft); color: var(--status-success); }
+.feed__icon--warning { background: var(--status-warning-soft); color: var(--status-warning); }
+.feed__icon--info { background: var(--status-info-soft); color: var(--status-info); }
+
+.feed__text {
+  flex: 1;
+  min-width: 0;
+}
+
+.feed__text > p:first-child {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.feed__value {
+  flex-shrink: 0;
+  font-size: 14px;
+  line-height: 18px;
+  font-weight: 560;
+  font-variant-numeric: tabular-nums;
+}
+
+.feed__value--success { color: var(--status-success); }
+
+/* Checklist (the reference's "Tier benefits") */
+.checklist {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-12);
+}
+
+.checklist li {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-10);
+}
+
+.checklist__mark {
+  display: grid;
+  flex-shrink: 0;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--brand-primary-soft);
+  color: var(--brand-primary-strong);
+}
+
+.checklist__mark--off { background: var(--surface-sunken); color: var(--text-muted); }
+
+/* Hero + side card row used by the area home pages */
+.hero-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1.7fr) minmax(300px, 1fr);
+  gap: var(--space-20);
+}
+
+/* Main column + 360 px side column */
+.split {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(300px, 380px);
+  align-items: start;
+  gap: var(--space-20);
+}
+
+@media (max-width: 1100px) {
+  .hero-row,
+  .split { grid-template-columns: minmax(0, 1fr); }
 }

@@ -1,0 +1,437 @@
+/*
+ * App shell (organization, volunteer, admin): top bar with a pill menu, a slim icon rail on the
+ * left and the content column. Replaces the 248 px sidebar.
+ */
+.shell {
+  --rail-width: 72px;
+  --top-height: 76px;
+
+  display: grid;
+  grid-template-columns: var(--rail-width) minmax(0, 1fr);
+  grid-template-rows: var(--top-height) 1fr;
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at 78% -12%, rgb(10 99 230 / 0.14), transparent 36rem),
+    radial-gradient(circle at -10% 110%, rgb(10 99 230 / 0.06), transparent 30rem),
+    var(--surface-page);
+}
+
+/* ---------- Top bar ---------- */
+.shell__top {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: var(--space-16);
+  padding: 0 clamp(var(--space-16), 2vw, var(--space-28)) 0 var(--space-16);
+  border-bottom: 1px solid var(--border-default);
+  background: rgb(0 0 0 / 0.72);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+}
+
+.shell__logo {
+  display: inline-flex;
+  padding: var(--space-6) var(--space-14) var(--space-6) var(--space-8);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-pill);
+  background: var(--surface-card);
+}
+
+.shell__logo .logo img { width: 28px; height: 28px; }
+.shell__logo .logo__word { font-size: 17px; line-height: 22px; }
+
+/* Pill menu: the active item is a solid light pill (the reference's "Overview" tab) */
+.shell__tabs {
+  display: flex;
+  justify-self: center;
+  gap: var(--space-4);
+  max-width: 100%;
+  padding: var(--space-4);
+  overflow-x: auto;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-pill);
+  background: var(--surface-card);
+  scrollbar-width: none;
+}
+
+.shell__tabs::-webkit-scrollbar { display: none; }
+
+.shell__tab {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: var(--space-8);
+  min-height: 40px;
+  padding: 0 var(--space-16);
+  border-radius: var(--radius-pill);
+  color: var(--text-muted);
+  font-size: 14px;
+  line-height: 18px;
+  font-weight: 510;
+  white-space: nowrap;
+  transition:
+    background-color var(--duration-fast) var(--ease-smooth-out),
+    color var(--duration-fast) var(--ease-smooth-out);
+}
+
+.shell__tab:hover { color: var(--text-strong); background: var(--surface-raised); }
+
+.shell__tab.active {
+  background: var(--text-strong);
+  color: var(--text-on-light);
+}
+
+.shell__count {
+  min-width: 20px;
+  padding: 1px var(--space-6);
+  border-radius: var(--radius-pill);
+  background: var(--brand-primary);
+  color: var(--text-on-color);
+  font-size: 11px;
+  line-height: 16px;
+  text-align: center;
+}
+
+.shell__tab.active .shell__count { background: var(--brand-primary); }
+
+.shell__tools {
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+}
+
+.shell__round {
+  position: relative;
+  display: grid;
+  flex-shrink: 0;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--border-default);
+  border-radius: 50%;
+  background: var(--surface-card);
+  color: var(--text-default);
+  cursor: pointer;
+  transition:
+    background-color var(--duration-fast) var(--ease-smooth-out),
+    color var(--duration-fast) var(--ease-smooth-out);
+}
+
+.shell__round:hover,
+.shell__round[aria-expanded='true'] {
+  background: var(--surface-raised);
+  color: var(--text-strong);
+}
+
+.shell__dot {
+  position: absolute;
+  top: 10px;
+  right: 11px;
+  width: 8px;
+  height: 8px;
+  border: 2px solid var(--surface-card);
+  border-radius: 50%;
+  background: var(--brand-primary-strong);
+}
+
+/* Account chip + menu */
+.shell__account { position: relative; }
+
+.shell__user {
+  display: flex;
+  align-items: center;
+  gap: var(--space-10);
+  min-height: 44px;
+  padding: var(--space-4) var(--space-12) var(--space-4) var(--space-4);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-pill);
+  background: var(--surface-card);
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color var(--duration-fast) var(--ease-smooth-out);
+}
+
+.shell__user:hover,
+.shell__user[aria-expanded='true'] { background: var(--surface-raised); }
+
+.shell__avatar {
+  display: grid;
+  flex-shrink: 0;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--brand-primary), #073c8f);
+  color: var(--text-on-color);
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 560;
+}
+
+.shell__user-text {
+  display: flex;
+  flex-direction: column;
+  max-width: 160px;
+}
+
+.shell__user-text > span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.shell__chevron {
+  color: var(--text-muted);
+  rotate: 90deg;
+  transition: rotate var(--duration-fast) var(--ease-smooth-out);
+}
+
+.shell__user[aria-expanded='true'] .shell__chevron { rotate: -90deg; }
+
+.shell__menu {
+  position: absolute;
+  top: calc(100% + var(--space-8));
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  min-width: 240px;
+  padding: var(--space-8);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-2xl);
+  background: var(--surface-raised);
+  box-shadow: var(--elevation-3);
+  animation: shell-pop var(--duration-quick) var(--ease-smooth-out);
+}
+
+.shell__menu-head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-10);
+  padding: var(--space-8) var(--space-8) var(--space-12);
+  border-bottom: 1px solid var(--border-default);
+}
+
+.shell__menu-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-10);
+  min-height: 44px;
+  padding: 0 var(--space-10);
+  border: 0;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--text-default);
+  font: inherit;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.shell__menu-item:hover { background: var(--surface-sunken); color: var(--text-strong); }
+
+/* ---------- Icon rail ---------- */
+.shell__rail {
+  position: sticky;
+  top: var(--top-height);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-12);
+  height: calc(100vh - var(--top-height));
+  padding: var(--space-20) 0;
+}
+
+.shell__rail-id {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--brand-primary-soft);
+  color: var(--brand-primary-strong);
+}
+
+.shell__rail-sep {
+  width: 20px;
+  border-top: 1px solid var(--border-default);
+}
+
+.shell__rail-nav,
+.shell__rail-foot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-6);
+  padding: var(--space-6);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-pill);
+  background: var(--surface-card);
+}
+
+.shell__rail-foot { margin-top: auto; }
+
+.shell__rail-link {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition:
+    background-color var(--duration-fast) var(--ease-smooth-out),
+    color var(--duration-fast) var(--ease-smooth-out);
+}
+
+.shell__rail-link:hover,
+.shell__rail-link[aria-expanded='true'] { background: var(--surface-raised); color: var(--text-strong); }
+
+.shell__rail-link.active {
+  background: var(--text-strong);
+  color: var(--text-on-light);
+}
+
+/* Tooltip: appears on hover and keyboard focus */
+.shell__tip {
+  position: absolute;
+  top: 50%;
+  left: calc(100% + 12px);
+  z-index: 30;
+  padding: var(--space-6) var(--space-10);
+  border-radius: var(--radius-sm);
+  background: var(--tt-bg);
+  color: var(--tt-fg);
+  box-shadow: var(--elevation-2);
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 510;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  translate: -4px -50%;
+  scale: var(--tt-scale, 0.98);
+  transition:
+    opacity var(--tt-out-dur, 50ms) var(--tt-out-ease, ease-out),
+    translate var(--tt-out-dur, 50ms) var(--tt-out-ease, ease-out);
+}
+
+.shell__rail-link:hover .shell__tip,
+.shell__rail-link:focus-visible .shell__tip {
+  opacity: 1;
+  translate: 0 -50%;
+  scale: 1;
+  transition:
+    opacity var(--tt-in-dur, 150ms) var(--tt-in-ease, ease-out) var(--tt-delay, 80ms),
+    translate var(--tt-in-dur, 150ms) var(--tt-in-ease, ease-out) var(--tt-delay, 80ms),
+    scale var(--tt-in-dur, 150ms) var(--tt-in-ease, ease-out) var(--tt-delay, 80ms);
+}
+
+/* Help popover (from the rail or the top bar) */
+.shell__help {
+  position: fixed;
+  bottom: var(--space-24);
+  left: calc(var(--rail-width) + var(--space-8));
+  z-index: 40;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  width: min(340px, calc(100vw - 32px));
+  padding: var(--space-16) var(--space-48) var(--space-16) var(--space-16);
+  border: 1px solid rgb(92 157 255 / 0.3);
+  border-radius: var(--radius-2xl);
+  background: var(--status-info-soft);
+  box-shadow: var(--elevation-3);
+  animation: shell-pop var(--duration-quick) var(--ease-smooth-out);
+}
+
+.shell__help-title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+  color: var(--status-info);
+  font-size: 13px;
+  line-height: 18px;
+  font-weight: 560;
+}
+
+.shell__help-close {
+  position: absolute;
+  top: var(--space-8);
+  right: var(--space-8);
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--text-default);
+  cursor: pointer;
+}
+
+.shell__help-close:hover { background: rgb(255 255 255 / 0.08); }
+
+@keyframes shell-pop {
+  from { opacity: 0; translate: 0 -4px; scale: 0.98; }
+  to   { opacity: 1; translate: 0 0; scale: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .shell__menu,
+  .shell__help { animation: none; }
+}
+
+/* ---------- Content ---------- */
+.shell__main { min-width: 0; }
+
+/* Cards inside the shell: softer, larger radius (the reference's floating panels) */
+.shell .card { border-radius: var(--radius-4xl); }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 1180px) {
+  .shell__user-text { display: none; }
+  .shell__chevron { display: none; }
+  .shell__user { padding: var(--space-4); }
+}
+
+/* Tablet and phone: no rail; the pill menu moves to its own row under the brand. */
+@media (max-width: 960px) {
+  .shell {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto 1fr;
+  }
+  .shell__top {
+    grid-template-columns: auto 1fr;
+    row-gap: var(--space-10);
+    padding: var(--space-10) var(--space-16);
+  }
+  .shell__tools { justify-self: end; }
+  .shell__tabs {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    justify-self: stretch;
+  }
+  .shell__rail { display: none; }
+  .shell__help { left: var(--space-16); }
+}
+
+@media (max-width: 420px) {
+  .shell__logo .logo__word { display: none; }
+  .shell__logo { padding: var(--space-6); }
+}
+
+/* Rail shortcut for the main action (e.g. "Nueva convocatoria") */
+.shell__rail-link--cta {
+  background: var(--brand-primary);
+  color: var(--text-on-color);
+}
+.shell__rail-link--cta:hover { background: var(--brand-primary-hover); color: var(--text-on-color); }

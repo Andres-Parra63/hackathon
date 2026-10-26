@@ -278,3 +278,7 @@
 .progress--brand > span   { background: var(--brand-primary); }
 .progress--muted > span   { background: var(--text-muted); }
 .progress--success > span { background: var(--status-success); }
+
+/* Light bar for gradient cards (white on translucent white) */
+.progress--light { background: rgb(255 255 255 / 0.22); }
+.progress--light > span { background: #ffffff; }

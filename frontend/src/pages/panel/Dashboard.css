@@ -4,76 +4,28 @@
   gap: var(--space-16);
 }
 
-.dash__columns {
-  display: flex;
-  align-items: flex-start;
-  gap: var(--space-24);
-}
+.dash__badges { margin-top: var(--space-8); }
 
-.dash__left {
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  gap: var(--space-24);
-  min-width: 0;
-}
-
-.dash__right {
+.dash__side {
   display: flex;
   flex-direction: column;
-  gap: var(--space-24);
-  width: 400px;
-  flex-shrink: 0;
+  gap: var(--space-20);
 }
 
-.dash__active-head {
-  display: flex;
-  align-items: center;
-  gap: var(--space-16);
-}
-
-.dash__active-text {
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  gap: var(--space-8);
-  min-width: 0;
-}
-
-.dash__history {
-  gap: var(--space-12);
-}
-
-.dash__history ul {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-12);
-}
-
-.dash__history li {
-  display: flex;
-  align-items: center;
-  gap: var(--space-12);
-  padding: var(--space-12) var(--space-16);
-  border-radius: var(--radius-lg);
-  background: var(--surface-page);
-}
-
-.dash__history li > div {
-  flex: 1;
-}
-
-/* Mapa de voluntarios card */
+/* Mapa de voluntarios card, next to the hero */
 .dash__map {
+  display: flex;
+  flex-direction: column;
   overflow: hidden;
   border: 1px solid var(--border-default);
-  border-radius: var(--radius-3xl);
+  border-radius: var(--radius-5xl);
   background: var(--surface-card);
   box-shadow: var(--elevation-1);
 }
 
 .dash__map-view {
-  height: 280px;
+  flex: 1;
+  min-height: 240px;
 }
 
 .dash__map-foot {
@@ -93,27 +45,17 @@
   align-items: center;
   gap: var(--space-14);
   padding: var(--space-20) var(--space-20) var(--space-20) 22px;
-  border-radius: var(--radius-3xl);
-  background: var(--brand-primary);
+  border-radius: var(--radius-4xl);
+  background: linear-gradient(135deg, #0a63e6, #06367f);
   box-shadow: var(--elevation-2);
   color: var(--text-on-color);
   text-align: left;
-  transition:
-    background-color var(--duration-fast) var(--ease-smooth-out),
-    box-shadow var(--duration-fast) var(--ease-smooth-out);
+  transition: box-shadow var(--duration-fast) var(--ease-smooth-out), translate var(--duration-fast) var(--ease-smooth-out);
 }
 
 .dash__cta:hover {
-  background: var(--brand-primary-hover);
   box-shadow: 0 0 0 1px rgb(92 157 255 / 0.4), 0 18px 48px rgb(10 99 230 / 0.35);
-}
-
-.dash__history li {
-  transition: background-color var(--duration-fast) var(--ease-smooth-out);
-}
-
-.dash__history li:hover {
-  background: var(--brand-primary-subtle);
+  translate: 0 -2px;
 }
 
 .dash__cta-text {
@@ -124,15 +66,14 @@
 }
 
 .dash__cta-plus {
-  display: flex;
+  display: grid;
   flex-shrink: 0;
-  align-items: center;
-  justify-content: center;
-  width: 48px;
-  height: 48px;
+  place-items: center;
+  width: 46px;
+  height: 46px;
   border-radius: 50%;
-  background: var(--surface-card);
-  color: var(--brand-primary-strong);
+  background: var(--text-strong);
+  color: var(--text-on-light);
 }
 
 .dash__privacy {
@@ -140,13 +81,10 @@
   border-radius: var(--radius-xl);
 }
 
-@media (max-width: 1280px) {
-  .dash__columns { flex-direction: column; align-items: stretch; }
-  .dash__right { width: 100%; }
+@media (prefers-reduced-motion: reduce) {
+  .dash__cta:hover { translate: none; }
 }
 
 @media (max-width: 760px) {
   .dash__metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .dash__active-head { flex-wrap: wrap; }
-  .dash__active-head .btn { width: 100%; }
 }

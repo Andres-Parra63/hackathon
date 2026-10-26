@@ -2,6 +2,7 @@ import { api } from '../../api/client'
 import { useApi } from '../../api/useApi'
 import { useAuth } from '../../auth/authContext'
 import { placeByName } from '../../data/places'
+import { clusterVolunteers } from '../../data/volunteerMap'
 
 // Calls still taking volunteers.
 export const isLive = (call) => call.estado === 'publicada'
@@ -24,6 +25,21 @@ export function useOrgData() {
     }
   }, [orgId])
   return { ...result, orgId, user }
+}
+
+/**
+ * Map data for one call: volunteers grouped by ~1 km cell and classified against the call, plus the
+ * other operation points of its emergency. Resolves to null when there is no call.
+ */
+export function useCallMap(call) {
+  return useApi(async () => {
+    if (!call) return null
+    const [volunteers, points] = await Promise.all([
+      api.volunteers({ limite: 1000 }),
+      call.emergencia_id ? api.points({ emergencia_id: call.emergencia_id, solo_publicos: false }) : [],
+    ])
+    return { ...clusterVolunteers(volunteers, call), points: points.filter((p) => p.activo) }
+  }, [call?.id])
 }
 
 /** Live emergency call to follow in the panel: `preferredId` if given, else the newest live one. */

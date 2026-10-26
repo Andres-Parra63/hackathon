@@ -1,7 +1,9 @@
 import { useRef } from 'react'
-import Badge from '../../components/Badge'
+import Icon from '../../components/Icon'
 import LoadState from '../../components/LoadState'
 import AreaHeader from '../../components/area/AreaHeader'
+import HeroCard from '../../components/panel/HeroCard'
+import MetricCard from '../../components/panel/MetricCard'
 import es from '../../i18n/es'
 import { formatDateTime, formatHours } from '../../lib/format'
 import { useReveal } from '../../motion/useReveal'
@@ -28,35 +30,38 @@ export default function VolunteerHours() {
         <LoadState loading={loading} error={error} onRetry={reload}>
           {data && (
             <>
-              <section className="vol__total" data-reveal="up">
-                <div>
-                  <p className="t-label c-muted">{t.total}</p>
-                  <p className="t-numeral-lg c-strong" data-count>
-                    {formatHours(data.hours.horas_voluntariado)}
-                  </p>
+              <div className="hero-row">
+                <HeroCard
+                  labelledBy="hours-total"
+                  badge={t.total}
+                  meta={es.volunteer.home.heroMeta(data.hours.turnos_cumplidos)}
+                  value={formatHours(data.hours.horas_voluntariado)}
+                  unit={es.volunteer.home.heroUnit}
+                  text={es.volunteer.home.heroText}
+                />
+                <div className="vol__hours-stats" data-stagger="up">
+                  <MetricCard icon="check" value={String(data.hours.turnos_cumplidos)} label={t.shifts} tone="accent" />
+                  <MetricCard icon="calendar" value={String(done.length)} label={t.list} />
                 </div>
-                <div>
-                  <p className="t-label c-muted">{t.shifts}</p>
-                  <p className="t-numeral-lg c-strong" data-count>
-                    {data.hours.turnos_cumplidos}
-                  </p>
-                </div>
-              </section>
+              </div>
               <section className="card" aria-labelledby="hours-list" data-reveal="up">
                 <h2 id="hours-list" className="t-h3 c-strong">
                   {t.list}
                 </h2>
                 <LoadState empty={done.length === 0} emptyText={t.empty}>
-                  <ul className="vol__hours" data-stagger="up">
+                  <ul className="feed" data-stagger="up">
                     {done.map((p) => (
                       <li key={p.id}>
-                        <div>
+                        <span className="feed__icon feed__icon--success">
+                          <Icon name="check" size={16} />
+                        </span>
+                        <div className="feed__text">
                           <p className="t-label c-strong">{p.convocatoria.titulo}</p>
                           <p className="t-body-sm c-muted">
                             {formatDateTime(p.check_in)} · {es.enums.callType[p.convocatoria.tipo]}
                           </p>
                         </div>
-                        <Badge tone="info">{formatHours(hoursOf(p))}</Badge>
+                        <span className="feed__value feed__value--success">+{formatHours(hoursOf(p))}</span>
                       </li>
                     ))}
                   </ul>
